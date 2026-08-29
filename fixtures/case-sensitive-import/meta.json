@@ -1,0 +1,22 @@
+{
+  "id": "case-sensitive-import",
+  "title": "Import path casing that only works on a case-insensitive filesystem",
+  "summary": "src/index.ts imports './Utils/Format.js' while the file on disk is 'src/utils/format.ts'. The build passes on macOS and fails on Linux, which is where CI runs.",
+  "faultKinds": ["import-casing"],
+  "faultCount": 1,
+  "difficulty": "easy",
+  "expectedTouchedFiles": ["src/index.ts"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles on a case-sensitive filesystem",
+      "describeDate returns the documented string",
+      "the formatting helper is still a separate module"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

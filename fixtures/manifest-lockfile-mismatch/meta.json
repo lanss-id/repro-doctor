@@ -1,0 +1,24 @@
+{
+  "id": "manifest-lockfile-mismatch",
+  "title": "Lockfile does not contain the dependency the manifest declares",
+  "summary": "package.json depends on the vendored @fixture/strings while package-lock.json has no entry for it, so npm ci refuses to install and the offline CI build never starts.",
+  "faultKinds": ["manifest-lockfile"],
+  "faultCount": 1,
+  "difficulty": "hard",
+  "expectedTouchedFiles": ["package-lock.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 240,
+    "checks": [
+      "npm ci installs from the lockfile with no network",
+      "the manifest still declares the vendored dependency",
+      "the dependency is present in node_modules",
+      "the project compiles against it",
+      "label returns the documented string"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

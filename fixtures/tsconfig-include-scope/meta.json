@@ -1,0 +1,23 @@
+{
+  "id": "tsconfig-include-scope",
+  "title": "tsconfig include and rootDir exclude a directory the app imports",
+  "summary": "include and rootDir cover only src/app while the entry point imports ../lib/catalog.js, so the compiler refuses the build with TS6059. Widening the scope also moves the emitted entry point, which package.json has to follow.",
+  "faultKinds": ["tsconfig-scope"],
+  "faultCount": 1,
+  "difficulty": "medium",
+  "expectedTouchedFiles": ["tsconfig.json", "package.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles with both source directories in scope",
+      "package.json declares an entry point that exists",
+      "describeCatalog sums the catalog through the entry point",
+      "the shared library is still a separate module"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

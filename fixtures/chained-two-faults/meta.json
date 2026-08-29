@@ -1,0 +1,24 @@
+{
+  "id": "chained-two-faults",
+  "title": "Two independent faults on the same path",
+  "summary": "package.json points main at dist/app.js while the build emits dist/index.js, and the configuration reads APP_GREETING while the documented variable is GREETING. Fixing either fault alone leaves the project broken.",
+  "faultKinds": ["chained", "package-entrypoint", "environment-contract"],
+  "faultCount": 2,
+  "difficulty": "hard",
+  "expectedTouchedFiles": ["package.json", "src/config.ts"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles",
+      "the declared entry point exists after the build",
+      "GREETING is the variable that is read",
+      "the greeting falls back to hello",
+      "the undocumented variable is no longer honoured"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

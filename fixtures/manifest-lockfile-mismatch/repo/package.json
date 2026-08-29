@@ -1,0 +1,14 @@
+{
+  "name": "widget-kit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "npm ci --offline --no-audit --no-fund && tsc -p tsconfig.json && node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@fixture/strings": "file:vendor/strings"
+  }
+}

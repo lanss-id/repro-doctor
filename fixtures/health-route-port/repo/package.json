@@ -1,0 +1,12 @@
+{
+  "name": "status-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node bin/server.mjs",
+    "check": "tsc -p tsconfig.json && node scripts/smoke.mjs"
+  }
+}

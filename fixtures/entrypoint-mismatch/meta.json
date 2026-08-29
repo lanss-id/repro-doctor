@@ -1,0 +1,22 @@
+{
+  "id": "entrypoint-mismatch",
+  "title": "Package entry point names a file the build never emits",
+  "summary": "package.json declares main as dist/main.js while the TypeScript build emits dist/index.js, so importing the package fails at module resolution even though the compiler is happy.",
+  "faultKinds": ["package-entrypoint"],
+  "faultCount": 1,
+  "difficulty": "easy",
+  "expectedTouchedFiles": ["package.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles",
+      "the declared entry point exists on disk",
+      "greet returns the documented string through that entry point"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

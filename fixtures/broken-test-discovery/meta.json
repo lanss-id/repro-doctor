@@ -1,0 +1,24 @@
+{
+  "id": "broken-test-discovery",
+  "title": "The test runner matches nothing and reports success",
+  "summary": "npm test globs tests/**/*.test.mjs while the suite is named sum.spec.mjs, so the runner finds zero tests and exits zero. The repository's own check is a false green.",
+  "faultKinds": ["test-discovery"],
+  "faultCount": 1,
+  "difficulty": "hard",
+  "expectedTouchedFiles": ["tests/sum.spec.mjs", "package.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 180,
+    "checks": [
+      "the project compiles",
+      "npm test exits zero",
+      "npm test runs at least two tests",
+      "no test failed",
+      "the tests still assert against the built library"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

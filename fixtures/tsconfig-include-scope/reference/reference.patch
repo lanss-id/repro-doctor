@@ -1,0 +1,28 @@
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,7 @@
+   "version": "1.0.0",
+   "private": true,
+   "type": "module",
+-  "main": "dist/index.js",
++  "main": "dist/app/index.js",
+   "scripts": {
+     "build": "tsc -p tsconfig.json",
+     "check": "tsc -p tsconfig.json && node scripts/smoke.mjs"
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -3,10 +3,12 @@
+     "target": "ES2022",
+     "module": "NodeNext",
+     "moduleResolution": "NodeNext",
+-    "rootDir": "src/app",
++    "rootDir": "src",
+     "outDir": "dist",
+     "strict": true,
+     "declaration": true
+   },
+-  "include": ["src/app/**/*"]
++  "include": [
++    "src/**/*"
++  ]
+ }

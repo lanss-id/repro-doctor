@@ -1,0 +1,23 @@
+{
+  "id": "health-route-port",
+  "title": "Health route and listening port both disagree with the platform contract",
+  "summary": "The service exposes /healthz on a hardcoded port 3000 while the load balancer probes /health on the port given in PORT, so every instance is marked unhealthy.",
+  "faultKinds": ["service-contract"],
+  "faultCount": 1,
+  "difficulty": "medium",
+  "expectedTouchedFiles": ["src/app.ts"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 180,
+    "checks": [
+      "the project compiles",
+      "the service listens on the port given in PORT",
+      "GET /health returns 200 with the documented body",
+      "an unknown path returns 404"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

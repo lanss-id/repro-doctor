@@ -1,0 +1,23 @@
+{
+  "id": "esm-cjs-mismatch",
+  "title": "Compiler emits CommonJS into a package declared as ESM",
+  "summary": "tsconfig sets module to commonjs while package.json sets type to module, so the build succeeds and the emitted dist/index.js dies at load time with \"exports is not defined in ES module scope\".",
+  "faultKinds": ["module-format"],
+  "faultCount": 1,
+  "difficulty": "medium",
+  "expectedTouchedFiles": ["tsconfig.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles",
+      "the package is still declared as ESM",
+      "the build output loads as an ES module",
+      "describeTotal returns the documented string"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

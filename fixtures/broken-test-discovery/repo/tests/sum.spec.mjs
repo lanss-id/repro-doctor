@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+const { mean, sum } = await import(new URL('../dist/index.js', import.meta.url).href);
+
+test('sum adds every value', () => {
+  assert.equal(sum([1, 2, 3]), 6);
+  assert.equal(sum([]), 0);
+});
+
+test('mean rejects an empty list', () => {
+  assert.equal(mean([2, 4]), 3);
+  assert.throws(() => mean([]), /empty/u);
+});

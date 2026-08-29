@@ -1,0 +1,26 @@
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -5,12 +5,20 @@
+   readonly body: string;
+ }
+ 
+-export const HEALTH_PATH = '/healthz';
++export const HEALTH_PATH = '/health';
+ 
+ export const DEFAULT_PORT = 3000;
+ 
+-export function resolvePort(_env: Environment): number {
+-  return DEFAULT_PORT;
++export function resolvePort(env: Environment): number {
++  const raw = env['PORT'];
++  if (raw === undefined || raw.trim() === '') {
++    return DEFAULT_PORT;
++  }
++  const port = Number(raw);
++  if (!Number.isInteger(port) || port <= 0) {
++    throw new Error(`PORT must be a positive integer, received ${raw}`);
++  }
++  return port;
+ }
+ 
+ export function handle(pathname: string): Response {

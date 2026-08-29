@@ -1,0 +1,23 @@
+{
+  "id": "monorepo-build-order",
+  "title": "Packages build in the wrong order",
+  "summary": "build.order.json builds app before core, but app imports core's compiled output, so a clean build fails with TS2307 while an already-built tree looks fine.",
+  "faultKinds": ["build-order"],
+  "faultCount": 1,
+  "difficulty": "medium",
+  "expectedTouchedFiles": ["build.order.json"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 180,
+    "checks": [
+      "a clean build of every package succeeds",
+      "both packages are still part of the build",
+      "quote returns the documented discount",
+      "the app still imports the core package"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "env-contract",
+  "title": "Configuration reads a variable the deployment never sets",
+  "summary": "loadConfig reads SERVICE_PORT while README.md and .env.example declare PORT, and it validates nothing, so a missing variable becomes NaN instead of an error.",
+  "faultKinds": ["environment-contract"],
+  "faultCount": 1,
+  "difficulty": "medium",
+  "expectedTouchedFiles": ["src/config.ts"],
+  "oracle": {
+    "entry": "oracle.mjs",
+    "timeoutSeconds": 120,
+    "checks": [
+      "the project compiles",
+      "PORT is read from the documented variable",
+      "REPORT_PREFIX defaults correctly",
+      "a missing PORT is rejected with an error naming the variable",
+      "a non-numeric PORT is rejected"
+    ]
+  },
+  "reference": {
+    "script": "repair.mjs",
+    "patch": "reference.patch"
+  }
+}
