@@ -1,0 +1,12 @@
+node_modules/
+dist/
+artifacts/
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+
+# Fixture build output produced by test and oracle runs.
+fixtures/*/repo/dist/
+fixtures/*/repo/node_modules/
+fixtures/*/repo/packages/*/dist/

@@ -1,0 +1,37 @@
+{
+  "name": "repro-doctor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sandboxed repair agent for unfamiliar TypeScript repositories, verified by a hidden semantic oracle.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "bin": {
+    "repro-doctor": "dist/src/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "npm run build --silent && node --test \"dist/tests/**/*.test.js\"",
+    "doctor": "npm run build --silent && node dist/src/cli/index.js",
+    "eval": "npm run build --silent && node dist/src/cli/index.js eval",
+    "report": "npm run build --silent && node dist/src/cli/index.js report",
+    "fixtures:verify": "npm run build --silent && node dist/src/cli/index.js fixtures verify",
+    "fixtures:patches": "npm run build --silent && node dist/src/cli/index.js fixtures patches",
+    "docker:build": "docker build -f Dockerfile -t repro-doctor-runner:1 ."
+  },
+  "dependencies": {
+    "@openai/agents": "0.17.0",
+    "zod": "4.5.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.20.1",
+    "eslint": "9.39.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.68.0"
+  }
+}
