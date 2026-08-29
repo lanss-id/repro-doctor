@@ -1,0 +1,26 @@
+{
+  "note": "Token prices in USD per million tokens, standard (non-batch, non-cached) API rates. Each entry records where the number came from and when a human last read that page. Repro Doctor never guesses a price: a model with no entry here and no environment override reports its cost as unknown, and a live scored evaluation refuses to run rather than produce unpriced numbers. Override per run with REPRO_DOCTOR_PRICE_INPUT_PER_MTOK and REPRO_DOCTOR_PRICE_OUTPUT_PER_MTOK for the model named in REPRO_DOCTOR_MODEL. Recheck these before quoting a cost in a submission.",
+  "models": {
+    "gpt-4.1-mini": {
+      "inputUsdPerMillionTokens": 0.4,
+      "outputUsdPerMillionTokens": 1.6,
+      "source": "OpenAI API pricing page, standard input and output rates",
+      "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-4.1-mini",
+      "verifiedOn": "2026-08-29"
+    },
+    "gpt-4.1-mini-2025-04-14": {
+      "inputUsdPerMillionTokens": 0.4,
+      "outputUsdPerMillionTokens": 1.6,
+      "source": "OpenAI API pricing page, standard input and output rates",
+      "sourceUrl": "https://developers.openai.com/api/docs/models/gpt-4.1-mini",
+      "verifiedOn": "2026-08-29"
+    },
+    "openai/gpt-4.1-mini": {
+      "inputUsdPerMillionTokens": 0.4,
+      "outputUsdPerMillionTokens": 1.6,
+      "source": "OpenRouter model page, standard input and output rates for the OpenAI-compatible route used by this project",
+      "sourceUrl": "https://openrouter.ai/openai/gpt-4.1-mini",
+      "verifiedOn": "2026-08-30"
+    }
+  }
+}
