@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# No API key is used anywhere in this workflow. Everything here runs offline
+# after the install step, which is the point: the harness and the benchmark are
+# checkable without spending anything.
+jobs:
+  check:
+    name: Typecheck, lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  benchmark:
+    name: Fixtures fail before repair and pass after it
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run docker:build
+      - name: Verify every fixture in the Docker sandbox
+        run: npm run doctor -- fixtures verify
+      - name: Reference patches match the reference repairs
+        run: |
+          npm run doctor -- fixtures patches
+          git diff --exit-code -- fixtures
