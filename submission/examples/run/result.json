@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260829T152416Z-6554df",
+  "caseId": "entrypoint-mismatch",
+  "mode": "advanced",
+  "model": "scripted-example-driver",
+  "modelSettingsFingerprint": "ed37b371150fa3a0",
+  "startedAt": "2026-08-29T15:24:16.778Z",
+  "finishedAt": "2026-08-29T15:24:27.467Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/example/repro-doctor/fixtures/entrypoint-mismatch/repo",
+    "workspacePath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/workspace",
+    "treeChecksumBefore": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "treeChecksumAfter": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "mutated": false,
+    "fileCount": 6
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 5,
+    "patchAttempts": 1,
+    "wallClockMs": 10690,
+    "tokens": null,
+    "cost": {
+      "kind": "unknown",
+      "why": "no-usage-reported"
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 3343,
+    "checks": [
+      "PASS the project compiles",
+      "PASS package.json is still valid JSON",
+      "PASS the declared entry point exists on disk",
+      "PASS greet(\"world\") returns \"hello world\" through the entry point",
+      "PASS the source of greet was not deleted"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/repair.patch",
+    "sha256": "8bffef44bf33d592e884b1e3939cf15a4bcafab31ff05bb1f828d160ac19f2b8",
+    "changedFiles": [
+      "package.json"
+    ],
+    "addedLines": 1,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df",
+    "resultPath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/result.json",
+    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/trajectory.jsonl",
+    "patchPath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/repair.patch",
+    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/verification.log",
+    "reportPath": "/example/repro-doctor/artifacts/runs/20260829T152416Z-6554df/report.html"
+  }
+}
