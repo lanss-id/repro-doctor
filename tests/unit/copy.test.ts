@@ -1,0 +1,99 @@
+import assert from 'node:assert/strict';
+import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import test from 'node:test';
+import { ReproDoctorError } from '../../src/domain/failure.js';
+import { copyRepositoryToWorkspace } from '../../src/infra/fs/copy.js';
+import { PathSafetyError } from '../../src/infra/fs/paths.js';
+import { removeDirectory, temporaryDirectory } from '../helpers/workspace.js';
+
+async function buildRepository(root: string): Promise<string> {
+  const repo = path.join(root, 'repo');
+  await mkdir(path.join(repo, 'src'), { recursive: true });
+  await mkdir(path.join(repo, 'node_modules', 'left-pad'), { recursive: true });
+  await writeFile(path.join(repo, 'package.json'), '{"name":"x"}\n', 'utf8');
+  await writeFile(path.join(repo, 'src', 'index.ts'), 'export const a = 1;\n', 'utf8');
+  await writeFile(path.join(repo, 'node_modules', 'left-pad', 'index.js'), 'module.exports = 1;\n', 'utf8');
+  return repo;
+}
+
+test('copying produces an independent workspace and skips node_modules', async () => {
+  const root = await temporaryDirectory('copy');
+  try {
+    const repo = await buildRepository(root);
+    const workspace = path.join(root, 'workspace');
+    const report = await copyRepositoryToWorkspace(repo, workspace);
+
+    assert.equal(report.fileCount, 2);
+    assert.equal(await readFile(path.join(workspace, 'src/index.ts'), 'utf8'), 'export const a = 1;\n');
+    await assert.rejects(() => readFile(path.join(workspace, 'node_modules/left-pad/index.js'), 'utf8'));
+
+    await writeFile(path.join(workspace, 'src/index.ts'), 'export const a = 2;\n', 'utf8');
+    assert.equal(
+      await readFile(path.join(repo, 'src/index.ts'), 'utf8'),
+      'export const a = 1;\n',
+      'writing in the workspace must not reach the source repository',
+    );
+  } finally {
+    await removeDirectory(root);
+  }
+});
+
+test('a symlink pointing outside the repository aborts the copy', async () => {
+  const root = await temporaryDirectory('copy-escape');
+  try {
+    const repo = await buildRepository(root);
+    await writeFile(path.join(root, 'secret.txt'), 'top secret', 'utf8');
+    await symlink(path.join(root, 'secret.txt'), path.join(repo, 'link.txt'));
+    await assert.rejects(
+      () => copyRepositoryToWorkspace(repo, path.join(root, 'workspace')),
+      PathSafetyError,
+    );
+  } finally {
+    await removeDirectory(root);
+  }
+});
+
+test('a symlink inside the repository is reported and not copied', async () => {
+  const root = await temporaryDirectory('copy-inner');
+  try {
+    const repo = await buildRepository(root);
+    await symlink(path.join(repo, 'package.json'), path.join(repo, 'manifest-link.json'));
+    const workspace = path.join(root, 'workspace');
+    const report = await copyRepositoryToWorkspace(repo, workspace);
+    assert.deepEqual(report.skippedSymlinks, ['manifest-link.json']);
+    await assert.rejects(() => readFile(path.join(workspace, 'manifest-link.json'), 'utf8'));
+  } finally {
+    await removeDirectory(root);
+  }
+});
+
+test('the workspace may not live inside the repository being copied', async () => {
+  const root = await temporaryDirectory('copy-nested');
+  try {
+    const repo = await buildRepository(root);
+    await assert.rejects(
+      () => copyRepositoryToWorkspace(repo, path.join(repo, 'workspace')),
+      PathSafetyError,
+    );
+  } finally {
+    await removeDirectory(root);
+  }
+});
+
+test('copy limits reject an oversized tree', async () => {
+  const root = await temporaryDirectory('copy-limits');
+  try {
+    const repo = await buildRepository(root);
+    await assert.rejects(
+      () => copyRepositoryToWorkspace(repo, path.join(root, 'workspace'), { maxFiles: 1 }),
+      ReproDoctorError,
+    );
+    await assert.rejects(
+      () => copyRepositoryToWorkspace(repo, path.join(root, 'workspace2'), { maxFileBytes: 4 }),
+      ReproDoctorError,
+    );
+  } finally {
+    await removeDirectory(root);
+  }
+});
