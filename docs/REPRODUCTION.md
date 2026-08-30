@@ -48,6 +48,33 @@ npm run report
 
 Expected: `artifacts/report/index.html`, with the evaluation status `not-run-yet` and a page that says no evaluation has been run rather than showing zeros.
 
+## Step 1b: reproduce every published number, without an API key
+
+This is the shortest path from a clean clone to checking the claims in the README, and it costs nothing.
+
+```bash
+npm run doctor -- replay submission/evidence/confirmatory
+```
+
+Expected: the recomputed aggregate `baseline 42/70` and `advanced 51/70`, the difference `+12.9 points (95% CI -2.8 to +27.6)`, both difficulty strata, and the line
+
+```
+Every re-scored run agrees with the published report on status, on all seven checks and on the verified verdict.
+```
+
+It exits non-zero on a single disagreement. About ten seconds, no model call, no network, no Docker, no money.
+
+What it does: the committed `result.json` and `trajectory.jsonl` of all 140 runs go back through the same scoring code that produced the report, and every check is recomputed rather than read from the report. What it does not do: re-run the model. That would produce different numbers by design, since the provider is not deterministic, and the size of that difference is itself measured in [EVALUATION.md](EVALUATION.md#what-variance-actually-looks-like-here).
+
+Two other bundles are committed and replay the same way:
+
+```bash
+npm run doctor -- replay submission/evidence/exploratory   # the 60-run batch that came first
+npm run doctor -- replay submission/evidence/critic        # the discarded critic experiment
+```
+
+One caveat the command prints itself: the oracle-access check searches the trajectory for the absolute paths of the hidden fixture directories, and those belong to the machine that produced the run. On any other machine that check passes because it cannot find strings that could never appear there. The replay says so rather than counting it as a re-derivation.
+
 ## Step 2: what happens without a key
 
 ```bash
@@ -102,25 +129,57 @@ It prints the patch and waits for you to type `apply`. Type anything else and no
 
 ## Step 5: the full evaluation
 
+This is the part that costs money. Everything above is free.
+
 ```bash
-npm run eval -- --repeats 3
+npm run eval -- --repeats 7
 npm run report
 open artifacts/report/index.html
 ```
 
-Sixty runs. Measured on the machine that produced the published result: **26.8 minutes of wall clock and $0.4262** of model spend, with a median of 25 seconds and $0.0073 per run. The per-run ceiling is 360 seconds, so a pathological batch could take six hours, but none has come close.
+140 runs. Measured on the machine that produced the published result: **64.5 minutes of wall clock and $0.9727** of model spend, a median of 29 seconds and $0.007144 per run. The per-run ceiling is 360 seconds, so a pathological batch could take fourteen hours; none has come close.
 
-See [EVALUATION.md](EVALUATION.md) for what the numbers mean and how many of them you should believe.
+Expected: `baseline 42/70` and `advanced 51/70` are what this machine measured, and you will not get them. The provider is not deterministic and the same baseline arm has scored 53.3%, 46.7% and 60.0% across three batches. If your numbers land inside those intervals, the run reproduced; if you get one number and treat it as the number, the run did not teach you anything. [EVALUATION.md](EVALUATION.md) explains why at length.
 
-To run the critic experiment instead, eighteen runs over the three hardest fixtures, scored by the rule fixed in advance:
+The smaller batch the first published result used:
 
 ```bash
-npm run eval -- --experiment critic --repeats 3
+npm run eval -- --repeats 3      # 60 runs, about 27 minutes, about $0.43
 ```
 
-Eighteen runs, about 8 minutes, about $0.13.
+The two pre-registered experiments, each writing its own report file so it cannot overwrite the comparison it is measured against:
 
-Both commands stop before spending anything if the pinned model has no token price in `config/pricing.json`, since an unpriced batch cannot enforce its cost budget.
+```bash
+npm run eval -- --experiment critic --repeats 3      # 18 runs, about 8 minutes, about $0.13
+npm run eval -- --experiment ablation --repeats 7    # 70 runs, about 35 minutes, about $0.55
+```
+
+The budget-sensitivity batch, which raises the tool-call ceiling for both modes at once:
+
+```bash
+npm run eval -- --repeats 3 --max-tool-calls 25      # 60 runs, longer and dearer per run
+```
+
+Every one of these stops before spending anything if the pinned model has no token price in `config/pricing.json`, since an unpriced batch cannot enforce its cost budget.
+
+## Step 6: a real repository
+
+The ten fixtures are mine. This one is not.
+
+```bash
+bash examples/real-world-commander/prepare.sh
+```
+
+It clones [commander](https://github.com/tj/commander.js) at a pinned SHA, restores the one line commander itself had before it fixed a real bug, holds commander's own regression test out of the visible tree to serve as the oracle, prints a full diff of both edits, installs commander's devDependencies, and then shows you `npm run check` exiting zero and the oracle failing on the same tree. Needs network; the repair afterwards does not. About a minute.
+
+```bash
+npm run doctor -- diagnose examples/real-world-commander/repo \
+  --mode advanced \
+  --oracle-dir examples/real-world-commander/oracle \
+  --max-tool-calls 20
+```
+
+[examples/real-world-commander/README.md](../examples/real-world-commander/README.md) states exactly which parts are upstream's and which are mine, and `RESULT.md` beside it records what happened when it was run.
 
 ## Determinism, and its limits
 

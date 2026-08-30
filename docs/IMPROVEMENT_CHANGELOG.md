@@ -8,13 +8,14 @@ Nothing moves from the second section to the third without artifacts.
 
 | Stage | What was tried, and why | Evidence | Decision |
 | --- | --- | --- | --- |
-| Baseline | A generic instruction, four tools, one unstructured loop, the same budget and scorer as everything below | 14/30 verified, 46.7% (95% CI 30.2 to 63.9); no patch at all in 9 of its 16 failures | The control |
-| Iteration 1 | Structure around the loop: preflight, hypothesis ledger, minimal-patch instruction, evidence-driven retry | 21/30, 70.0%; +23.3 points, 95% CI -1.5 to +44.5 | Kept, with the effect size reported as unestablished |
+| Baseline | A generic instruction, four tools, one unstructured loop, the same budget and scorer as everything below | 42/70 verified, 60.0% (95% CI 48.3 to 70.7); no patch at all in 11 of its 28 failures | The control |
+| Iteration 1 | Structure around the loop: preflight, hypothesis ledger, minimal-patch instruction, evidence-driven retry | 51/70, 72.9%; +12.9 points, 95% CI -2.8 to +27.6 | Kept, with the effect reported as not established |
 | Iteration 2 | Tell the agent the budget it actually has, and reserve the retry's call | Three live runs on `chained-two-faults`, each failing a different way, ending in a repaired run | Kept |
 | Iteration 3 | Bill a turn that ends by throwing | One run in 60 with `cost: unknown`, which made a whole mode's median cost unreportable | Kept, and the spoiled batch re-run |
 | Iteration 4 | Say that a check exiting zero is not evidence the repository works | On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the first, null result reported on the second |
 | Discarded | A critic agent reviewing the patch before the retry decision | 1/9 against 4/9, negative in both runs of the experiment | Discarded by the rule written before it ran |
-| Final | Everything except the critic | 21/30, zero safety violations in 60 runs | The submitted system |
+| Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
+| Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system |
 
 Each row expands below. Failures are in here with the same weight as the wins, including a 60-run batch that was measured and thrown away.
 
@@ -170,9 +171,11 @@ On the benchmark, the same change produced **no measurable improvement**: advanc
 
 **Decision.** Kept, on the strength of the user-path evidence, with the benchmark result reported as the null result it is.
 
-### Final evaluation, 30 August 2026
+### Exploratory batch, 30 August 2026
 
 Ten fixtures, both modes, three repeats, 60 runs. `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, 12 tool calls, 2 patch attempts, 360 second deadline, $0.30 ceiling per run. Report generated `2026-08-30T06:30:50Z`. Total measured spend $0.4262.
+
+This was the published result for about eight hours. It is kept here in full because the batch that replaced it did not agree with it, and a changelog that only keeps the batch it liked is not a changelog.
 
 | | Baseline | Advanced |
 | --- | --- | --- |
@@ -187,11 +190,21 @@ Six of the thirty advanced runs used their retry and four of those ended verifie
 
 `manifest-lockfile-mismatch` was repaired zero times out of six across both modes. The full per-case grid is in [EVALUATION.md](EVALUATION.md#per-case-three-runs-each).
 
-### What one identical arm did twice
+### What one identical arm did three times
 
-The baseline arm did not change between the two 60-run batches: only the advanced instructions did. It scored 16/30 in the first and 14/30 in the second. Same code, same prompt, same fixtures, same model at temperature zero, 6.7 points apart.
+The baseline arm has not changed by a character across three batches: only the advanced instructions did.
 
-That is the cheapest lesson in this file. A 6.7 point swing from nothing, measured, is why every rate here is printed with an interval and why the +23.3 point headline is reported as a direction rather than a size.
+| Batch | Baseline verified repair rate |
+| --- | --- |
+| Development batch, 29 August | 16/30, 53.3% |
+| Exploratory batch, 30 August | 14/30, 46.7% |
+| Confirmatory batch, 30 August | 42/70, 60.0% |
+
+Same code, same prompt, same fixtures, same model at temperature zero and top-p one. **A spread of 13.3 points from nothing but running it again.**
+
+The effect this whole project is trying to detect is 12.9 points. The noise is bigger than the signal, which means any comparison of two arms that were not run inside the same batch is measuring the weather, and a number quoted from someone else's run last week is worth nothing at all.
+
+That is the cheapest lesson in this file and the one most likely to be useful to somebody else.
 
 ### E1, the critic: discarded, 30 August 2026
 
@@ -220,6 +233,42 @@ This is not only a CI problem. The guarantee the project makes is that one deadl
 
 The lesson worth keeping: a version difference between the development machine and CI hid a real defect in the product, not just in the pipeline. The green local suite was the misleading signal.
 
+### E5, the confirmatory batch: hypothesis not confirmed, 30 August 2026
+
+**What was tried, and why.** The exploratory batch's headline, +23.3 points with a 95 percent CI of -1.5 to +44.5, established nothing: the interval crossed zero. Reading the same 60 runs per case rather than in aggregate showed why the aggregate was blunt. Five fixtures were saturated, baseline scoring 14 of 15 on them with no room for advanced to differ, while on the other five baseline scored **0 of 15** against advanced's 6, a difference of +40.0 points whose interval, +11.3 to +64.3, excluded zero.
+
+That subgroup was found after seeing the results, which makes it a hypothesis and not a result. So instead of publishing it, the five cases were frozen as a stratum, both hypotheses and their decision rules were written into [PREREGISTRATION.md](PREREGISTRATION.md), and the file was committed and pushed before a single run of the new batch started. Seventy runs per mode, chosen for 80 percent power against the 23 point effect the first batch suggested.
+
+**Evidence.** 140 runs, report `2026-08-30T15:18:26Z`, $0.9727, 64.5 minutes.
+
+| | Baseline | Advanced | Difference |
+| --- | --- | --- | --- |
+| aggregate | 42/70, 60.0% | 51/70, 72.9% | +12.9 points (95% CI -2.8 to +27.6) |
+| saturated stratum | 31/35, 88.6% | 35/35, 100.0% | +11.4 points (95% CI -0.6 to +26.0) |
+| hard stratum | 11/35, 31.4% | 16/35, 45.7% | +14.3 points (95% CI -8.2 to +34.9) |
+
+All three intervals include zero.
+
+**The subgroup effect did not survive.** Baseline went from 0 of 15 to **11 of 35** on the hard stratum, in an arm that had not changed. `broken-test-discovery` went from 0 of 3 to 5 of 7 for baseline; `monorepo-build-order` from 0 of 3 to 6 of 7. The +40 points was noise, and pre-registration is the only reason it is described here as noise rather than printed on the landing page as a result.
+
+**Decision and learning.** Published as the result, unconfirmed. The pre-registration says a null outcome gets the same prominence as a positive one, so the README leads with it.
+
+Two things did move, and are recorded without being dressed up as the headline. Advanced has scored higher in all three batches. And `tsconfig-include-scope` separates completely, 0 of 7 against 7 of 7, while `monorepo-build-order` runs the other way, 6 of 7 against 1 of 7, which is a specific regression in advanced mode that nobody has yet explained.
+
+The honest reading is that this benchmark cannot settle a 13 point difference. Doing so needs about 206 runs per arm, roughly 420 runs and $3.30 at this batch's measured cost, which exceeded the model credit available. The number is written down so the next person does not have to derive it.
+
+### The cost defect that survived its own fix, 30 August 2026
+
+Iteration 3 above fixed a run that ended by throwing losing the usage of every model call it had made. It fixed one path, the SDK turn limit. The confirmatory batch found another: two runs of 140, one per mode, ended `budget-exhausted` and reported `cost: unknown`, which by design made both modes' median cost unreportable rather than optimistic.
+
+It was **not** fixed while the batches were running. [PREREGISTRATION.md](PREREGISTRATION.md) rule 1 forbids code changes between the pre-registration commit and the end of the batches being compared, and two batches have already been discarded for breaking exactly that rule. The defect is recorded, the median over the 138 runs with measured cost is $0.007144, and the fix waits for the batches to finish.
+
+The lesson is narrower than it looks: a fix aimed at one error path is not a fix for a class of error paths, and the only reason this one was caught is that the reporting fails loudly rather than quietly averaging over what it has.
+
 ### What these numbers are not
 
-They are ten synthetic TypeScript fixtures, one model, one provider, one machine. They say nothing about a real repository with a real dependency tree, and nothing about any other model. Every run directory behind them is on the machine that produced them, under `artifacts/runs/`, which is gitignored; `submission/examples/live-run/` carries one of them in full.
+They are ten synthetic TypeScript fixtures, one model, one provider, one machine, and a sample too small to settle the difference they are measuring. They say nothing about any other model.
+
+They no longer say nothing about a real repository. [`examples/real-world-commander/`](../examples/real-world-commander) runs the tool against commander at a pinned upstream commit, with a fault restored from commander's own pre-fix code and an oracle lifted from commander's own regression test. That is one bug in one repository, not a rate, and it is described as such.
+
+Every run behind every number above is committed under [`submission/evidence/`](../submission/evidence) and can be re-scored offline with `npm run doctor -- replay`, with no API key and no model call.

@@ -1,62 +1,101 @@
 # Evaluation
 
-## Result: 60 runs, 30 per mode
+## Result: 140 runs, 70 per mode
 
-Run on 30 August 2026 with `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, ten fixtures, three repeats per case per mode. Report generated `2026-08-30T06:30:50Z`.
+Run on 30 August 2026 with `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, ten fixtures, seven repeats per case per mode. Report generated `2026-08-30T15:18:26Z`. Sample size, hypotheses and decision rules were fixed in [PREREGISTRATION.md](PREREGISTRATION.md) and committed before the first run of this batch started.
 
 | | Baseline | Advanced |
 | --- | --- | --- |
-| Verified repair rate | 14/30, 46.7% (95% CI 30.2 to 63.9) | 21/30, 70.0% (95% CI 52.1 to 83.3) |
-| Median wall clock | 24.3s | 25.7s |
-| Median cost per run | $0.0074 | $0.0072 |
+| Verified repair rate | 42/70, 60.0% (95% CI 48.3 to 70.7) | 51/70, 72.9% (95% CI 61.5 to 81.9) |
+| Median wall clock | 25.4s | 28.9s |
+| Median cost per run | unreportable | unreportable |
 | Unsafe mutations | 0 | 0 |
 | Budget violations | 0 | 0 |
 | Oracle access violations | 0 | 0 |
 
-Total measured spend for the batch: $0.4262.
+Total measured spend for the batch: $0.9727 over 64.5 minutes of wall clock.
 
-**Advanced minus baseline: +23.3 points, 95% CI -1.5 to +44.5.** The interval includes zero. Thirty runs per mode is not enough to establish that the structure is what produced the gap, and this document is not going to claim otherwise because the point estimate looks good. What the batch does establish is the direction, the cost, and that the extra structure did not cost extra money: advanced repaired more and its median run was fractionally cheaper, because the baseline's failures burn the full twelve calls while an advanced run that gets it right stops earlier.
+**Advanced minus baseline: +12.9 points, 95% CI -2.8 to +27.6.** The interval includes zero.
 
-### How much of that is the retry
+By the rule fixed before the batch ran, that is a null result: seventy runs per mode do not establish that the difference is real. It is not a finding that the two modes are equal. The data are consistent with anything from a small harm to a substantial benefit, advanced has scored higher in all three batches run so far, and the failure profile below moves in a direction that noise would not obviously produce. What cannot be said is that the improvement is established.
 
-Six of the thirty advanced runs used a second patch attempt, and four of those six ended verified. So the retry is not what carries the mode: twenty-one runs were verified and seventeen of them never needed it. The preflight, the minimal-patch instruction and the closed tools do most of the work, and the retry is the recovery path for the cases where the first patch is wrong in a way only an independent check can see. [submission/examples/retry-run/](../submission/examples/retry-run) is one of those four, event by event.
+### The secondary hypothesis, also not established
 
-### Per case, three runs each
+The strata were frozen by the exploratory batch's baseline result alone, before this batch ran, and are defined in [PREREGISTRATION.md](PREREGISTRATION.md) and in `src/eval/strata.ts`.
+
+| Stratum | Baseline | Advanced | Difference |
+| --- | --- | --- | --- |
+| saturated | 31/35, 88.6% (95% CI 74.0 to 95.5) | 35/35, 100.0% (95% CI 90.1 to 100.0) | +11.4 points (95% CI -0.6 to +26.0) |
+| hard | 11/35, 31.4% (95% CI 18.6 to 48.0) | 16/35, 45.7% (95% CI 30.5 to 61.8) | +14.3 points (95% CI -8.2 to +34.9) |
+
+Both intervals include zero.
+
+### Why the exploratory batch's stratification was wrong
+
+The exploratory batch, 60 runs at three repeats, generated `2026-08-30T06:30:50Z`, measured baseline 14/30, 46.7% (95% CI 30.2 to 63.9) against advanced 21/30, 70.0% (95% CI 52.1 to 83.3): a difference of +23.3 points, 95% CI -1.5 to +44.5.
+
+Per case, it looked much sharper than that. On the five cases that became the hard stratum, baseline scored **0 of 15** and advanced scored 6, a difference of +40.0 points whose interval, +11.3 to +64.3, excluded zero.
+
+In this batch baseline scored **11 of 35** on those same five cases, in an arm that had not changed by a character. Two of the five, `broken-test-discovery` and `monorepo-build-order`, went from 0 of 3 to 5 of 7 and 6 of 7 respectively.
+
+The +40 points was noise. It survives here only as a worked example of why a subgroup found after seeing the data has to become a hypothesis rather than a headline.
+
+### What variance actually looks like here
+
+The baseline arm is byte-identical across every batch: only advanced instructions changed between them.
+
+| Batch | Baseline verified repair rate |
+| --- | --- |
+| Development batch, 29 August | 16/30, 53.3% |
+| Exploratory batch, 30 August | 14/30, 46.7% |
+| Confirmatory batch, 30 August | 42/70, 60.0% |
+
+A spread of 13.3 points at temperature zero and top-p one, from nothing but running the same thing again on different occasions. The effect this benchmark is trying to detect is 12.9 points.
+
+**Between-batch variance exceeds the effect being measured.** Any comparison whose two arms were not run in the same batch is measuring the weather, and that includes comparing a number in a README against a number someone else published last week. It is the most useful thing this project measured, and every interval in this document exists because of it.
+
+### Per case, seven runs each
 
 `P` is a verified repair: the hidden oracle exited zero and every safety check passed.
 
 | Case | Baseline | Advanced |
 | --- | --- | --- |
-| `broken-test-discovery` | `...` | `PP.` |
-| `case-sensitive-import` | `PPP` | `PPP` |
-| `chained-two-faults` | `...` | `P..` |
-| `entrypoint-mismatch` | `.PP` | `PPP` |
-| `env-contract` | `PPP` | `PPP` |
-| `esm-cjs-mismatch` | `PPP` | `PPP` |
-| `health-route-port` | `PPP` | `PPP` |
-| `manifest-lockfile-mismatch` | `...` | `...` |
-| `monorepo-build-order` | `...` | `.P.` |
-| `tsconfig-include-scope` | `...` | `P.P` |
+| `broken-test-discovery` | `PPPP.P.` | `.PP.PPP` |
+| `case-sensitive-import` | `PPPPPPP` | `PPPPPPP` |
+| `chained-two-faults` | `.......` | `P...PP.` |
+| `entrypoint-mismatch` | `..P.PP.` | `PPPPPPP` |
+| `env-contract` | `PPPPPPP` | `PPPPPPP` |
+| `esm-cjs-mismatch` | `PPPPPPP` | `PPPPPPP` |
+| `health-route-port` | `PPPPPPP` | `PPPPPPP` |
+| `manifest-lockfile-mismatch` | `.......` | `.......` |
+| `monorepo-build-order` | `PPPPPP.` | `P......` |
+| `tsconfig-include-scope` | `.......` | `PPPPPPP` |
 
-Four cases are solved by both modes every time and carry no information about the comparison. The gap lives in `broken-test-discovery`, `tsconfig-include-scope`, `chained-two-faults` and `monorepo-build-order`, and `manifest-lockfile-mismatch` defeats both modes six times out of six.
+Four cases are solved by both modes every time and carry no information about the comparison. `manifest-lockfile-mismatch` defeats both modes fourteen times out of fourteen, and has now defeated them twenty times out of twenty across both batches.
 
-`broken-test-discovery` is the case the whole design is aimed at. Its own check exits zero while running zero tests, so a mode with no independent signal has nothing to react to. Baseline verified it zero times in three; advanced twice in three.
+Two cases deserve to be named rather than averaged away.
+
+`tsconfig-include-scope`: baseline 0 of 7, advanced 7 of 7. Complete separation, and the strongest single case for the structure in the whole benchmark.
+
+`monorepo-build-order`: baseline 6 of 7, advanced 1 of 7. **Advanced mode is dramatically worse here and I do not know why.** It is the one case where the structure appears to hurt, it moved in the opposite direction from the exploratory batch, where it was 0 of 3 against 1 of 3, and the trajectories are in the evidence bundle for anyone who wants to work out what happens. Leaving it out of the aggregate would have raised the published difference by about four points, which is exactly why it is not left out.
 
 ### How the two modes fail
 
 | Failure | Baseline | Advanced |
 | --- | ---: | ---: |
-| Patch produced, oracle rejected it | 7 | 5 |
-| No patch at all | 9 | 4 |
-| Budget exhausted | 0 | 0 |
+| Patch produced, oracle rejected it | 16 | 12 |
+| No patch at all | 11 | 6 |
+| Budget exhausted | 1 | 1 |
 
-Baseline's characteristic failure is spending twelve calls reading files and never proposing anything. [submission/examples/baseline-run/](../submission/examples/baseline-run) is one of those nine: it worked out the fault, then had its first `propose_patch` refused at call thirteen.
+Baseline's characteristic failure remains producing nothing at all: eleven runs spent twelve tool calls reading files and never proposed a patch. Advanced halves that, to six.
 
-### What variance actually looks like here
+### How much of that is the retry
 
-The baseline arm was byte-identical across two consecutive 60-run batches, because only the advanced instructions changed between them. It scored 16/30 in the first and 14/30 in the second: 53.3% then 46.7%, a swing of 6.7 points from nothing but run-to-run noise at temperature zero.
+Nineteen of the seventy advanced runs received the evidence-driven feedback turn, which fires only when the harness's own re-run of the check or the hidden oracle rejects the first patch. **Eighteen of those nineteen ended verified.**
 
-That is the most useful number in this document. It is measured rather than asserted, it is why every rate here carries an interval, and it is the reason a five point difference between two arms should never be read as a result.
+That is a striking conditional rate and it needs stating carefully. Those nineteen runs had a first patch that an independent check rejected, so without a second turn they would have ended `unverified-patch`. Eighteen of advanced mode's fifty-one verified repairs, more than a third, arrived through a turn that only exists because something outside the agent said the first attempt was wrong.
+
+If that reasoning is right, advanced mode without the retry would score around 33 of 70, which is below baseline. The `--experiment ablation` batch measures it directly instead of inferring it, because a conditional rate is not a causal one: the ablated arm also gets back the tool call the retry reserves, and may not produce the same first patch at all.
 
 ### The critic experiment, decided
 
@@ -73,15 +112,21 @@ The experiment was run twice, before and after an unrelated change to the advanc
 
 One resource note belongs with the number: the treatment arm holds back two tool calls where the control holds back one, because the critic's own call has to come from the same budget. Part of the treatment's disadvantage is therefore one fewer investigation call, not the critic's advice.
 
+### The cost defect this batch exposed
+
+Two runs of the 140, one in each mode, ended `budget-exhausted` on a path that loses the usage of the model calls it had already made, and reported `cost: unknown`. By design one unpriced run makes a mode's median cost unreportable rather than optimistic, so both medians above are blank rather than estimated.
+
+This is the second instance of a defect already fixed once, for the SDK turn-limit path, in iteration 3 of the improvement changelog. It was **not** fixed while these batches were running: [PREREGISTRATION.md](PREREGISTRATION.md) forbids code changes between the pre-registration commit and the end of the batches being compared, and two earlier batches were already discarded for exactly that reason. Over the 138 runs with measured cost the median is $0.007144.
+
 ### What is still not measured
 
-- Any repository that is not one of these ten fixtures. They are synthetic by construction, small, and dependency free. [examples/bring-your-own-oracle/](../examples/bring-your-own-oracle) is the one run against something outside the benchmark, and it is a single case, not evidence of a rate.
-- Any model other than `gpt-4.1-mini`.
-- Five repeats. Experiment E4 in the improvement changelog fires when the observed difference falls between 5 and 15 points, and 23.3 points did not trigger it. That rule was fixed in advance and is being followed rather than rewritten after seeing a result that would benefit from more data.
+- Any repository outside the ten fixtures, other than the two worked examples: [bring-your-own-oracle](../examples/bring-your-own-oracle), which is synthetic, and [real-world-commander](../examples/real-world-commander), which is not. Neither is a rate; both are single cases.
+- Any model other than `gpt-4.1-mini`, and any provider other than the one route recorded in `config/pricing.json`.
+- A sample large enough to settle a 13 point difference. That needs roughly 206 runs per arm at 80 percent power, about 420 runs and $3.30 at this batch's measured cost per run, which is more than the model credit available for this submission. It is the first thing to run with more budget, and the number is written here so nobody has to guess it.
 
 ### What did not need a model, and was verified anyway
 
-163 tests pass with no API key and no network. All ten fixtures fail their hidden oracle before the reference repair and pass it after, under Docker and under the local test adapter. The parts of the loop that do need a model are exercised by integration tests that drive the real sandbox, the real patch engine and the real oracle with a scripted stand-in, which is how the feedback retry, the budget reservation and the cumulative cost accounting are tested without inventing a benchmark number.
+The test suite passes with no API key and no network. All ten fixtures fail their hidden oracle before the reference repair and pass it after, under Docker and under the local test adapter. The parts of the loop that do need a model are exercised by integration tests that drive the real sandbox, the real patch engine and the real oracle with a scripted stand-in, which is how the feedback retry, the budget reservation, the retry ablation and the cumulative cost accounting are tested without inventing a benchmark number.
 
 ## What is being measured
 
