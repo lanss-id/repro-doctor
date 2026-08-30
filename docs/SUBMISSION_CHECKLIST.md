@@ -125,7 +125,7 @@ The evaluation work in this list is done. What is left:
 - [x] Every relative link in every tracked markdown file resolves, and every asset and anchor the landing page references exists
 - [x] `npm run doctor -- replay submission/evidence/confirmatory` exits zero, and CI re-runs it on every push
 - [x] `git status --porcelain` clean, with `artifacts/` gitignored and the run behind the video published under `submission/examples/` instead
-- [ ] `npm ci && npm run typecheck && npm run lint && npm test` on a clean clone
+- [x] `npm ci && npm run typecheck && npm run lint && npm test` on a clean clone of the pushed remote: clean, 201 tests, 0 failures. `npm run doctor -- replay submission/evidence/confirmatory` on that same clone exits zero and agrees with the published report on every run
 - [ ] Walk `docs/REPRODUCTION.md` on a machine that has never run this, following it literally
 - [ ] Read `README.md` top to bottom as someone who has never seen the project
 
