@@ -1,8 +1,15 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { EvalReportSchema, type EvalReport, type EvalRun } from '../domain/eval.js';
+import {
+  EvalReportSchema,
+  type EvalReport,
+  type EvalRun,
+  type ExperimentReport,
+} from '../domain/eval.js';
 import { MODES, type Mode } from '../domain/mode.js';
 import type { RunResult } from '../domain/result.js';
+import { EXPERIMENTS } from '../eval/experiments.js';
+import { DIFFICULTY_STRATA, STRATUM_NAMES, summarizeStratum } from '../eval/strata.js';
 import { evalReportPath } from '../eval/run-eval.js';
 import {
   formatDifferencePoints,
@@ -19,7 +26,9 @@ export function comparisonReportPath(): string {
   return path.join(artifactsRoot(), 'report', 'index.html');
 }
 
-export async function loadEvalReport(experiment: 'critic' | null = null): Promise<EvalReport | null> {
+export async function loadEvalReport(
+  experiment: Parameters<typeof evalReportPath>[0] = null,
+): Promise<EvalReport | null> {
   const raw = await readFile(evalReportPath(experiment), 'utf8').catch(() => null);
   if (raw === null) {
     return null;
@@ -42,9 +51,11 @@ export interface ComparisonReport {
  */
 export async function buildComparisonReport(): Promise<ComparisonReport> {
   const report = await loadEvalReport();
-  const experiment = await loadEvalReport('critic');
+  const experiments = await Promise.all(
+    (Object.keys(EXPERIMENTS) as (keyof typeof EXPERIMENTS)[]).map((name) => loadEvalReport(name)),
+  );
   const runs = await listRunResults();
-  const html = renderComparisonHtml(report, runs, experiment);
+  const html = renderComparisonHtml(report, runs, experiments);
   const target = comparisonReportPath();
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, html, 'utf8');
@@ -59,20 +70,71 @@ export async function buildComparisonReport(): Promise<ComparisonReport> {
 export function renderComparisonHtml(
   report: EvalReport | null,
   runs: readonly RunResult[],
-  experimentReport: EvalReport | null = null,
+  experimentReports: readonly (EvalReport | null)[] = [],
 ): string {
   const body = [
     '<h1>Repro Doctor: baseline against advanced</h1>',
     '<p class="subtitle">Verified repair means the hidden semantic oracle exited zero and every safety check passed. Nothing on this page is estimated.</p>',
     renderStatusNotice(report, runs),
     renderSummaryTable(report),
-    renderExperiment(experimentReport ?? report),
+    renderStrataTable(report),
+    ...collectExperiments(report, experimentReports).map(renderExperiment),
     renderPerCaseTable(report),
     renderFailures(report),
     renderRunIndex(runs),
     `<footer>Built by <code>npm run report</code> from <code>${escapeHtml(evalReportPath())}</code> and <code>${escapeHtml(path.join(artifactsRoot(), 'runs'))}</code>.</footer>`,
   ].join('\n');
   return htmlDocument('Repro Doctor evaluation report', body);
+}
+
+/**
+ * The aggregate hides a ceiling: baseline already repairs almost everything in
+ * the saturated stratum, so averaging the two strata dilutes whatever
+ * difference the hard one holds. The split was frozen in
+ * docs/PREREGISTRATION.md before the batch that tests it, and is reported here
+ * whether or not it flatters the result.
+ */
+function renderStrataTable(report: EvalReport | null): string {
+  if (report === null || report.runs.length === 0) {
+    return '';
+  }
+  const rows = STRATUM_NAMES.flatMap((stratum) => {
+    const summaries = MODES.map((mode) => summarizeStratum(stratum, mode, report.runs));
+    if (summaries.every((summary) => summary.runs === 0)) {
+      return [];
+    }
+    const [baseline, advanced] = [
+      summaries[MODES.indexOf('baseline')],
+      summaries[MODES.indexOf('advanced')],
+    ];
+    if (baseline === undefined || advanced === undefined) {
+      return [];
+    }
+    const difference = proportionDifferenceInterval(
+      advanced.verifiedRepairs,
+      advanced.runs,
+      baseline.verifiedRepairs,
+      baseline.runs,
+    );
+    const cases = DIFFICULTY_STRATA[stratum];
+    return [
+      `<tr>
+        <td><strong>${escapeHtml(stratum)}</strong><br><span class="muted">${cases.map((id) => escapeHtml(id)).join(', ')}</span></td>
+        <td class="num">${baseline.verifiedRepairs}/${baseline.runs}<br>${formatRateWithInterval(baseline.verifiedRepairRate, baseline.verifiedRepairs, baseline.runs)}</td>
+        <td class="num">${advanced.verifiedRepairs}/${advanced.runs}<br>${formatRateWithInterval(advanced.verifiedRepairRate, advanced.verifiedRepairs, advanced.runs)}</td>
+        <td class="num">${escapeHtml(formatDifferencePoints(difference))}</td>
+      </tr>`,
+    ];
+  }).join('\n');
+  if (rows.length === 0) {
+    return '';
+  }
+  return `<h2>By difficulty stratum</h2>
+<p class="muted">Membership was assigned by the exploratory batch's baseline result alone and frozen in <code>docs/PREREGISTRATION.md</code> before the batch that tests it. A subgroup chosen after seeing the answer is not evidence.</p>
+<table>
+<tr><th>Stratum</th><th class="num">baseline</th><th class="num">advanced</th><th class="num">Advanced minus baseline</th></tr>
+${rows}
+</table>`;
 }
 
 function renderStatusNotice(report: EvalReport | null, runs: readonly RunResult[]): string {
@@ -138,18 +200,42 @@ function renderDifference(report: EvalReport | null): string {
 }
 
 /**
- * The critic experiment, when one was run. The decision rule was fixed before
- * the experiment, so the page prints the rule next to the verdict rather than
- * only the verdict.
+ * Every experiment that has a report on disk, in registry order, with the
+ * batch it came from. An experiment recorded inside the main report wins only
+ * when no dedicated file carries it, so a stale copy cannot outrank the file
+ * the experiment actually wrote.
  */
-function renderExperiment(report: EvalReport | null): string {
-  const experiment = report?.experiment ?? null;
-  if (experiment === null) {
-    return '';
+interface ExperimentEntry {
+  readonly experiment: ExperimentReport;
+  readonly source: EvalReport;
+}
+
+function collectExperiments(
+  report: EvalReport | null,
+  extra: readonly (EvalReport | null)[],
+): readonly ExperimentEntry[] {
+  const found = new Map<string, ExperimentEntry>();
+  for (const candidate of [...extra, report]) {
+    const experiment = candidate?.experiment ?? null;
+    if (candidate === null || experiment === null || found.has(experiment.name)) {
+      continue;
+    }
+    found.set(experiment.name, { experiment, source: candidate });
   }
+  return [...found.values()];
+}
+
+/**
+ * One experiment, when one was run. The decision rule was fixed before the
+ * experiment, so the page prints the rule next to the verdict rather than only
+ * the verdict.
+ */
+function renderExperiment(entry: ExperimentEntry): string {
+  const { experiment, source } = entry;
+  const spec = EXPERIMENTS[experiment.name];
   const rows = [
-    ['control (advanced)', experiment.control],
-    ['treatment (advanced with a critic)', experiment.treatment],
+    [spec.controlLabel, experiment.control],
+    [spec.treatmentLabel, experiment.treatment],
   ] as const;
   const body = rows
     .map(
@@ -162,22 +248,21 @@ function renderExperiment(report: EvalReport | null): string {
     )
     .join('\n');
   const decision = experiment.decision;
-  const decisionLabel =
-    decision.status === 'pending'
-      ? 'Decision pending'
-      : decision.status === 'keep'
-        ? 'Keep the critic'
-        : 'Discard the critic';
-  const decisionClass = decision.status === 'pending' ? 'warn' : decision.keep ? 'pass' : 'fail';
-  return `<h2>Critic experiment</h2>
+  const decisionClass =
+    decision.status === 'pending' || decision.status === 'unresolved'
+      ? 'warn'
+      : decision.keep
+        ? 'pass'
+        : 'fail';
+  return `<h2>${escapeHtml(spec.title)}</h2>
 <p>${escapeHtml(experiment.hypothesis)}</p>
-<p class="muted">Measured separately from the table above, ${report === null ? '' : `on ${escapeHtml(report.generatedAt)} with ${report.repeats} repeat(s), `}and stored in <code>${escapeHtml(evalReportPath('critic'))}</code>.</p>
+<p class="muted">Measured separately from the table above, on ${escapeHtml(source.generatedAt)} with ${source.repeats} repeat(s), and stored in <code>${escapeHtml(evalReportPath(experiment.name))}</code>.</p>
 <p class="muted">Cases: ${experiment.cases.map((id) => `<code>${escapeHtml(id)}</code>`).join(', ')}. Rule fixed before the experiment: ${escapeHtml(experiment.rule)}</p>
 <table>
 <tr><th>Arm</th><th class="num">Runs</th><th class="num">Verified repair rate</th><th class="num">Median cost</th></tr>
 ${body}
 </table>
-<p><strong class="${decisionClass}">${decisionLabel}</strong>: ${escapeHtml(decision.reason)}</p>`;
+<p><strong class="${decisionClass}">${escapeHtml(spec.verdict[decision.status])}</strong>: ${escapeHtml(decision.reason)}</p>`;
 }
 
 function renderPerCaseTable(report: EvalReport | null): string {

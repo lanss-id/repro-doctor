@@ -81,6 +81,14 @@ export interface DiagnoseOptions {
   readonly criticEnabled?: boolean;
   readonly criticFactory?: CriticFactory;
   /**
+   * Ablation treatment, advanced mode only. Default true, which is published
+   * advanced mode. False removes the whole retry design at once: the retry
+   * turn, the tool calls reserved for it, and the promise of a second turn in
+   * the instructions. See docs/PREREGISTRATION.md for why those three move
+   * together rather than one at a time.
+   */
+  readonly retryEnabled?: boolean;
+  /**
    * Test seam. Integration tests drive the real sandbox, patcher and oracle
    * with a scripted driver instead of a live model. Results produced this way
    * name the scripted model in result.json and are excluded from scoring.
@@ -190,10 +198,15 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   // artifacts. The finally block below always clears it, so a finished run is
   // never held open by it.
 
+  // The critic acts on the run through the retry, so the two are never
+  // switched off together. No experiment asks for that combination and the
+  // registry in experiments.ts cannot express it.
+  const retryEnabled = options.retryEnabled !== false;
+
   const driverOptions: DriverOptions = {
     apiKey: config.apiKey ?? 'scripted-driver-no-key',
     settings,
-    instructions: instructionsFor(options.mode, budget),
+    instructions: instructionsFor(options.mode, budget, retryEnabled),
     tools,
     structuredOutput: options.mode === 'advanced',
     signal: deadline.signal,
@@ -256,7 +269,10 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
       // Advanced mode promises one evidence-driven repair turn. Hold back the
       // calls that turn needs before the agent starts spending, or a first
       // patch on the last call cancels the promise without anyone noticing.
-      tracker.setToolCallReserve(RETRY_TOOL_CALL_RESERVE + (critic === null ? 0 : CRITIC_TOOL_CALL_RESERVE));
+      tracker.setToolCallReserve(
+        (retryEnabled ? RETRY_TOOL_CALL_RESERVE : 0) +
+          (critic === null ? 0 : CRITIC_TOOL_CALL_RESERVE),
+      );
       session.beginCheckpointedRepairTurn();
     }
 
@@ -298,7 +314,7 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
 
       // The retry's own budget comes back here, and nowhere earlier.
       tracker.clearToolCallReserve();
-      const needsRetry = !gate.passed || !oracleSatisfied || critique !== null;
+      const needsRetry = retryEnabled && (!gate.passed || !oracleSatisfied || critique !== null);
       if (needsRetry && tracker.remainingPatchAttempts > 0 && tracker.remainingToolCalls > 0) {
         const feedback = evidenceFeedback({
           checkPassed: gate.passed,

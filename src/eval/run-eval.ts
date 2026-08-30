@@ -8,6 +8,7 @@ import {
   type EvalReport,
   type EvalRun,
   type EvalStatus,
+  type ExperimentName,
   type ExperimentReport,
 } from '../domain/eval.js';
 import type { ExperimentArm } from '../domain/execution.js';
@@ -21,24 +22,8 @@ import { findIsolationProblems, loadAllFixtures } from '../fixtures/registry.js'
 import { artifactsRoot } from '../infra/project-root.js';
 import { createLogger, type Logger } from '../infra/log.js';
 import { allPassed, evaluateRun } from './checks.js';
-import {
-  MAX_COST_INCREASE_PERCENT,
-  MIN_REPAIR_RATE_GAIN_POINTS,
-  decideExperiment,
-  summarizeArm,
-  summarizeMode,
-} from './scoring.js';
-
-export const CRITIC_EXPERIMENT_CASES: readonly string[] = [
-  'broken-test-discovery',
-  'manifest-lockfile-mismatch',
-  'chained-two-faults',
-];
-
-export const CRITIC_HYPOTHESIS =
-  'A critic call that reviews the proposed patch against the hypothesis ledger, and can send it back once, catches patches that satisfy the visible check without satisfying the contract.';
-
-export const CRITIC_RULE = `Keep the critic only for at least +${MIN_REPAIR_RATE_GAIN_POINTS} percentage points of verified repair rate at no more than +${MAX_COST_INCREASE_PERCENT} percent median cost, measured against advanced mode without the critic over the same cases and repeats.`;
+import { EXPERIMENTS, type ExperimentSpec } from './experiments.js';
+import { summarizeArm, summarizeMode } from './scoring.js';
 
 export interface EvalOptions {
   readonly repeats: number;
@@ -52,8 +37,8 @@ export interface EvalOptions {
   readonly driverFactory?: DiagnoseOptions['driverFactory'];
   readonly criticFactory?: DiagnoseOptions['criticFactory'];
   readonly modelOverride?: string;
-  /** `critic` runs the A/B experiment instead of the ordinary mode comparison. */
-  readonly experiment?: 'critic';
+  /** Runs a two-arm experiment instead of the ordinary mode comparison. */
+  readonly experiment?: ExperimentName;
 }
 
 /**
@@ -61,7 +46,7 @@ export interface EvalOptions {
  * they get different files. Sharing one meant that running the experiment
  * silently destroyed the comparison it was supposed to be measured against.
  */
-export function evalReportPath(experiment: 'critic' | null = null): string {
+export function evalReportPath(experiment: ExperimentName | null = null): string {
   const name = experiment === null ? 'eval.json' : `eval-${experiment}.json`;
   return path.join(artifactsRoot(), 'eval', name);
 }
@@ -72,6 +57,7 @@ interface PlannedRun {
   readonly arm: ExperimentArm | null;
   readonly repeat: number;
   readonly criticEnabled: boolean;
+  readonly retryEnabled: boolean;
 }
 
 /**
@@ -101,13 +87,14 @@ export async function runEvaluation(options: EvalOptions): Promise<EvalReport> {
     );
   }
 
-  const experiment = options.experiment ?? null;
-  const selected = experiment === 'critic' ? CRITIC_EXPERIMENT_CASES : options.cases;
+  const spec = options.experiment === undefined ? null : EXPERIMENTS[options.experiment];
+  const selected = spec === null ? options.cases : spec.cases;
   const fixtures = (await loadAllFixtures()).filter(
     (fixture) => selected === undefined || selected.includes(fixture.meta.id),
   );
-  const modes: readonly Mode[] =
-    experiment === 'critic' ? ['advanced'] : (options.modes ?? MODES);
+  // Every experiment holds mode fixed and varies one thing inside advanced
+  // mode, so a batch that ran both modes would be comparing two things at once.
+  const modes: readonly Mode[] = spec === null ? (options.modes ?? MODES) : ['advanced'];
 
   const runs: EvalRun[] = [];
   let status: EvalStatus = { kind: 'complete' };
@@ -117,7 +104,7 @@ export async function runEvaluation(options: EvalOptions): Promise<EvalReport> {
     status = blocked;
     logger.warn('eval.pending', { why: blocked.kind === 'pending' ? blocked.why : 'unknown' });
   } else {
-    for (const planned of planRuns(fixtures, modes, options.repeats, experiment)) {
+    for (const planned of planRuns(fixtures, modes, options.repeats, spec)) {
       logger.info('eval.run.start', {
         case: planned.fixture.meta.id,
         mode: planned.mode,
@@ -142,6 +129,7 @@ export async function runEvaluation(options: EvalOptions): Promise<EvalReport> {
           env,
           modelOverride: model,
           criticEnabled: planned.criticEnabled,
+          retryEnabled: planned.retryEnabled,
           ...(options.criticFactory === undefined ? {} : { criticFactory: options.criticFactory }),
           ...(options.allowLocalAdapter === undefined
             ? {}
@@ -197,10 +185,10 @@ export async function runEvaluation(options: EvalOptions): Promise<EvalReport> {
     cases: fixtures.map((fixture) => fixture.meta.id),
     runs,
     summaries: modes.map((mode) => summarizeMode(mode, runs)),
-    experiment: experiment === 'critic' ? criticReport(fixtures, runs) : null,
+    experiment: spec === null ? null : experimentReport(spec, fixtures, runs),
   });
 
-  const target = evalReportPath(experiment);
+  const target = evalReportPath(options.experiment ?? null);
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   logger.info('eval.written', { path: target, status: report.status.kind, runs: runs.length });
@@ -211,35 +199,49 @@ function planRuns(
   fixtures: readonly FixtureLayout[],
   modes: readonly Mode[],
   repeats: number,
-  experiment: 'critic' | null,
+  spec: ExperimentSpec | null,
 ): PlannedRun[] {
   const planned: PlannedRun[] = [];
   for (const fixture of fixtures) {
     for (const mode of modes) {
       for (let repeat = 1; repeat <= repeats; repeat += 1) {
-        if (experiment === 'critic') {
-          planned.push({ fixture, mode, arm: 'control', repeat, criticEnabled: false });
-          planned.push({ fixture, mode, arm: 'treatment', repeat, criticEnabled: true });
-        } else {
-          planned.push({ fixture, mode, arm: null, repeat, criticEnabled: false });
+        if (spec === null) {
+          planned.push({
+            fixture,
+            mode,
+            arm: null,
+            repeat,
+            criticEnabled: false,
+            retryEnabled: true,
+          });
+          continue;
         }
+        // Both arms of a repeat are planned next to each other so a batch that
+        // stops early has run the same number of each, rather than a complete
+        // control and a half-finished treatment.
+        planned.push({ fixture, mode, arm: 'control', repeat, ...spec.control });
+        planned.push({ fixture, mode, arm: 'treatment', repeat, ...spec.treatment });
       }
     }
   }
   return planned;
 }
 
-function criticReport(fixtures: readonly FixtureLayout[], runs: readonly EvalRun[]): ExperimentReport {
+function experimentReport(
+  spec: ExperimentSpec,
+  fixtures: readonly FixtureLayout[],
+  runs: readonly EvalRun[],
+): ExperimentReport {
   const control = summarizeArm('advanced', 'control', runs);
   const treatment = summarizeArm('advanced', 'treatment', runs);
   return {
-    name: 'critic',
-    hypothesis: CRITIC_HYPOTHESIS,
-    rule: CRITIC_RULE,
+    name: spec.name,
+    hypothesis: spec.hypothesis,
+    rule: spec.rule,
     cases: fixtures.map((fixture) => fixture.meta.id),
     control,
     treatment,
-    decision: decideExperiment(control, treatment),
+    decision: spec.decide(control, treatment),
   };
 }
 

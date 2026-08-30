@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { EvalRun, ModeSummary } from '../../src/domain/eval.js';
 import {
+  decideAblation,
   decideExperiment,
   formatDifferencePoints,
   formatRateWithInterval,
@@ -75,6 +76,59 @@ test('one unpriced run makes the median cost unknown rather than optimistic', ()
   ]);
   assert.equal(summary.medianCostUsd, null);
   assert.equal(summary.costUnknownRuns, 1);
+});
+
+test('an ablation calls an ingredient load-bearing only when its interval excludes zero', () => {
+  const control = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 12, verifiedRepairRate: 12 / 15 });
+  const collapsed = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 2, verifiedRepairRate: 2 / 15 });
+
+  const loadBearing = decideAblation(control, collapsed);
+  assert.equal(loadBearing.status, 'keep');
+  assert.equal(loadBearing.keep, true);
+  assert.equal(Math.round(loadBearing.repairRateDeltaPoints ?? 0), 67);
+  assert.ok((loadBearing.intervalLowPoints ?? 0) > 0, 'the interval must exclude zero');
+  assert.match(loadBearing.reason, /load-bearing/u);
+});
+
+test('an ablation that cannot tell says unresolved rather than discard', () => {
+  const control = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 8, verifiedRepairRate: 8 / 15 });
+  const nearby = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 6, verifiedRepairRate: 6 / 15 });
+
+  const decision = decideAblation(control, nearby);
+  assert.equal(decision.status, 'unresolved');
+  // The ingredient stays, and the record says the reason is the weak one.
+  assert.equal(decision.keep, true);
+  assert.ok((decision.intervalLowPoints ?? 0) < 0);
+  assert.ok((decision.intervalHighPoints ?? 0) > 0);
+  assert.match(decision.reason, /includes zero/u);
+  assert.match(decision.reason, /weaker reason/u);
+});
+
+test('an ablation reports an ingredient that made things worse', () => {
+  const control = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 2, verifiedRepairRate: 2 / 15 });
+  const better = summary({ mode: 'advanced', runs: 15, verifiedRepairs: 12, verifiedRepairRate: 12 / 15 });
+
+  const decision = decideAblation(control, better);
+  assert.equal(decision.status, 'discard');
+  assert.equal(decision.keep, false);
+  assert.ok((decision.intervalHighPoints ?? 0) < 0);
+});
+
+test('an ablation refuses to decide on an unmeasured arm', () => {
+  const decision = decideAblation(summary({ verifiedRepairRate: null }), summary({}));
+  assert.equal(decision.status, 'pending');
+  assert.equal(decision.keep, false);
+  assert.match(decision.reason, /no measured repair rate/u);
+});
+
+test('a critic decision carries the interval on its own point estimate', () => {
+  const decision = decideExperiment(
+    summary({ runs: 15, verifiedRepairs: 5, verifiedRepairRate: 5 / 15 }),
+    summary({ mode: 'advanced', runs: 15, verifiedRepairs: 12, verifiedRepairRate: 12 / 15, medianCostUsd: 0.1 }),
+  );
+  assert.equal(decision.status, 'keep');
+  assert.notEqual(decision.intervalLowPoints, null);
+  assert.notEqual(decision.intervalHighPoints, null);
 });
 
 function summary(overrides: Partial<ModeSummary>): ModeSummary {

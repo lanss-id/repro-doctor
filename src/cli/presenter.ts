@@ -22,7 +22,9 @@ export function createPresenter(write: (text: string) => void = (text) => proces
       out(text);
       out('-'.repeat(Math.min(text.length, 72)));
     },
-    keyValue: (key, value) => out(`  ${key.padEnd(28)}${value}`),
+    // A label longer than the column still gets one space, so a long key
+    // never runs into its own value.
+    keyValue: (key, value) => out(`  ${key.length >= 28 ? `${key} ` : key.padEnd(28)}${value}`),
     bullet: (text) => out(`  - ${text}`),
     block: (text) => out(text),
   };
@@ -34,8 +36,9 @@ Usage:
   repro-doctor diagnose <repo> --mode baseline|advanced [options]
   repro-doctor apply <run-id> --to <repo> [--yes-i-reviewed-the-patch]
   repro-doctor eval [--repeats 3] [--case <id>] [--mode <mode>]
-  repro-doctor eval --experiment critic [--repeats 3]
+  repro-doctor eval --experiment critic|ablation [--repeats 3]
   repro-doctor report
+  repro-doctor replay <evidence-bundle>
   repro-doctor fixtures list|verify|patches [--case <id>]
 
 Through npm, put the arguments after a double dash:
@@ -59,13 +62,29 @@ eval options:
   --repeats <n>                Repeats per case per mode. Default 3.
   --case <id>                  Restrict to one fixture.
   --mode <baseline|advanced>   Restrict to one mode.
-  --experiment critic          Run the critic A/B experiment instead of the mode comparison:
-                               advanced control against advanced with a critic, on the three
-                               hardest fixtures, scored by the rule fixed in advance
-                               (keep only for at least +10 points of verified repair rate at
-                               no more than +25 percent median cost). Ignores --case and --mode.
+  --experiment <name>          Run a two-arm experiment instead of the mode comparison.
+                               Ignores --case and --mode, and writes its own report file so it
+                               cannot overwrite the comparison it is measured against.
+                                 critic    advanced against advanced with a critic, on the three
+                                           hardest fixtures. Kept only for at least +10 points of
+                                           verified repair rate at no more than +25 percent
+                                           median cost.
+                                 ablation  advanced against advanced without the bounded retry,
+                                           on the five hard-stratum fixtures. The retry is called
+                                           load-bearing only if the 95 percent interval on the
+                                           difference excludes zero.
                                A live scored batch refuses to start unless the pinned model has
                                a token price, because an unpriced run cannot enforce a cost budget.
+  --max-tool-calls <n>         Raise the tool-call ceiling for both modes at once. Default 12.
+                               Used by the budget-sensitivity experiment to ask whether the
+                               advantage is capability or only efficiency under scarcity.
+
+replay:
+  Recomputes a published evaluation from the run artifacts committed beside it.
+  No API key, no model call, no network and no sandbox: the same scoring code
+  runs again over the same result.json and trajectory.jsonl files, and any
+  verdict that comes out differently is reported rather than overwritten.
+  Exits non-zero on a single disagreement.
 
 apply options:
   --to <repo>                  Required. The repository to patch.

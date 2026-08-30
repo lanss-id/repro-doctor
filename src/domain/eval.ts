@@ -63,11 +63,22 @@ export const EvalStatusSchema = z.discriminatedUnion('kind', [
 ]);
 export type EvalStatus = z.infer<typeof EvalStatusSchema>;
 
+/** The experiments this repository has run. Each has its own report file. */
+export const ExperimentNameSchema = z.enum(['critic', 'ablation']);
+export type ExperimentName = z.infer<typeof ExperimentNameSchema>;
+
 export const ExperimentDecisionSchema = z.object({
-  status: z.enum(['pending', 'keep', 'discard']),
+  /**
+   * `unresolved` exists because "removing it did not measurably hurt" and "the
+   * sample cannot tell" are different answers, and an experiment that reports
+   * the second as the first has thrown away the only honest thing it measured.
+   */
+  status: z.enum(['pending', 'keep', 'discard', 'unresolved']),
   keep: z.boolean(),
   repairRateDeltaPoints: z.number().nullable(),
   costChangePercent: z.number().nullable(),
+  intervalLowPoints: z.number().nullable().default(null),
+  intervalHighPoints: z.number().nullable().default(null),
   reason: z.string(),
 });
 export type ExperimentDecisionRecord = z.infer<typeof ExperimentDecisionSchema>;
@@ -78,7 +89,7 @@ export type ExperimentDecisionRecord = z.infer<typeof ExperimentDecisionSchema>;
  * whenever either side is unmeasured, so a half-measured batch cannot settle it.
  */
 export const ExperimentReportSchema = z.object({
-  name: z.literal('critic'),
+  name: ExperimentNameSchema,
   hypothesis: z.string(),
   rule: z.string(),
   cases: z.array(CaseIdSchema),
@@ -99,7 +110,7 @@ export const EvalReportSchema = z.object({
   cases: z.array(CaseIdSchema),
   runs: z.array(EvalRunSchema),
   summaries: z.array(ModeSummarySchema),
-  /** Null unless the batch was run with `--experiment critic`. */
+  /** Null unless the batch was run with `--experiment`. */
   experiment: ExperimentReportSchema.nullable(),
 });
 export type EvalReport = z.infer<typeof EvalReportSchema>;

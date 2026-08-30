@@ -20,7 +20,13 @@ export function baselineInstructions(budget: Budget): string {
   ].join('\n');
 }
 
-export function advancedInstructions(budget: Budget): string {
+/**
+ * `retryEnabled` is false only in the ablation's treatment arm, where the
+ * harness will not offer a second turn. Step 8 has to say so: telling the model
+ * about a retry it will never get would measure a broken promise rather than a
+ * missing mechanism.
+ */
+export function advancedInstructions(budget: Budget, retryEnabled = true): string {
   return [
     'You are a repair agent working on an unfamiliar TypeScript repository.',
     'The repository is broken. Find the smallest change that makes it work.',
@@ -38,14 +44,18 @@ export function advancedInstructions(budget: Budget): string {
     '5. Patch minimally. Change configuration or source only where a supported hypothesis says the fault is. Do not reformat, rename, upgrade dependencies, add libraries, add tests, or "improve" untouched code.',
     '6. Never edit or weaken a test, an assertion, or a check in order to make it pass. Fix the cause.',
     '7. Put every file supported by the current evidence into one minimal propose_patch call. After that call succeeds, stop calling tools and return the structured ledger. The harness, not you, owns post-patch verification.',
-    '8. The harness re-runs the project check itself, and an independent verification you cannot see runs against a fresh copy of your repaired tree. If either is not satisfied you get exactly one more repair turn, with their output. There is no third attempt. The [budget] line counts only what this turn may spend; the retry is paid for separately.',
+    retryEnabled
+      ? '8. The harness re-runs the project check itself, and an independent verification you cannot see runs against a fresh copy of your repaired tree. If either is not satisfied you get exactly one more repair turn, with their output. There is no third attempt. The [budget] line counts only what this turn may spend; the retry is paid for separately.'
+      : '8. The harness re-runs the project check itself, and an independent verification you cannot see runs against a fresh copy of your repaired tree. You do not get a second repair turn. The patch you submit is the one that is scored, so submit it while you still have the budget to.',
     '',
     'Your final answer must be the structured ledger plus a one-line summary of the patch.',
   ].join('\n');
 }
 
-export function instructionsFor(mode: Mode, budget: Budget): string {
-  return mode === 'baseline' ? baselineInstructions(budget) : advancedInstructions(budget);
+export function instructionsFor(mode: Mode, budget: Budget, retryEnabled = true): string {
+  return mode === 'baseline'
+    ? baselineInstructions(budget)
+    : advancedInstructions(budget, retryEnabled);
 }
 
 /**

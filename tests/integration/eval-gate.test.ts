@@ -5,10 +5,12 @@ import { useTemporaryArtifacts } from '../helpers/workspace.js';
 
 const artifacts = await useTemporaryArtifacts('eval-gate');
 
-const { runEvaluation, evalReportPath, CRITIC_EXPERIMENT_CASES } = await import(
+const { runEvaluation, evalReportPath } = await import(
   '../../src/eval/run-eval.js'
 );
 const { EvalReportSchema } = await import('../../src/domain/eval.js');
+const { EXPERIMENTS } = await import('../../src/eval/experiments.js');
+const { DEFAULT_BUDGET } = await import('../../src/domain/budget.js');
 const { silentLogger } = await import('../../src/infra/log.js');
 
 // These runs never reach a model: runEvaluation refuses before spending.
@@ -59,7 +61,7 @@ test('the default model is priced, so the price gate does not block it', async (
 
 test('the critic experiment selects its own cases and reports an undecided rule', async () => {
   const report = await runEvaluation({ ...options, env: {}, experiment: 'critic' });
-  assert.deepEqual(report.cases, [...CRITIC_EXPERIMENT_CASES].sort());
+  assert.deepEqual(report.cases, [...EXPERIMENTS.critic.cases].sort());
   assert.notEqual(report.experiment, null);
   if (report.experiment === null) return;
   assert.equal(report.experiment.name, 'critic');
@@ -78,6 +80,46 @@ test('the critic experiment selects its own cases and reports an undecided rule'
     JSON.parse(await readFile(evalReportPath('critic'), 'utf8')),
   );
   assert.equal(written.experiment?.name, 'critic');
+});
+
+test('the ablation experiment selects the hard stratum and writes its own file', async () => {
+  const report = await runEvaluation({ ...options, env: {}, experiment: 'ablation' });
+  assert.deepEqual(report.cases, [...EXPERIMENTS.ablation.cases].sort());
+  assert.notEqual(report.experiment, null);
+  if (report.experiment === null) return;
+  assert.equal(report.experiment.name, 'ablation');
+  assert.match(report.experiment.rule, /excludes zero/u);
+  assert.equal(report.experiment.decision.status, 'pending');
+
+  // Three experiments, three files. A batch must never overwrite the batch it
+  // is measured against.
+  assert.notEqual(evalReportPath('ablation'), evalReportPath('critic'));
+  assert.notEqual(evalReportPath('ablation'), evalReportPath());
+  const written = EvalReportSchema.parse(
+    JSON.parse(await readFile(evalReportPath('ablation'), 'utf8')),
+  );
+  assert.equal(written.experiment?.name, 'ablation');
+});
+
+test('the ablation arms differ only in the retry, and the critic arms only in the critic', () => {
+  const { control: ablationControl, treatment: ablationTreatment } = EXPERIMENTS.ablation;
+  assert.equal(ablationControl.criticEnabled, ablationTreatment.criticEnabled);
+  assert.notEqual(ablationControl.retryEnabled, ablationTreatment.retryEnabled);
+
+  const { control: criticControl, treatment: criticTreatment } = EXPERIMENTS.critic;
+  assert.equal(criticControl.retryEnabled, criticTreatment.retryEnabled);
+  assert.notEqual(criticControl.criticEnabled, criticTreatment.criticEnabled);
+});
+
+test('a raised tool-call ceiling is recorded in the report it produced', async () => {
+  const budget = { ...DEFAULT_BUDGET, maxToolCalls: 25 };
+  const report = await runEvaluation({ ...options, env: {}, budget });
+  assert.equal(report.budget.maxToolCalls, 25);
+  // Everything else about the budget has to survive untouched, or the batch is
+  // not comparable with the one it is measured against.
+  assert.equal(report.budget.maxPatchAttempts, DEFAULT_BUDGET.maxPatchAttempts);
+  assert.equal(report.budget.maxWallClockSeconds, DEFAULT_BUDGET.maxWallClockSeconds);
+  assert.equal(report.budget.maxCostUsd, DEFAULT_BUDGET.maxCostUsd);
 });
 
 after(async () => {

@@ -61,11 +61,28 @@ function countFailed(runs: readonly EvalRun[], name: string): number {
 }
 
 export interface ExperimentDecision {
-  readonly status: 'pending' | 'keep' | 'discard';
+  readonly status: 'pending' | 'keep' | 'discard' | 'unresolved';
   readonly keep: boolean;
+  /**
+   * The difference the experiment's own rule is about, in percentage points.
+   * For an A/B test that is treatment minus control. For an ablation it is
+   * control minus treatment, which is what removing the ingredient costs.
+   */
   readonly repairRateDeltaPoints: number | null;
   readonly costChangePercent: number | null;
+  /** The 95 percent interval on `repairRateDeltaPoints`, in the same units. */
+  readonly intervalLowPoints: number | null;
+  readonly intervalHighPoints: number | null;
   readonly reason: string;
+}
+
+/** Percentage points, or null when the interval could not be computed. */
+function intervalPoints(
+  difference: ProportionDifference | null,
+): { low: number | null; high: number | null } {
+  return difference === null
+    ? { low: null, high: null }
+    : { low: difference.low * 100, high: difference.high * 100 };
 }
 
 export const MIN_REPAIR_RATE_GAIN_POINTS = 10;
@@ -87,16 +104,31 @@ export function decideExperiment(
       keep: false,
       repairRateDeltaPoints: null,
       costChangePercent: null,
+      intervalLowPoints: null,
+      intervalHighPoints: null,
       reason: 'no measured repair rate on one side, so the rule cannot be applied',
     };
   }
   const deltaPoints = (treatment.verifiedRepairRate - control.verifiedRepairRate) * 100;
+  // The rule below is about the point estimate, but a point estimate published
+  // without its interval is a reporting error even when the rule does not use
+  // it, so the interval is carried on the record either way.
+  const spread = intervalPoints(
+    proportionDifferenceInterval(
+      treatment.verifiedRepairs,
+      treatment.runs,
+      control.verifiedRepairs,
+      control.runs,
+    ),
+  );
   if (control.medianCostUsd === null || treatment.medianCostUsd === null) {
     return {
       status: 'pending',
       keep: false,
       repairRateDeltaPoints: deltaPoints,
       costChangePercent: null,
+      intervalLowPoints: spread.low,
+      intervalHighPoints: spread.high,
       reason: 'cost is unknown on at least one side, so the cost ceiling cannot be checked',
     };
   }
@@ -113,6 +145,8 @@ export function decideExperiment(
     keep: gainEnough && costOk,
     repairRateDeltaPoints: deltaPoints,
     costChangePercent: costChange,
+    intervalLowPoints: spread.low,
+    intervalHighPoints: spread.high,
     reason: gainEnough
       ? costOk
         ? `+${deltaPoints.toFixed(1)} points for ${costChange.toFixed(1)}% cost change, both within the rule`
@@ -225,4 +259,90 @@ export function formatMillis(value: number | null): string {
 
 export function formatUsd(value: number | null): string {
   return value === null ? 'unknown' : `$${value.toFixed(4)}`;
+}
+
+/**
+ * The pre-registered rule for an ablation: an ingredient is only called
+ * load-bearing when the 95 percent interval on what removing it costs excludes
+ * zero.
+ *
+ * Unlike the critic rule this one has three outcomes rather than two, because
+ * "removing it did not measurably hurt" and "we could not tell" are different
+ * answers and collapsing them into one verdict is the exact error this project
+ * exists to argue against. An unresolved ablation leaves the ingredient in
+ * place on the weaker ground that it was not shown to hurt, and says so.
+ */
+export function decideAblation(
+  control: ModeSummary,
+  treatment: ModeSummary,
+): ExperimentDecision {
+  if (control.verifiedRepairRate === null || treatment.verifiedRepairRate === null) {
+    return {
+      status: 'pending',
+      keep: false,
+      repairRateDeltaPoints: null,
+      costChangePercent: null,
+      intervalLowPoints: null,
+      intervalHighPoints: null,
+      reason: 'no measured repair rate on one side, so the rule cannot be applied',
+    };
+  }
+  // Control minus treatment, so a positive number is what removing the
+  // ingredient costs rather than what keeping it gains.
+  const difference = proportionDifferenceInterval(
+    control.verifiedRepairs,
+    control.runs,
+    treatment.verifiedRepairs,
+    treatment.runs,
+  );
+  const spread = intervalPoints(difference);
+  const deltaPoints = (control.verifiedRepairRate - treatment.verifiedRepairRate) * 100;
+  const costChange =
+    control.medianCostUsd === null || treatment.medianCostUsd === null || control.medianCostUsd === 0
+      ? null
+      : ((treatment.medianCostUsd - control.medianCostUsd) / control.medianCostUsd) * 100;
+  const points = (value: number): string => `${value >= 0 ? '+' : '-'}${Math.abs(value).toFixed(1)}`;
+  if (difference === null) {
+    return {
+      status: 'pending',
+      keep: false,
+      repairRateDeltaPoints: deltaPoints,
+      costChangePercent: costChange,
+      intervalLowPoints: null,
+      intervalHighPoints: null,
+      reason: 'the difference interval could not be computed, so the rule cannot be applied',
+    };
+  }
+  const interval = `95% CI ${points(difference.low * 100)} to ${points(difference.high * 100)}`;
+  if (difference.low > 0) {
+    return {
+      status: 'keep',
+      keep: true,
+      repairRateDeltaPoints: deltaPoints,
+      costChangePercent: costChange,
+      intervalLowPoints: spread.low,
+      intervalHighPoints: spread.high,
+      reason: `removing it cost ${points(deltaPoints)} points (${interval}), an interval that excludes zero, so it is load-bearing`,
+    };
+  }
+  if (difference.high < 0) {
+    return {
+      status: 'discard',
+      keep: false,
+      repairRateDeltaPoints: deltaPoints,
+      costChangePercent: costChange,
+      intervalLowPoints: spread.low,
+      intervalHighPoints: spread.high,
+      reason: `removing it changed the rate by ${points(deltaPoints)} points (${interval}), an interval that excludes zero in the other direction, so it should go`,
+    };
+  }
+  return {
+    status: 'unresolved',
+    keep: true,
+    repairRateDeltaPoints: deltaPoints,
+    costChangePercent: costChange,
+    intervalLowPoints: spread.low,
+    intervalHighPoints: spread.high,
+    reason: `removing it changed the rate by ${points(deltaPoints)} points (${interval}), an interval that includes zero, so this batch does not establish that it is load-bearing; it stays because it was not shown to hurt, which is a weaker reason`,
+  };
 }
