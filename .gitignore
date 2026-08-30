@@ -15,3 +15,9 @@ fixtures/*/repo/packages/*/dist/
 .agents/
 .claude/
 skills-lock.json
+
+# Third-party repository rebuilt by examples/real-world-commander/prepare.sh from a pinned SHA.
+examples/real-world-commander/repo/
+
+# Agent tooling installed locally, disclosed in docs/AGENT_USE.md rather than vendored
+.codex/
