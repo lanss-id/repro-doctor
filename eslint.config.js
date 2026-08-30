@@ -3,7 +3,16 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'artifacts/**', 'examples/**', 'fixtures/**', 'node_modules/**', 'submission/**'],
+    ignores: [
+      'dist/**',
+      'artifacts/**',
+      'examples/**',
+      'fixtures/**',
+      'node_modules/**',
+      'submission/**',
+      // The video has its own project and its own typecheck; see video/README.md.
+      'video/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

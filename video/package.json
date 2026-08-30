@@ -1,0 +1,30 @@
+{
+  "name": "repro-doctor-video",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Renders the submission video from recorded terminal sessions and committed evaluation artifacts.",
+  "scripts": {
+    "evidence": "node pipeline/evidence.mjs",
+    "narrate": "node pipeline/narrate.mjs",
+    "trim": "node pipeline/trim.mjs 01-baseline 02-idea 03a-diagnose 03b-evidence 03c-apply 08-replay",
+    "timeline": "node pipeline/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "studio": "remotion studio remotion/index.ts",
+    "still": "remotion still remotion/index.ts submission out/frame.png",
+    "render": "remotion render remotion/index.ts submission out/submission.mp4 --log=info",
+    "video": "npm run evidence && npm run narrate && npm run timeline && npm run typecheck && npm run render"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.400",
+    "@remotion/google-fonts": "^4.0.400",
+    "@remotion/media-utils": "4.0.400",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.400"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}

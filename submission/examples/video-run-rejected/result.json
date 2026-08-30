@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T205332Z-603341",
+  "caseId": "entrypoint-mismatch",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T20:53:32.078Z",
+  "finishedAt": "2026-08-30T20:54:19.658Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/example/repro-doctor/fixtures/entrypoint-mismatch/repo",
+    "workspacePath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/workspace",
+    "treeChecksumBefore": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "treeChecksumAfter": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "mutated": false,
+    "fileCount": 6
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 9,
+    "patchAttempts": 2,
+    "wallClockMs": 47581,
+    "tokens": {
+      "inputTokens": 17011,
+      "outputTokens": 1570,
+      "totalTokens": 18581,
+      "requests": 8
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.009316
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3117,
+    "checks": [
+      "FAIL the project compiles: Command failed: tsc -p tsconfig.json",
+      "PASS package.json is still valid JSON",
+      "FAIL the declared entry point exists on disk: main points at dist/index.js, which the build does not produce",
+      "FAIL greet(\"world\") returns \"hello world\" through the entry point: Cannot find module '/work/dist/index.js' imported from /oracle/oracle.mjs",
+      "PASS the source of greet was not deleted"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/repair.patch",
+    "sha256": "4c08b45b2c5cebbc08244fd7937240c1d7875d92560eef1d619d2a82b400503c",
+    "changedFiles": [
+      "package.json",
+      "tsconfig.json"
+    ],
+    "addedLines": 3,
+    "removedLines": 2,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341",
+    "resultPath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/result.json",
+    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/trajectory.jsonl",
+    "patchPath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/repair.patch",
+    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/verification.log",
+    "reportPath": "/example/repro-doctor/artifacts/runs/20260830T205332Z-603341/report.html"
+  }
+}

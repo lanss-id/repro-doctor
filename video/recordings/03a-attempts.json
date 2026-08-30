@@ -1,0 +1,16 @@
+{
+  "kept": "20260830T205502Z-0a731f",
+  "attempts": [
+    {
+      "runId": "20260830T205332Z-603341",
+      "status": "unverified-patch",
+      "verification": "failed"
+    },
+    {
+      "runId": "20260830T205502Z-0a731f",
+      "status": "repaired",
+      "verification": "passed"
+    }
+  ],
+  "note": "Every attempt is listed. The kept recording is the first whose hidden oracle exited zero. The case this runs on scored 7/7 for advanced mode in the confirmatory batch; the first attempt here did not, which is the between-run variance the comparison section is about."
+}

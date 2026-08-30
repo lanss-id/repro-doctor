@@ -373,7 +373,12 @@ src/report      HTML for a single run and for the comparison
 src/cli         Argument parsing, presentation, the five commands
 fixtures/<id>   repo/ is copied into the sandbox; oracle/, reference/ and meta.json never are
 tests           Unit and integration tests, mostly against real processes
+video           The submission video, built from recorded terminal sessions and the evidence bundle
 ```
+
+## The video
+
+[video/](video) builds the five minute submission video with one command. It is not a screen recording. Each terminal scene is an [asciinema](https://asciinema.org) capture of a real command against a real pty, and every rate, difference and interval on screen is recomputed from `submission/evidence/` by the same `src/eval/scoring.ts` that produced the report, so a re-run that changes the result changes the video without anyone editing a slide. The build refuses to draw a highlight around text the terminal did not print, and refuses a timeline over five minutes. What is synthetic is listed in [video/README.md](video/README.md), and it is two things: the keystroke timing at the prompt, and the removal of whole idle stretches, which the window's title bar declares.
 
 ## Documentation
 
@@ -388,6 +393,7 @@ tests           Unit and integration tests, mostly against real processes
 - [examples/bring-your-own-oracle/](examples/bring-your-own-oracle), the oracle contract and a worked example on a repository outside the benchmark
 - [examples/real-world-commander/](examples/real-world-commander), a real third-party repository with a fault and an oracle written by its own maintainers, and the three defects the attempt found
 - [submission/examples/](submission/examples), committed trajectories for every agent and a transcript of the human checkpoint
+- [video/README.md](video/README.md), how the submission video is built, and exactly which parts of it are synthetic
 - [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md)
 
 ## License

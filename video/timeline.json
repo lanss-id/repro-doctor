@@ -1,0 +1,3424 @@
+{
+  "generatedAt": "2026-08-30T21:25:27.724Z",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "totalSeconds": 296,
+  "durationInFrames": 8880,
+  "hasAudio": false,
+  "showCaptions": true,
+  "limitSeconds": 300,
+  "sections": [
+    {
+      "id": "01",
+      "title": "the problem and the baseline",
+      "onScreen": "the terminal running `npm run check` in `fixtures/broken-test-discovery/repo`. It exits zero. Scroll up two lines to `tests 0`.",
+      "start": 0,
+      "duration": 32,
+      "audio": null,
+      "text": "This repository's check passes. It also runs zero tests, because the glob says dot test dot mjs and the files are named dot spec dot mjs. The exit code says everything is fine. Hand that to a repair agent and it reports success. The transcript looks perfect. That is the baseline, and it is not a straw man. Same model, same four tools, same budget as everything below. The only thing it lacks is any way to find out whether it was right.",
+      "captions": [
+        {
+          "text": "This repository's check passes.",
+          "start": 0,
+          "duration": 1.542
+        },
+        {
+          "text": "It also runs zero tests, because the glob says dot test dot mjs and the files are named dot spec dot mjs.",
+          "start": 1.542,
+          "duration": 8.482
+        },
+        {
+          "text": "The exit code says everything is fine.",
+          "start": 10.024,
+          "duration": 2.699
+        },
+        {
+          "text": "Hand that to a repair agent and it reports success.",
+          "start": 12.723,
+          "duration": 3.855
+        },
+        {
+          "text": "The transcript looks perfect.",
+          "start": 16.578,
+          "duration": 1.542
+        },
+        {
+          "text": "That is the baseline, and it is not a straw man.",
+          "start": 18.12,
+          "duration": 4.241
+        },
+        {
+          "text": "Same model, same four tools, same budget as everything below.",
+          "start": 22.361,
+          "duration": 3.855
+        },
+        {
+          "text": "The only thing it lacks is any way to find out whether it was right.",
+          "start": 26.217,
+          "duration": 5.783
+        }
+      ],
+      "beats": [
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [
+              {
+                "at": 1.48,
+                "seconds": 2.322
+              }
+            ],
+            "events": [
+              [
+                0.523,
+                "\u001b[38;5;114m❯\u001b[0m n"
+              ],
+              [
+                0.55,
+                "p"
+              ],
+              [
+                0.577,
+                "m"
+              ],
+              [
+                0.605,
+                " "
+              ],
+              [
+                0.633,
+                "r"
+              ],
+              [
+                0.661,
+                "u"
+              ],
+              [
+                0.688,
+                "n"
+              ],
+              [
+                0.716,
+                " "
+              ],
+              [
+                0.744,
+                "c"
+              ],
+              [
+                0.771,
+                "h"
+              ],
+              [
+                0.799,
+                "e"
+              ],
+              [
+                0.827,
+                "c"
+              ],
+              [
+                0.855,
+                "k"
+              ],
+              [
+                0.882,
+                "\r\n"
+              ],
+              [
+                1.48,
+                "\r\n> sum-kit@1.0.0 check\r\n> tsc -p tsconfig.json && node --test \"tests/**/*.test.mjs\"\r\n\r\n"
+              ],
+              [
+                2.18,
+                "\u001b[34mℹ tests 0\u001b[39m\r\n\u001b[34mℹ suites 0\u001b[39m\r\n\u001b[34mℹ pass 0\u001b[39m\r\n\u001b[34mℹ fail 0\u001b[39m\r\n\u001b[34mℹ cancelled 0\u001b[39m\r\n\u001b[34mℹ skipped 0\u001b[39m\r\n\u001b[34mℹ todo 0\u001b[39m\r\n\u001b[34mℹ duration_ms 11.754518\u001b[39m\r\n"
+              ],
+              [
+                2.186,
+                "⠙"
+              ],
+              [
+                2.188,
+                "\u001b[1G\u001b[0K"
+              ],
+              [
+                2.193,
+                "\r\n\u001b[38;5;244mexit status \u001b[38;5;114m\u001b[1m0\u001b[0m\u001b[38;5;244m"
+              ],
+              [
+                2.193,
+                "\u001b[0m\r\n"
+              ],
+              [
+                4.395,
+                "\u001b[38;5;114m❯\u001b[0m c"
+              ],
+              [
+                4.424,
+                "a"
+              ],
+              [
+                4.454,
+                "t"
+              ],
+              [
+                4.481,
+                " "
+              ],
+              [
+                4.508,
+                "p"
+              ],
+              [
+                4.536,
+                "a"
+              ],
+              [
+                4.563,
+                "c"
+              ],
+              [
+                4.592,
+                "k"
+              ],
+              [
+                4.62,
+                "a"
+              ],
+              [
+                4.648,
+                "g"
+              ],
+              [
+                4.675,
+                "e"
+              ],
+              [
+                4.702,
+                "."
+              ],
+              [
+                4.73,
+                "j"
+              ],
+              [
+                4.758,
+                "s"
+              ],
+              [
+                4.786,
+                "o"
+              ],
+              [
+                4.813,
+                "n"
+              ],
+              [
+                4.841,
+                " "
+              ],
+              [
+                4.868,
+                "|"
+              ],
+              [
+                4.896,
+                " "
+              ],
+              [
+                4.923,
+                "s"
+              ],
+              [
+                4.951,
+                "e"
+              ],
+              [
+                4.979,
+                "d"
+              ],
+              [
+                5.006,
+                " "
+              ],
+              [
+                5.033,
+                "-"
+              ],
+              [
+                5.061,
+                "n"
+              ],
+              [
+                5.09,
+                " "
+              ],
+              [
+                5.118,
+                "'"
+              ],
+              [
+                5.145,
+                "9"
+              ],
+              [
+                5.173,
+                ","
+              ],
+              [
+                5.2,
+                "1"
+              ],
+              [
+                5.228,
+                "2"
+              ],
+              [
+                5.255,
+                "p"
+              ],
+              [
+                5.283,
+                "'"
+              ],
+              [
+                5.311,
+                "\r\n"
+              ],
+              [
+                5.615,
+                "    \"test\": \"node --test \\\"tests/**/*.test.mjs\\\"\",\r\n    \"check\": \"tsc -p tsconfig.json && node --test \\\"tests/**/*.test.mjs\\\"\"\r\n  }\r\n}\r\n"
+              ],
+              [
+                6.92,
+                "\u001b[38;5;114m❯\u001b[0m l"
+              ],
+              [
+                6.948,
+                "s"
+              ],
+              [
+                6.975,
+                " "
+              ],
+              [
+                7.003,
+                "t"
+              ],
+              [
+                7.03,
+                "e"
+              ],
+              [
+                7.058,
+                "s"
+              ],
+              [
+                7.086,
+                "t"
+              ],
+              [
+                7.114,
+                "s"
+              ],
+              [
+                7.141,
+                "\r\n"
+              ],
+              [
+                7.445,
+                "sum.spec.mjs\r\n"
+              ]
+            ]
+          },
+          "fromSentence": 0,
+          "highlights": [
+            {
+              "text": "tests/**/*.test.mjs",
+              "label": "the glob",
+              "from": 3.5,
+              "until": 9.5
+            },
+            {
+              "text": "tests 0",
+              "label": "nothing ran",
+              "from": 4.8,
+              "until": 10.3
+            },
+            {
+              "text": "exit status 0",
+              "label": "and the check still passed",
+              "from": 10.6,
+              "until": 16.6
+            },
+            {
+              "text": "sum.spec.mjs",
+              "label": "the file on disk",
+              "from": 17.6,
+              "until": 25.6
+            }
+          ],
+          "start": 0,
+          "duration": 32,
+          "cues": [
+            0,
+            1.542,
+            10.024,
+            12.723,
+            16.578,
+            18.12,
+            22.361,
+            26.217
+          ],
+          "castFile": "recordings/01-baseline.trimmed.cast",
+          "castDuration": 7.444904
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "the idea",
+      "onScreen": "the fixture tree, `repo/` beside `oracle/` and `reference/`.",
+      "start": 32,
+      "duration": 26,
+      "audio": null,
+      "text": "Only repo is copied into the sandbox. The oracle sits beside it and the agent never sees it. It runs afterwards, in a different container, read-only, against a fresh copy of the repaired tree, and it does not ask for an exit code. It counts how many tests actually ran. An agent that can see the test can make the test pass. This is the cheapest way to stop that.",
+      "captions": [
+        {
+          "text": "Only repo is copied into the sandbox.",
+          "start": 0,
+          "duration": 2.6
+        },
+        {
+          "text": "The oracle sits beside it and the agent never sees it.",
+          "start": 2.6,
+          "duration": 4.086
+        },
+        {
+          "text": "It runs afterwards, in a different container, read-only, against a fresh copy of the repaired tree, and it does not ask for an exit code.",
+          "start": 6.686,
+          "duration": 9.286
+        },
+        {
+          "text": "It counts how many tests actually ran.",
+          "start": 15.971,
+          "duration": 2.6
+        },
+        {
+          "text": "An agent that can see the test can make the test pass.",
+          "start": 18.571,
+          "duration": 4.457
+        },
+        {
+          "text": "This is the cheapest way to stop that.",
+          "start": 23.029,
+          "duration": 2.971
+        }
+      ],
+      "beats": [
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [],
+            "events": [
+              [
+                0.524,
+                "\u001b[38;5;114m❯\u001b[0m l"
+              ],
+              [
+                0.551,
+                "s"
+              ],
+              [
+                0.578,
+                " "
+              ],
+              [
+                0.606,
+                "f"
+              ],
+              [
+                0.634,
+                "i"
+              ],
+              [
+                0.661,
+                "x"
+              ],
+              [
+                0.688,
+                "t"
+              ],
+              [
+                0.716,
+                "u"
+              ],
+              [
+                0.744,
+                "r"
+              ],
+              [
+                0.771,
+                "e"
+              ],
+              [
+                0.799,
+                "s"
+              ],
+              [
+                0.826,
+                "/"
+              ],
+              [
+                0.853,
+                "b"
+              ],
+              [
+                0.881,
+                "r"
+              ],
+              [
+                0.908,
+                "o"
+              ],
+              [
+                0.936,
+                "k"
+              ],
+              [
+                0.963,
+                "e"
+              ],
+              [
+                0.99,
+                "n"
+              ],
+              [
+                1.017,
+                "-"
+              ],
+              [
+                1.045,
+                "t"
+              ],
+              [
+                1.073,
+                "e"
+              ],
+              [
+                1.101,
+                "s"
+              ],
+              [
+                1.128,
+                "t"
+              ],
+              [
+                1.155,
+                "-"
+              ],
+              [
+                1.183,
+                "d"
+              ],
+              [
+                1.211,
+                "i"
+              ],
+              [
+                1.239,
+                "s"
+              ],
+              [
+                1.266,
+                "c"
+              ],
+              [
+                1.293,
+                "o"
+              ],
+              [
+                1.321,
+                "v"
+              ],
+              [
+                1.348,
+                "e"
+              ],
+              [
+                1.376,
+                "r"
+              ],
+              [
+                1.404,
+                "y"
+              ],
+              [
+                1.431,
+                "\r\n"
+              ],
+              [
+                1.734,
+                "meta.json  oracle  reference  repo\r\n"
+              ],
+              [
+                3.639,
+                "\u001b[38;5;114m❯\u001b[0m s"
+              ],
+              [
+                3.667,
+                "e"
+              ],
+              [
+                3.695,
+                "d"
+              ],
+              [
+                3.722,
+                " "
+              ],
+              [
+                3.749,
+                "-"
+              ],
+              [
+                3.777,
+                "n"
+              ],
+              [
+                3.804,
+                " "
+              ],
+              [
+                3.831,
+                "'"
+              ],
+              [
+                3.859,
+                "4"
+              ],
+              [
+                3.887,
+                "5"
+              ],
+              [
+                3.914,
+                ","
+              ],
+              [
+                3.942,
+                "5"
+              ],
+              [
+                3.969,
+                "8"
+              ],
+              [
+                3.996,
+                "p"
+              ],
+              [
+                4.024,
+                "'"
+              ],
+              [
+                4.052,
+                " "
+              ],
+              [
+                4.079,
+                "f"
+              ],
+              [
+                4.106,
+                "i"
+              ],
+              [
+                4.133,
+                "x"
+              ],
+              [
+                4.161,
+                "t"
+              ],
+              [
+                4.189,
+                "u"
+              ],
+              [
+                4.216,
+                "r"
+              ],
+              [
+                4.244,
+                "e"
+              ],
+              [
+                4.271,
+                "s"
+              ],
+              [
+                4.299,
+                "/"
+              ],
+              [
+                4.327,
+                "b"
+              ],
+              [
+                4.355,
+                "r"
+              ],
+              [
+                4.382,
+                "o"
+              ],
+              [
+                4.409,
+                "k"
+              ],
+              [
+                4.436,
+                "e"
+              ],
+              [
+                4.464,
+                "n"
+              ],
+              [
+                4.491,
+                "-"
+              ],
+              [
+                4.519,
+                "t"
+              ],
+              [
+                4.546,
+                "e"
+              ],
+              [
+                4.574,
+                "s"
+              ],
+              [
+                4.601,
+                "t"
+              ],
+              [
+                4.628,
+                "-"
+              ],
+              [
+                4.656,
+                "d"
+              ],
+              [
+                4.684,
+                "i"
+              ],
+              [
+                4.711,
+                "s"
+              ],
+              [
+                4.738,
+                "c"
+              ],
+              [
+                4.766,
+                "o"
+              ],
+              [
+                4.793,
+                "v"
+              ],
+              [
+                4.821,
+                "e"
+              ],
+              [
+                4.85,
+                "r"
+              ],
+              [
+                4.877,
+                "y"
+              ],
+              [
+                4.905,
+                "/"
+              ],
+              [
+                4.932,
+                "o"
+              ],
+              [
+                4.959,
+                "r"
+              ],
+              [
+                4.987,
+                "a"
+              ],
+              [
+                5.014,
+                "c"
+              ],
+              [
+                5.04,
+                "l"
+              ],
+              [
+                5.067,
+                "e"
+              ],
+              [
+                5.095,
+                "/"
+              ],
+              [
+                5.123,
+                "o"
+              ],
+              [
+                5.15,
+                "r"
+              ],
+              [
+                5.177,
+                "a"
+              ],
+              [
+                5.204,
+                "c"
+              ],
+              [
+                5.231,
+                "l"
+              ],
+              [
+                5.258,
+                "e"
+              ],
+              [
+                5.285,
+                "."
+              ],
+              [
+                5.313,
+                "m"
+              ],
+              [
+                5.339,
+                "j"
+              ],
+              [
+                5.366,
+                "s"
+              ],
+              [
+                5.394,
+                "\r\n"
+              ],
+              [
+                5.698,
+                "await check('npm test runs at least two tests', () => {\r\n  const passed = countFrom('pass');\r\n  if (passed === null) {\r\n    throw new Error('the test runner reported no pass count at all');\r\n  }\r\n  if (passed < 2) {\r\n    throw new Error(`only ${passed} test(s) ran; the suite has two`);\r\n  }\r\n});\r\n\r\nawait check('no test failed', () => {\r\n  const failedCount = countFrom('fail');\r\n  if (failedCount !== 0) {\r\n    throw new Error(`the runner reported ${failedCount} failing test(s)`);\r\n"
+              ]
+            ]
+          },
+          "fromSentence": 0,
+          "highlights": [
+            {
+              "text": "oracle  reference  repo",
+              "label": "only repo is copied into the sandbox",
+              "from": 2.4,
+              "until": 7.4
+            },
+            {
+              "text": "npm test runs at least two tests",
+              "label": "what the hidden oracle asks",
+              "from": 8.8,
+              "until": 16.8
+            },
+            {
+              "text": "if (passed < 2)",
+              "label": "a count, not an exit code",
+              "from": 17,
+              "until": 24
+            }
+          ],
+          "start": 0,
+          "duration": 26,
+          "cues": [
+            0,
+            2.6,
+            6.686,
+            15.971,
+            18.571,
+            23.029
+          ],
+          "castFile": "recordings/02-idea.trimmed.cast",
+          "castDuration": 5.698424
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "one execution, end to end",
+      "onScreen": "`diagnose fixtures/entrypoint-mismatch/repo --mode advanced`, live. Then the patch, then `result.json`, then `apply` being refused.",
+      "start": 58,
+      "duration": 47,
+      "audio": null,
+      "text": "The repository is copied and checksummed first. Everything after runs with no network, no capabilities, a read-only root, and the workspace copy as its only mount. One file changed. main pointed at dist/main.js; the build emits dist/index.js. Then the part that counts. The oracle imported the package through whatever entry point the manifest now declares, called the function, checked the string. Exit zero. These two checksums are the repository before and after. They match, so nothing was written to your code. And applying prints the whole diff and waits. Type anything but apply and nothing happens.",
+      "captions": [
+        {
+          "text": "The repository is copied and checksummed first.",
+          "start": 0,
+          "duration": 3.427
+        },
+        {
+          "text": "Everything after runs with no network, no capabilities, a read-only root, and the workspace copy as its only mount.",
+          "start": 3.427,
+          "duration": 9.302
+        },
+        {
+          "text": "One file changed.",
+          "start": 12.729,
+          "duration": 1.469
+        },
+        {
+          "text": "main pointed at dist/main.js; the build emits dist/index.js.",
+          "start": 14.198,
+          "duration": 3.917
+        },
+        {
+          "text": "Then the part that counts.",
+          "start": 18.115,
+          "duration": 2.448
+        },
+        {
+          "text": "The oracle imported the package through whatever entry point the manifest now declares, called the function, checked the string.",
+          "start": 20.563,
+          "duration": 9.302
+        },
+        {
+          "text": "Exit zero.",
+          "start": 29.865,
+          "duration": 0.979
+        },
+        {
+          "text": "These two checksums are the repository before and after.",
+          "start": 30.844,
+          "duration": 4.406
+        },
+        {
+          "text": "They match, so nothing was written to your code.",
+          "start": 35.25,
+          "duration": 4.406
+        },
+        {
+          "text": "And applying prints the whole diff and waits.",
+          "start": 39.656,
+          "duration": 3.917
+        },
+        {
+          "text": "Type anything but apply and nothing happens.",
+          "start": 43.573,
+          "duration": 3.427
+        }
+      ],
+      "beats": [
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [
+              {
+                "at": 3.267,
+                "seconds": 3.309
+              },
+              {
+                "at": 3.991,
+                "seconds": 24.441
+              }
+            ],
+            "events": [
+              [
+                0.525,
+                "\u001b[38;5;114m❯\u001b[0m n"
+              ],
+              [
+                0.552,
+                "p"
+              ],
+              [
+                0.58,
+                "m"
+              ],
+              [
+                0.608,
+                " "
+              ],
+              [
+                0.636,
+                "r"
+              ],
+              [
+                0.664,
+                "u"
+              ],
+              [
+                0.691,
+                "n"
+              ],
+              [
+                0.718,
+                " "
+              ],
+              [
+                0.746,
+                "d"
+              ],
+              [
+                0.775,
+                "o"
+              ],
+              [
+                0.803,
+                "c"
+              ],
+              [
+                0.83,
+                "t"
+              ],
+              [
+                0.857,
+                "o"
+              ],
+              [
+                0.885,
+                "r"
+              ],
+              [
+                0.912,
+                " "
+              ],
+              [
+                0.94,
+                "-"
+              ],
+              [
+                0.969,
+                "-"
+              ],
+              [
+                0.996,
+                " "
+              ],
+              [
+                1.023,
+                "d"
+              ],
+              [
+                1.051,
+                "i"
+              ],
+              [
+                1.078,
+                "a"
+              ],
+              [
+                1.106,
+                "g"
+              ],
+              [
+                1.134,
+                "n"
+              ],
+              [
+                1.162,
+                "o"
+              ],
+              [
+                1.19,
+                "s"
+              ],
+              [
+                1.217,
+                "e"
+              ],
+              [
+                1.245,
+                " "
+              ],
+              [
+                1.274,
+                "f"
+              ],
+              [
+                1.302,
+                "i"
+              ],
+              [
+                1.33,
+                "x"
+              ],
+              [
+                1.357,
+                "t"
+              ],
+              [
+                1.384,
+                "u"
+              ],
+              [
+                1.412,
+                "r"
+              ],
+              [
+                1.44,
+                "e"
+              ],
+              [
+                1.469,
+                "s"
+              ],
+              [
+                1.496,
+                "/"
+              ],
+              [
+                1.524,
+                "e"
+              ],
+              [
+                1.551,
+                "n"
+              ],
+              [
+                1.579,
+                "t"
+              ],
+              [
+                1.606,
+                "r"
+              ],
+              [
+                1.634,
+                "y"
+              ],
+              [
+                1.662,
+                "p"
+              ],
+              [
+                1.689,
+                "o"
+              ],
+              [
+                1.717,
+                "i"
+              ],
+              [
+                1.745,
+                "n"
+              ],
+              [
+                1.773,
+                "t"
+              ],
+              [
+                1.802,
+                "-"
+              ],
+              [
+                1.83,
+                "m"
+              ],
+              [
+                1.857,
+                "i"
+              ],
+              [
+                1.884,
+                "s"
+              ],
+              [
+                1.912,
+                "m"
+              ],
+              [
+                1.939,
+                "a"
+              ],
+              [
+                1.967,
+                "t"
+              ],
+              [
+                1.994,
+                "c"
+              ],
+              [
+                2.022,
+                "h"
+              ],
+              [
+                2.05,
+                "/"
+              ],
+              [
+                2.077,
+                "r"
+              ],
+              [
+                2.105,
+                "e"
+              ],
+              [
+                2.133,
+                "p"
+              ],
+              [
+                2.16,
+                "o"
+              ],
+              [
+                2.187,
+                " "
+              ],
+              [
+                2.215,
+                "-"
+              ],
+              [
+                2.249,
+                "-"
+              ],
+              [
+                2.278,
+                "m"
+              ],
+              [
+                2.307,
+                "o"
+              ],
+              [
+                2.334,
+                "d"
+              ],
+              [
+                2.362,
+                "e"
+              ],
+              [
+                2.389,
+                " "
+              ],
+              [
+                2.417,
+                "a"
+              ],
+              [
+                2.444,
+                "d"
+              ],
+              [
+                2.472,
+                "v"
+              ],
+              [
+                2.5,
+                "a"
+              ],
+              [
+                2.527,
+                "n"
+              ],
+              [
+                2.555,
+                "c"
+              ],
+              [
+                2.582,
+                "e"
+              ],
+              [
+                2.61,
+                "d"
+              ],
+              [
+                2.637,
+                "\r\n"
+              ],
+              [
+                3.267,
+                "\r\n> repro-doctor@0.1.0 doctor\r\n> npm run build --silent && node dist/src/cli/index.js diagnose fixtures/entrypoint-mismatch/repo --mode advanced\r\n\r\n"
+              ],
+              [
+                3.967,
+                "\r\n"
+              ],
+              [
+                3.967,
+                "Diagnose\r\n--------\r\n"
+              ],
+              [
+                3.967,
+                "  repository                  /home/lanss/experimence/hackathon-micro1/fixtures/entrypoint-mismatch/repo\r\n  mode                        advanced\r\n  case                        entrypoint-mismatch\r\n  hidden oracle               entrypoint-mismatch/oracle\r\n"
+              ],
+              [
+                3.967,
+                "  budget                      12 tool calls, 2 patch attempts, 360s, $0.3\r\n"
+              ],
+              [
+                3.991,
+                "info  workspace.prepared runId=20260830T205502Z-0a731f mode=advanced files=6 workspace=/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/workspace\r\n"
+              ],
+              [
+                4.691,
+                "info  run.finished runId=20260830T205502Z-0a731f mode=advanced status=repaired verification=passed\r\n\r\n"
+              ],
+              [
+                4.691,
+                "Result\r\n------\r\n  run id                      20260830T205502Z-0a731f\r\n  outcome                     repaired\r\n"
+              ],
+              [
+                4.691,
+                "  verification                oracle passed (5 checks)\r\n  patch                       1 file(s), +1/-1\r\n  tool calls                  9/12\r\n  patch attempts              1/2\r\n  wall clock                  25.2s\r\n  cost                        $0.0055\r\n  input repository            unchanged\r\n\r\nArtifacts\r\n---------\r\n"
+              ],
+              [
+                4.691,
+                "  - /home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/result.json\r\n  - /home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/trajectory.jsonl\r\n  - /home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/repair.patch\r\n  - /home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/verification.log\r\n"
+              ],
+              [
+                4.691,
+                "  - /home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T205502Z-0a731f/report.html\r\n"
+              ],
+              [
+                4.691,
+                "\r\n"
+              ],
+              [
+                4.692,
+                "Review and apply with: npm run doctor -- apply 20260830T205502Z-0a731f --to /home/lanss/experimence/hackathon-micro1/fixtures/entrypoint-mismatch/repo\r\n"
+              ],
+              [
+                4.702,
+                "⠙"
+              ],
+              [
+                4.707,
+                "\u001b[1G\u001b[0K"
+              ]
+            ]
+          },
+          "fromSentence": 0,
+          "highlights": [
+            {
+              "text": "hidden oracle",
+              "label": "beside the repository, never in it",
+              "from": 4.6,
+              "until": 8.6
+            },
+            {
+              "text": "input repository            unchanged",
+              "from": 9.4,
+              "until": 12.4
+            }
+          ],
+          "start": 0,
+          "duration": 12.729,
+          "cues": [
+            0,
+            3.427
+          ],
+          "castFile": "recordings/03a-diagnose.trimmed.cast",
+          "castDuration": 4.706799
+        },
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [],
+            "events": [
+              [
+                0.419,
+                "\u001b[38;5;114m❯\u001b[0m c"
+              ],
+              [
+                0.446,
+                "d"
+              ],
+              [
+                0.474,
+                " "
+              ],
+              [
+                0.501,
+                "a"
+              ],
+              [
+                0.528,
+                "r"
+              ],
+              [
+                0.556,
+                "t"
+              ],
+              [
+                0.583,
+                "i"
+              ],
+              [
+                0.611,
+                "f"
+              ],
+              [
+                0.639,
+                "a"
+              ],
+              [
+                0.666,
+                "c"
+              ],
+              [
+                0.694,
+                "t"
+              ],
+              [
+                0.721,
+                "s"
+              ],
+              [
+                0.749,
+                "/"
+              ],
+              [
+                0.776,
+                "r"
+              ],
+              [
+                0.805,
+                "u"
+              ],
+              [
+                0.832,
+                "n"
+              ],
+              [
+                0.86,
+                "s"
+              ],
+              [
+                0.887,
+                "/"
+              ],
+              [
+                0.915,
+                "2"
+              ],
+              [
+                0.942,
+                "0"
+              ],
+              [
+                0.969,
+                "2"
+              ],
+              [
+                0.997,
+                "6"
+              ],
+              [
+                1.024,
+                "0"
+              ],
+              [
+                1.052,
+                "8"
+              ],
+              [
+                1.079,
+                "3"
+              ],
+              [
+                1.106,
+                "0"
+              ],
+              [
+                1.134,
+                "T"
+              ],
+              [
+                1.162,
+                "2"
+              ],
+              [
+                1.19,
+                "0"
+              ],
+              [
+                1.217,
+                "5"
+              ],
+              [
+                1.244,
+                "5"
+              ],
+              [
+                1.272,
+                "0"
+              ],
+              [
+                1.299,
+                "2"
+              ],
+              [
+                1.328,
+                "Z"
+              ],
+              [
+                1.355,
+                "-"
+              ],
+              [
+                1.382,
+                "0"
+              ],
+              [
+                1.409,
+                "a"
+              ],
+              [
+                1.437,
+                "7"
+              ],
+              [
+                1.464,
+                "3"
+              ],
+              [
+                1.491,
+                "1"
+              ],
+              [
+                1.519,
+                "f"
+              ],
+              [
+                1.546,
+                "\r\n"
+              ],
+              [
+                2.549,
+                "\u001b[38;5;114m❯\u001b[0m c"
+              ],
+              [
+                2.576,
+                "a"
+              ],
+              [
+                2.604,
+                "t"
+              ],
+              [
+                2.631,
+                " "
+              ],
+              [
+                2.659,
+                "r"
+              ],
+              [
+                2.686,
+                "e"
+              ],
+              [
+                2.713,
+                "p"
+              ],
+              [
+                2.741,
+                "a"
+              ],
+              [
+                2.769,
+                "i"
+              ],
+              [
+                2.797,
+                "r"
+              ],
+              [
+                2.825,
+                "."
+              ],
+              [
+                2.852,
+                "p"
+              ],
+              [
+                2.879,
+                "a"
+              ],
+              [
+                2.907,
+                "t"
+              ],
+              [
+                2.935,
+                "c"
+              ],
+              [
+                2.963,
+                "h"
+              ],
+              [
+                2.99,
+                "\r\n"
+              ],
+              [
+                3.294,
+                "--- a/package.json\r\n+++ b/package.json\r\n@@ -3,7 +3,7 @@\r\n   \"version\": \"1.0.0\",\r\n   \"private\": true,\r\n   \"type\": \"module\",\r\n-  \"main\": \"dist/main.js\",\r\n+  \"main\": \"dist/index.js\",\r\n   \"scripts\": {\r\n     \"build\": \"tsc -p tsconfig.json\",\r\n     \"check\": \"tsc -p tsconfig.json && node scripts/smoke.mjs\"\r\n"
+              ],
+              [
+                5.397,
+                "\u001b[38;5;114m❯\u001b[0m j"
+              ],
+              [
+                5.425,
+                "q"
+              ],
+              [
+                5.452,
+                " "
+              ],
+              [
+                5.48,
+                "'"
+              ],
+              [
+                5.507,
+                "."
+              ],
+              [
+                5.535,
+                "r"
+              ],
+              [
+                5.562,
+                "e"
+              ],
+              [
+                5.589,
+                "p"
+              ],
+              [
+                5.617,
+                "o"
+              ],
+              [
+                5.645,
+                " "
+              ],
+              [
+                5.673,
+                "|"
+              ],
+              [
+                5.7,
+                " "
+              ],
+              [
+                5.727,
+                "{"
+              ],
+              [
+                5.755,
+                "t"
+              ],
+              [
+                5.782,
+                "r"
+              ],
+              [
+                5.81,
+                "e"
+              ],
+              [
+                5.837,
+                "e"
+              ],
+              [
+                5.864,
+                "C"
+              ],
+              [
+                5.892,
+                "h"
+              ],
+              [
+                5.919,
+                "e"
+              ],
+              [
+                5.947,
+                "c"
+              ],
+              [
+                5.975,
+                "k"
+              ],
+              [
+                6.002,
+                "s"
+              ],
+              [
+                6.029,
+                "u"
+              ],
+              [
+                6.057,
+                "m"
+              ],
+              [
+                6.085,
+                "B"
+              ],
+              [
+                6.113,
+                "e"
+              ],
+              [
+                6.14,
+                "f"
+              ],
+              [
+                6.167,
+                "o"
+              ],
+              [
+                6.195,
+                "r"
+              ],
+              [
+                6.222,
+                "e"
+              ],
+              [
+                6.25,
+                ","
+              ],
+              [
+                6.278,
+                " "
+              ],
+              [
+                6.305,
+                "t"
+              ],
+              [
+                6.333,
+                "r"
+              ],
+              [
+                6.36,
+                "e"
+              ],
+              [
+                6.387,
+                "e"
+              ],
+              [
+                6.415,
+                "C"
+              ],
+              [
+                6.443,
+                "h"
+              ],
+              [
+                6.47,
+                "e"
+              ],
+              [
+                6.498,
+                "c"
+              ],
+              [
+                6.525,
+                "k"
+              ],
+              [
+                6.553,
+                "s"
+              ],
+              [
+                6.58,
+                "u"
+              ],
+              [
+                6.608,
+                "m"
+              ],
+              [
+                6.635,
+                "A"
+              ],
+              [
+                6.662,
+                "f"
+              ],
+              [
+                6.69,
+                "t"
+              ],
+              [
+                6.717,
+                "e"
+              ],
+              [
+                6.746,
+                "r"
+              ],
+              [
+                6.773,
+                ","
+              ],
+              [
+                6.801,
+                " "
+              ],
+              [
+                6.828,
+                "m"
+              ],
+              [
+                6.855,
+                "u"
+              ],
+              [
+                6.883,
+                "t"
+              ],
+              [
+                6.911,
+                "a"
+              ],
+              [
+                6.939,
+                "t"
+              ],
+              [
+                6.966,
+                "e"
+              ],
+              [
+                6.994,
+                "d"
+              ],
+              [
+                7.021,
+                "}"
+              ],
+              [
+                7.048,
+                "'"
+              ],
+              [
+                7.076,
+                " "
+              ],
+              [
+                7.104,
+                "r"
+              ],
+              [
+                7.131,
+                "e"
+              ],
+              [
+                7.159,
+                "s"
+              ],
+              [
+                7.186,
+                "u"
+              ],
+              [
+                7.214,
+                "l"
+              ],
+              [
+                7.241,
+                "t"
+              ],
+              [
+                7.269,
+                "."
+              ],
+              [
+                7.296,
+                "j"
+              ],
+              [
+                7.323,
+                "s"
+              ],
+              [
+                7.351,
+                "o"
+              ],
+              [
+                7.378,
+                "n"
+              ],
+              [
+                7.406,
+                "\r\n"
+              ],
+              [
+                7.738,
+                "\u001b[1;39m{\r\n  \u001b[0m\u001b[34;1m\"treeChecksumBefore\"\u001b[0m\u001b[1;39m: \u001b[0m\u001b[0;32m\"bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6\"\u001b[0m\u001b[1;39m,\r\n  \u001b[0m\u001b[34;1m\"treeChecksumAfter\"\u001b[0m\u001b[1;39m: \u001b[0m\u001b[0;32m\"bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6\"\u001b[0m\u001b[1;39m,\r\n  \u001b[0m\u001b[34;1m\"mutated\"\u001b[0m\u001b[1;39m: \u001b[0m\u001b[0;39mfalse\u001b[0m\u001b[1;39m\r\n\u001b[1;39m}\u001b[0m\r\n"
+              ],
+              [
+                9.843,
+                "\u001b[38;5;114m❯\u001b[0m j"
+              ],
+              [
+                9.87,
+                "q"
+              ],
+              [
+                9.898,
+                " "
+              ],
+              [
+                9.925,
+                "-"
+              ],
+              [
+                9.953,
+                "r"
+              ],
+              [
+                9.98,
+                " "
+              ],
+              [
+                10.007,
+                "'"
+              ],
+              [
+                10.035,
+                "."
+              ],
+              [
+                10.063,
+                "v"
+              ],
+              [
+                10.091,
+                "e"
+              ],
+              [
+                10.118,
+                "r"
+              ],
+              [
+                10.145,
+                "i"
+              ],
+              [
+                10.173,
+                "f"
+              ],
+              [
+                10.2,
+                "i"
+              ],
+              [
+                10.228,
+                "c"
+              ],
+              [
+                10.255,
+                "a"
+              ],
+              [
+                10.282,
+                "t"
+              ],
+              [
+                10.309,
+                "i"
+              ],
+              [
+                10.337,
+                "o"
+              ],
+              [
+                10.365,
+                "n"
+              ],
+              [
+                10.393,
+                " "
+              ],
+              [
+                10.421,
+                "|"
+              ],
+              [
+                10.448,
+                " "
+              ],
+              [
+                10.475,
+                "."
+              ],
+              [
+                10.503,
+                "k"
+              ],
+              [
+                10.53,
+                "i"
+              ],
+              [
+                10.557,
+                "n"
+              ],
+              [
+                10.585,
+                "d"
+              ],
+              [
+                10.612,
+                ","
+              ],
+              [
+                10.639,
+                " "
+              ],
+              [
+                10.667,
+                "."
+              ],
+              [
+                10.695,
+                "e"
+              ],
+              [
+                10.722,
+                "x"
+              ],
+              [
+                10.75,
+                "i"
+              ],
+              [
+                10.777,
+                "t"
+              ],
+              [
+                10.804,
+                "C"
+              ],
+              [
+                10.832,
+                "o"
+              ],
+              [
+                10.859,
+                "d"
+              ],
+              [
+                10.887,
+                "e"
+              ],
+              [
+                10.914,
+                ","
+              ],
+              [
+                10.941,
+                " "
+              ],
+              [
+                10.969,
+                "."
+              ],
+              [
+                10.997,
+                "c"
+              ],
+              [
+                11.024,
+                "h"
+              ],
+              [
+                11.051,
+                "e"
+              ],
+              [
+                11.079,
+                "c"
+              ],
+              [
+                11.106,
+                "k"
+              ],
+              [
+                11.134,
+                "s"
+              ],
+              [
+                11.162,
+                "["
+              ],
+              [
+                11.189,
+                "]"
+              ],
+              [
+                11.217,
+                "'"
+              ],
+              [
+                11.244,
+                " "
+              ],
+              [
+                11.271,
+                "r"
+              ],
+              [
+                11.299,
+                "e"
+              ],
+              [
+                11.326,
+                "s"
+              ],
+              [
+                11.354,
+                "u"
+              ],
+              [
+                11.381,
+                "l"
+              ],
+              [
+                11.408,
+                "t"
+              ],
+              [
+                11.436,
+                "."
+              ],
+              [
+                11.463,
+                "j"
+              ],
+              [
+                11.491,
+                "s"
+              ],
+              [
+                11.519,
+                "o"
+              ],
+              [
+                11.546,
+                "n"
+              ],
+              [
+                11.573,
+                "\r\n"
+              ],
+              [
+                11.901,
+                "passed\r\n\u001b[0;39m0\u001b[0m\r\nPASS the project compiles\r\nPASS package.json is still valid JSON\r\nPASS the declared entry point exists on disk\r\nPASS greet(\"world\") returns \"hello world\" through the entry point\r\nPASS the source of greet was not deleted\r\n"
+              ]
+            ]
+          },
+          "fromSentence": 2,
+          "highlights": [
+            {
+              "text": "+  \"main\": \"dist/index.js\",",
+              "label": "what the build actually emits",
+              "from": 3.8,
+              "until": 8.8
+            },
+            {
+              "text": "\"treeChecksumBefore\"",
+              "from": 20,
+              "until": 26
+            },
+            {
+              "text": "\"treeChecksumAfter\"",
+              "label": "identical, so nothing was written",
+              "from": 20,
+              "until": 26
+            },
+            {
+              "text": "PASS greet(\"world\") returns \"hello world\" through the entry point",
+              "label": "the hidden oracle, exit zero",
+              "from": 16.4,
+              "until": 19.8
+            }
+          ],
+          "start": 12.729,
+          "duration": 26.927,
+          "cues": [
+            0,
+            1.469,
+            5.385,
+            7.833,
+            17.135,
+            18.115,
+            22.521
+          ],
+          "castFile": "recordings/03b-evidence.trimmed.cast",
+          "castDuration": 11.900623
+        },
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [
+              {
+                "at": 3.005,
+                "seconds": 2.344
+              }
+            ],
+            "events": [
+              [
+                0.316,
+                "\u001b[38;5;114m❯\u001b[0m n"
+              ],
+              [
+                0.343,
+                "p"
+              ],
+              [
+                0.371,
+                "m"
+              ],
+              [
+                0.398,
+                " "
+              ],
+              [
+                0.425,
+                "r"
+              ],
+              [
+                0.453,
+                "u"
+              ],
+              [
+                0.48,
+                "n"
+              ],
+              [
+                0.507,
+                " "
+              ],
+              [
+                0.534,
+                "d"
+              ],
+              [
+                0.561,
+                "o"
+              ],
+              [
+                0.588,
+                "c"
+              ],
+              [
+                0.615,
+                "t"
+              ],
+              [
+                0.642,
+                "o"
+              ],
+              [
+                0.67,
+                "r"
+              ],
+              [
+                0.697,
+                " "
+              ],
+              [
+                0.724,
+                "-"
+              ],
+              [
+                0.752,
+                "-"
+              ],
+              [
+                0.778,
+                " "
+              ],
+              [
+                0.806,
+                "a"
+              ],
+              [
+                0.833,
+                "p"
+              ],
+              [
+                0.86,
+                "p"
+              ],
+              [
+                0.887,
+                "l"
+              ],
+              [
+                0.914,
+                "y"
+              ],
+              [
+                0.941,
+                " "
+              ],
+              [
+                0.968,
+                "2"
+              ],
+              [
+                0.995,
+                "0"
+              ],
+              [
+                1.022,
+                "2"
+              ],
+              [
+                1.049,
+                "6"
+              ],
+              [
+                1.076,
+                "0"
+              ],
+              [
+                1.103,
+                "8"
+              ],
+              [
+                1.131,
+                "3"
+              ],
+              [
+                1.158,
+                "0"
+              ],
+              [
+                1.186,
+                "T"
+              ],
+              [
+                1.213,
+                "2"
+              ],
+              [
+                1.24,
+                "0"
+              ],
+              [
+                1.267,
+                "5"
+              ],
+              [
+                1.295,
+                "5"
+              ],
+              [
+                1.322,
+                "0"
+              ],
+              [
+                1.349,
+                "2"
+              ],
+              [
+                1.376,
+                "Z"
+              ],
+              [
+                1.404,
+                "-"
+              ],
+              [
+                1.431,
+                "0"
+              ],
+              [
+                1.458,
+                "a"
+              ],
+              [
+                1.486,
+                "7"
+              ],
+              [
+                1.513,
+                "3"
+              ],
+              [
+                1.54,
+                "1"
+              ],
+              [
+                1.567,
+                "f"
+              ],
+              [
+                1.594,
+                " "
+              ],
+              [
+                1.622,
+                "-"
+              ],
+              [
+                1.649,
+                "-"
+              ],
+              [
+                1.677,
+                "t"
+              ],
+              [
+                1.704,
+                "o"
+              ],
+              [
+                1.731,
+                " "
+              ],
+              [
+                1.758,
+                "/"
+              ],
+              [
+                1.786,
+                "t"
+              ],
+              [
+                1.813,
+                "m"
+              ],
+              [
+                1.841,
+                "p"
+              ],
+              [
+                1.867,
+                "/"
+              ],
+              [
+                1.895,
+                "t"
+              ],
+              [
+                1.922,
+                "m"
+              ],
+              [
+                1.949,
+                "p"
+              ],
+              [
+                1.976,
+                "."
+              ],
+              [
+                2.003,
+                "i"
+              ],
+              [
+                2.03,
+                "O"
+              ],
+              [
+                2.058,
+                "x"
+              ],
+              [
+                2.085,
+                "C"
+              ],
+              [
+                2.113,
+                "J"
+              ],
+              [
+                2.14,
+                "h"
+              ],
+              [
+                2.167,
+                "S"
+              ],
+              [
+                2.194,
+                "A"
+              ],
+              [
+                2.221,
+                "M"
+              ],
+              [
+                2.248,
+                "k"
+              ],
+              [
+                2.275,
+                "/"
+              ],
+              [
+                2.302,
+                "d"
+              ],
+              [
+                2.329,
+                "e"
+              ],
+              [
+                2.357,
+                "m"
+              ],
+              [
+                2.384,
+                "o"
+              ],
+              [
+                2.412,
+                "-"
+              ],
+              [
+                2.438,
+                "r"
+              ],
+              [
+                2.465,
+                "e"
+              ],
+              [
+                2.493,
+                "p"
+              ],
+              [
+                2.52,
+                "o"
+              ],
+              [
+                2.547,
+                "\r\n"
+              ],
+              [
+                3.005,
+                "\r\r\n> repro-doctor@0.1.0 doctor\r\r\n> npm run build --silent && node dist/src/cli/index.js apply 20260830T205502Z-0a731f --to /tmp/tmp.iOxCJhSAMk/demo-repo\r\r\n\r\r\n"
+              ],
+              [
+                3.705,
+                "n"
+              ],
+              [
+                3.867,
+                "o"
+              ],
+              [
+                4.019,
+                "\r\r\n"
+              ],
+              [
+                4.019,
+                "Patch preview\r\r\n"
+              ],
+              [
+                4.019,
+                "-------------\r\r\n"
+              ],
+              [
+                4.019,
+                "  run id                      20260830T205502Z-0a731f\r\r\n"
+              ],
+              [
+                4.019,
+                "  mode                        advanced\r\r\n"
+              ],
+              [
+                4.019,
+                "  produced by model           openai/gpt-4.1-mini\r\r\n  verification                passed\r\r\n"
+              ],
+              [
+                4.019,
+                "  target repository           /tmp/tmp.iOxCJhSAMk/demo-repo\r\r\n  target checksum             bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6\r\r\n  files changed               package.json\r\r\n"
+              ],
+              [
+                4.019,
+                "\r\r\n"
+              ],
+              [
+                4.019,
+                "--- a/package.json\r\r\n+++ b/package.json\r\r\n@@ -3,7 +3,7 @@\r\r\n   \"version\": \"1.0.0\",\r\r\n   \"private\": true,\r\r\n   \"type\": \"module\",\r\r\n-  \"main\": \"dist/main.js\",\r\r\n+  \"main\": \"dist/index.js\",\r\r\n   \"scripts\": {\r\r\n     \"build\": \"tsc -p tsconfig.json\",\r\r\n"
+              ],
+              [
+                4.019,
+                "     \"check\": \"tsc -p tsconfig.json && node scripts/smoke.mjs\"\r\r\n\r\r\n"
+              ],
+              [
+                4.021,
+                "\u001b[1G\u001b[0J"
+              ],
+              [
+                4.021,
+                "Type \"apply\" to write these changes to /tmp/tmp.iOxCJhSAMk/demo-repo: \u001b[71G"
+              ],
+              [
+                4.022,
+                "n"
+              ],
+              [
+                4.022,
+                "o"
+              ],
+              [
+                4.029,
+                "\r\r\r\n"
+              ],
+              [
+                4.029,
+                "Cancelled. Nothing was written.\r\r\n"
+              ]
+            ]
+          },
+          "fromSentence": 9,
+          "highlights": [
+            {
+              "text": "Cancelled. Nothing was written.",
+              "from": 4.6,
+              "until": null
+            }
+          ],
+          "start": 39.656,
+          "duration": 7.344,
+          "cues": [
+            0,
+            3.917
+          ],
+          "castFile": "recordings/03c-apply.trimmed.cast",
+          "castDuration": 4.029142
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "title": "the comparison, which did not go my way",
+      "onScreen": "the difference chart, interval crossing zero.",
+      "start": 105,
+      "duration": 43,
+      "audio": null,
+      "text": "A hundred and forty runs. Ten broken repositories, both modes, seven repeats. Baseline verified forty-two of seventy, advanced fifty-one of seventy. A difference of twelve point nine points, ninety-five per cent interval minus two point eight to plus twenty-seven point six. It includes zero. I wrote the sample size and the rule down before the batch and pushed them first, and by that rule this is a null result. Seventy runs per mode do not establish that the structure is what produced the gap. That is not a finding that they are the same. What I cannot tell you is that the improvement is real.",
+      "captions": [
+        {
+          "text": "A hundred and forty runs.",
+          "start": 0,
+          "duration": 2.048
+        },
+        {
+          "text": "Ten broken repositories, both modes, seven repeats.",
+          "start": 2.048,
+          "duration": 2.867
+        },
+        {
+          "text": "Baseline verified forty-two of seventy, advanced fifty-one of seventy.",
+          "start": 4.914,
+          "duration": 3.686
+        },
+        {
+          "text": "A difference of twelve point nine points, ninety-five per cent interval minus two point eight to plus twenty-seven point six.",
+          "start": 8.6,
+          "duration": 8.19
+        },
+        {
+          "text": "It includes zero.",
+          "start": 16.79,
+          "duration": 1.229
+        },
+        {
+          "text": "I wrote the sample size and the rule down before the batch and pushed them first, and by that rule this is a null result.",
+          "start": 18.019,
+          "duration": 10.238
+        },
+        {
+          "text": "Seventy runs per mode do not establish that the structure is what produced the gap.",
+          "start": 28.257,
+          "duration": 6.143
+        },
+        {
+          "text": "That is not a finding that they are the same.",
+          "start": 34.4,
+          "duration": 4.095
+        },
+        {
+          "text": "What I cannot tell you is that the improvement is real.",
+          "start": 38.495,
+          "duration": 4.505
+        }
+      ],
+      "beats": [
+        {
+          "kind": "difference",
+          "fromSentence": 0,
+          "start": 0,
+          "duration": 43,
+          "cues": [
+            0,
+            2.048,
+            4.914,
+            8.6,
+            16.79,
+            18.019,
+            28.257,
+            34.4,
+            38.495
+          ]
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "title": "the changelog, and the number worth more than the result",
+      "onScreen": "the changelog stage table, then the three-row variance chart.",
+      "start": 148,
+      "duration": 37,
+      "audio": null,
+      "text": "Seven iterations, each with the run that caused it. An agent that went blind to its budget and had a correct patch refused on call thirteen. A file reader that showed it four per cent of the file the fault was in. Then this. The baseline arm has not changed by a character across three batches. Fifty-three point three per cent, then forty-six point seven, then sixty. A spread of thirteen point three points, at temperature zero, from nothing. The effect I was measuring is twelve point nine. The noise is bigger than the signal.",
+      "captions": [
+        {
+          "text": "Seven iterations, each with the run that caused it.",
+          "start": 0,
+          "duration": 3.505
+        },
+        {
+          "text": "An agent that went blind to its budget and had a correct patch refused on call thirteen.",
+          "start": 3.505,
+          "duration": 6.621
+        },
+        {
+          "text": "A file reader that showed it four per cent of the file the fault was in.",
+          "start": 10.126,
+          "duration": 6.232
+        },
+        {
+          "text": "Then this.",
+          "start": 16.358,
+          "duration": 0.779
+        },
+        {
+          "text": "The baseline arm has not changed by a character across three batches.",
+          "start": 17.137,
+          "duration": 4.674
+        },
+        {
+          "text": "Fifty-three point three per cent, then forty-six point seven, then sixty.",
+          "start": 21.811,
+          "duration": 4.284
+        },
+        {
+          "text": "A spread of thirteen point three points, at temperature zero, from nothing.",
+          "start": 26.095,
+          "duration": 4.674
+        },
+        {
+          "text": "The effect I was measuring is twelve point nine.",
+          "start": 30.768,
+          "duration": 3.505
+        },
+        {
+          "text": "The noise is bigger than the signal.",
+          "start": 34.274,
+          "duration": 2.726
+        }
+      ],
+      "beats": [
+        {
+          "kind": "changelog",
+          "fromSentence": 0,
+          "start": 0,
+          "duration": 16.358,
+          "cues": [
+            0,
+            3.505,
+            10.126
+          ]
+        },
+        {
+          "kind": "variance",
+          "fromSentence": 3,
+          "start": 16.358,
+          "duration": 20.642,
+          "cues": [
+            0,
+            0.779,
+            5.453,
+            9.737,
+            14.411,
+            17.916
+          ]
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "title": "the change that contributed most",
+      "onScreen": "the ablation table.",
+      "start": 185,
+      "duration": 55,
+      "audio": null,
+      "text": "So I removed one ingredient and measured what broke. The bounded retry: when the harness's own check or the hidden oracle rejects the first patch, the agent gets one more turn, with the evidence attached. Without it, advanced goes from thirteen of thirty-five to one of thirty-five. Thirty-four point three points, plus sixteen to plus fifty-one. Clear of zero. But the mechanism was not what I predicted. Eighteen of those runs had a patch refused for running out of tool calls. The reserved call was also making the agent patch earlier. Two jobs, and I knew about one. So I ran it again, holding the reservation still and removing only the turn. Twenty-five point seven points, plus three to plus forty-five. Still clear of zero. The second attempt earns its place on its own, and it exists only because something outside the agent said the first one was wrong.",
+      "captions": [
+        {
+          "text": "So I removed one ingredient and measured what broke.",
+          "start": 0,
+          "duration": 3.322
+        },
+        {
+          "text": "The bounded retry: when the harness's own check or the hidden oracle rejects the first patch, the agent gets one more turn, with the evidence attached.",
+          "start": 3.322,
+          "duration": 9.597
+        },
+        {
+          "text": "Without it, advanced goes from thirteen of thirty-five to one of thirty-five.",
+          "start": 12.919,
+          "duration": 4.43
+        },
+        {
+          "text": "Thirty-four point three points, plus sixteen to plus fifty-one.",
+          "start": 17.349,
+          "duration": 3.322
+        },
+        {
+          "text": "Clear of zero.",
+          "start": 20.671,
+          "duration": 1.107
+        },
+        {
+          "text": "But the mechanism was not what I predicted.",
+          "start": 21.779,
+          "duration": 2.953
+        },
+        {
+          "text": "Eighteen of those runs had a patch refused for running out of tool calls.",
+          "start": 24.732,
+          "duration": 5.168
+        },
+        {
+          "text": "The reserved call was also making the agent patch earlier.",
+          "start": 29.899,
+          "duration": 3.691
+        },
+        {
+          "text": "Two jobs, and I knew about one.",
+          "start": 33.591,
+          "duration": 2.584
+        },
+        {
+          "text": "So I ran it again, holding the reservation still and removing only the turn.",
+          "start": 36.174,
+          "duration": 5.168
+        },
+        {
+          "text": "Twenty-five point seven points, plus three to plus forty-five.",
+          "start": 41.342,
+          "duration": 3.322
+        },
+        {
+          "text": "Still clear of zero.",
+          "start": 44.664,
+          "duration": 1.477
+        },
+        {
+          "text": "The second attempt earns its place on its own, and it exists only because something outside the agent said the first one was wrong.",
+          "start": 46.141,
+          "duration": 8.859
+        }
+      ],
+      "beats": [
+        {
+          "kind": "experiment",
+          "experiment": "ablation",
+          "fromSentence": 0,
+          "start": 0,
+          "duration": 21.779,
+          "cues": [
+            0,
+            3.322,
+            12.919,
+            17.349,
+            20.671
+          ]
+        },
+        {
+          "kind": "mechanism",
+          "fromSentence": 5,
+          "start": 21.779,
+          "duration": 14.396,
+          "cues": [
+            0,
+            2.953,
+            8.121,
+            11.812
+          ]
+        },
+        {
+          "kind": "experiment",
+          "experiment": "reserve",
+          "fromSentence": 9,
+          "start": 36.174,
+          "duration": 18.826,
+          "cues": [
+            0,
+            5.168,
+            8.49,
+            9.966
+          ]
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "title": "an experiment I threw away, and one I nearly published",
+      "onScreen": "the critic table, then the hard-stratum rows.",
+      "start": 240,
+      "duration": 38,
+      "audio": null,
+      "text": "A critic that reviews the patch before the retry decision. I wrote the keep rule before running it. It scored one of nine against four of nine, twice, and the rule discarded it. And one I nearly got wrong. In the first batch, five repositories looked like the whole story: baseline zero out of fifteen, advanced six, a forty point gap clear of zero. I found that after seeing the results, so I froze those cases and made it the next batch's hypothesis instead of publishing it. In that batch baseline scored eleven out of thirty-five on the same five cases. The forty points was noise.",
+      "captions": [
+        {
+          "text": "A critic that reviews the patch before the retry decision.",
+          "start": 0,
+          "duration": 3.585
+        },
+        {
+          "text": "I wrote the keep rule before running it.",
+          "start": 3.585,
+          "duration": 2.868
+        },
+        {
+          "text": "It scored one of nine against four of nine, twice, and the rule discarded it.",
+          "start": 6.453,
+          "duration": 5.377
+        },
+        {
+          "text": "And one I nearly got wrong.",
+          "start": 11.83,
+          "duration": 2.151
+        },
+        {
+          "text": "In the first batch, five repositories looked like the whole story: baseline zero out of fifteen, advanced six, a forty point gap clear of zero.",
+          "start": 13.981,
+          "duration": 8.962
+        },
+        {
+          "text": "I found that after seeing the results, so I froze those cases and made it the next batch's hypothesis instead of publishing it.",
+          "start": 22.943,
+          "duration": 8.245
+        },
+        {
+          "text": "In that batch baseline scored eleven out of thirty-five on the same five cases.",
+          "start": 31.189,
+          "duration": 5.019
+        },
+        {
+          "text": "The forty points was noise.",
+          "start": 36.208,
+          "duration": 1.792
+        }
+      ],
+      "beats": [
+        {
+          "kind": "experiment",
+          "experiment": "critic",
+          "fromSentence": 0,
+          "start": 0,
+          "duration": 11.83,
+          "cues": [
+            0,
+            3.585,
+            6.453
+          ]
+        },
+        {
+          "kind": "subgroup",
+          "fromSentence": 3,
+          "start": 11.83,
+          "duration": 26.17,
+          "cues": [
+            0,
+            2.151,
+            11.113,
+            19.358,
+            24.377
+          ]
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "title": "close",
+      "onScreen": "`npm run doctor -- replay submission/evidence/confirmatory` running to completion.",
+      "start": 278,
+      "duration": 18,
+      "audio": null,
+      "text": "Every run behind every number I just said is committed. This puts all of them back through the same scoring code, recomputes every check, and reports anything that comes out differently. No key, no model, no network. Ten seconds, nothing. You do not have to believe me. That was the point.",
+      "captions": [
+        {
+          "text": "Every run behind every number I just said is committed.",
+          "start": 0,
+          "duration": 3.529
+        },
+        {
+          "text": "This puts all of them back through the same scoring code, recomputes every check, and reports anything that comes out differently.",
+          "start": 3.529,
+          "duration": 7.412
+        },
+        {
+          "text": "No key, no model, no network.",
+          "start": 10.941,
+          "duration": 2.118
+        },
+        {
+          "text": "Ten seconds, nothing.",
+          "start": 13.059,
+          "duration": 1.059
+        },
+        {
+          "text": "You do not have to believe me.",
+          "start": 14.118,
+          "duration": 2.471
+        },
+        {
+          "text": "That was the point.",
+          "start": 16.588,
+          "duration": 1.412
+        }
+      ],
+      "beats": [
+        {
+          "kind": "terminal",
+          "cast": {
+            "width": 100,
+            "height": 30,
+            "cuts": [
+              {
+                "at": 2.583,
+                "seconds": 3.311
+              }
+            ],
+            "events": [
+              [
+                0.515,
+                "\u001b[38;5;114m❯\u001b[0m n"
+              ],
+              [
+                0.542,
+                "p"
+              ],
+              [
+                0.57,
+                "m"
+              ],
+              [
+                0.597,
+                " "
+              ],
+              [
+                0.625,
+                "r"
+              ],
+              [
+                0.653,
+                "u"
+              ],
+              [
+                0.681,
+                "n"
+              ],
+              [
+                0.709,
+                " "
+              ],
+              [
+                0.736,
+                "d"
+              ],
+              [
+                0.764,
+                "o"
+              ],
+              [
+                0.792,
+                "c"
+              ],
+              [
+                0.819,
+                "t"
+              ],
+              [
+                0.848,
+                "o"
+              ],
+              [
+                0.877,
+                "r"
+              ],
+              [
+                0.902,
+                " "
+              ],
+              [
+                0.929,
+                "-"
+              ],
+              [
+                0.956,
+                "-"
+              ],
+              [
+                0.983,
+                " "
+              ],
+              [
+                1.01,
+                "r"
+              ],
+              [
+                1.037,
+                "e"
+              ],
+              [
+                1.064,
+                "p"
+              ],
+              [
+                1.091,
+                "l"
+              ],
+              [
+                1.119,
+                "a"
+              ],
+              [
+                1.147,
+                "y"
+              ],
+              [
+                1.174,
+                " "
+              ],
+              [
+                1.201,
+                "s"
+              ],
+              [
+                1.228,
+                "u"
+              ],
+              [
+                1.256,
+                "b"
+              ],
+              [
+                1.284,
+                "m"
+              ],
+              [
+                1.311,
+                "i"
+              ],
+              [
+                1.338,
+                "s"
+              ],
+              [
+                1.365,
+                "s"
+              ],
+              [
+                1.392,
+                "i"
+              ],
+              [
+                1.42,
+                "o"
+              ],
+              [
+                1.447,
+                "n"
+              ],
+              [
+                1.474,
+                "/"
+              ],
+              [
+                1.502,
+                "e"
+              ],
+              [
+                1.529,
+                "v"
+              ],
+              [
+                1.556,
+                "i"
+              ],
+              [
+                1.583,
+                "d"
+              ],
+              [
+                1.61,
+                "e"
+              ],
+              [
+                1.637,
+                "n"
+              ],
+              [
+                1.665,
+                "c"
+              ],
+              [
+                1.692,
+                "e"
+              ],
+              [
+                1.719,
+                "/"
+              ],
+              [
+                1.746,
+                "c"
+              ],
+              [
+                1.773,
+                "o"
+              ],
+              [
+                1.801,
+                "n"
+              ],
+              [
+                1.828,
+                "f"
+              ],
+              [
+                1.855,
+                "i"
+              ],
+              [
+                1.883,
+                "r"
+              ],
+              [
+                1.91,
+                "m"
+              ],
+              [
+                1.939,
+                "a"
+              ],
+              [
+                1.966,
+                "t"
+              ],
+              [
+                1.993,
+                "o"
+              ],
+              [
+                2.02,
+                "r"
+              ],
+              [
+                2.048,
+                "y"
+              ],
+              [
+                2.076,
+                "\r\n"
+              ],
+              [
+                2.583,
+                "\r\n> repro-doctor@0.1.0 doctor\r\n> npm run build --silent && node dist/src/cli/index.js replay submission/evidence/confirmatory\r\n\r\n"
+              ],
+              [
+                3.283,
+                "\r\n"
+              ],
+              [
+                3.283,
+                "Replay\r\n"
+              ],
+              [
+                3.283,
+                "------\r\n"
+              ],
+              [
+                3.283,
+                "  bundle                      submission/evidence/confirmatory\r\n"
+              ],
+              [
+                3.283,
+                "  published                   2026-08-30T15:18:26.854Z\r\n  model                       openai/gpt-4.1-mini\r\n  executor                    docker\r\n"
+              ],
+              [
+                3.283,
+                "  repeats per case per mode   7\r\n  tool-call ceiling           12\r\n"
+              ],
+              [
+                3.283,
+                "  runs re-scored              140/140\r\n"
+              ],
+              [
+                3.283,
+                "No API key, no model call, no network and no sandbox: the committed\r\n"
+              ],
+              [
+                3.283,
+                "run artifacts go back through the same scoring code that produced the report.\r\n"
+              ],
+              [
+                3.283,
+                "\r\nRecomputed result\r\n-----------------\r\n"
+              ],
+              [
+                3.284,
+                "  baseline                    42/70 verified, rate 60.0% (95% CI 48.3-70.7%)\r\n"
+              ],
+              [
+                3.284,
+                "  advanced                    51/70 verified, rate 72.9% (95% CI 61.5-81.9%)\r\n"
+              ],
+              [
+                3.284,
+                "  advanced - baseline         +12.9 points (95% CI -2.8 to +27.6)\r\n\r\n"
+              ],
+              [
+                3.284,
+                "By difficulty stratum\r\n---------------------\r\n"
+              ],
+              [
+                3.284,
+                "Strata frozen in docs/PREREGISTRATION.md before the batch that tests them.\r\n"
+              ],
+              [
+                3.285,
+                "  saturated / baseline        31/35 verified, rate 88.6% (95% CI 74.0-95.5%)\r\n"
+              ],
+              [
+                3.285,
+                "  saturated / advanced        35/35 verified, rate 100.0% (95% CI 90.1-100.0%)\r\n"
+              ],
+              [
+                3.285,
+                "  saturated difference        +11.4 points (95% CI -0.6 to +26.0)\r\n"
+              ],
+              [
+                3.285,
+                "  hard / baseline             11/35 verified, rate 31.4% (95% CI 18.6-48.0%)\r\n"
+              ],
+              [
+                3.285,
+                "  hard / advanced             16/35 verified, rate 45.7% (95% CI 30.5-61.8%)\r\n"
+              ],
+              [
+                3.285,
+                "  hard difference             +14.3 points (95% CI -8.2 to +34.9)\r\n\r\n"
+              ],
+              [
+                3.285,
+                "Agreement with the published report\r\n"
+              ],
+              [
+                3.285,
+                "-----------------------------------\r\nEvery re-scored run agrees with the published report on status, on all seven checks and on the verified verdict.\r\n\r\n"
+              ],
+              [
+                3.285,
+                "oracle-access was re-run against this machine's fixture paths. When the bundle was produced elsewhere, that check is weaker on replay than it was on the original run, and its agreement below is not independent evidence.\r\n"
+              ],
+              [
+                3.295,
+                "⠙"
+              ],
+              [
+                3.298,
+                "\u001b[1G"
+              ],
+              [
+                3.298,
+                "\u001b[0K"
+              ]
+            ]
+          },
+          "fromSentence": 0,
+          "highlights": [
+            {
+              "text": "runs re-scored              140/140",
+              "from": 4,
+              "until": 8.5
+            },
+            {
+              "text": "advanced - baseline",
+              "label": "recomputed, not re-read",
+              "from": 9.4,
+              "until": 13.4
+            },
+            {
+              "text": "Every re-scored run agrees",
+              "from": 13.6,
+              "until": null
+            }
+          ],
+          "start": 0,
+          "duration": 18,
+          "cues": [
+            0,
+            3.529,
+            10.941,
+            13.059,
+            14.118,
+            16.588
+          ],
+          "castFile": "recordings/08-replay.trimmed.cast",
+          "castDuration": 3.297838
+        }
+      ]
+    }
+  ],
+  "evidenceGeneratedAt": "2026-08-30T21:25:08.746Z"
+}

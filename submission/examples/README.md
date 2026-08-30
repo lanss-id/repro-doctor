@@ -1,6 +1,6 @@
 # Example artifacts
 
-Six committed artifacts, so the claims in this repository can be read rather than believed. Every run below used `openai/gpt-4.1-mini` in the Docker sandbox with the default budget of 12 tool calls, 2 patch attempts, 360 seconds and a $0.30 ceiling. Paths are replaced with placeholders; nothing else is edited.
+Eight committed artifacts, so the claims in this repository can be read rather than believed. Every run below used `openai/gpt-4.1-mini` in the Docker sandbox with the default budget of 12 tool calls, 2 patch attempts, 360 seconds and a $0.30 ceiling. Paths are replaced with placeholders; nothing else is edited.
 
 | Directory | Agent | Case | Outcome | Why it is here |
 | --- | --- | --- | --- | --- |
@@ -10,6 +10,8 @@ Six committed artifacts, so the claims in this repository can be read rather tha
 | [`critic-run/`](critic-run) | advanced with the critic | `broken-test-discovery` | repaired | The experimental treatment that was discarded |
 | [`byo-oracle-run/`](byo-oracle-run) | advanced | not a fixture | patch rejected by the oracle | The user path, with a user-written oracle |
 | [`apply-session.txt`](apply-session.txt) | none, this is the human checkpoint | — | applied after review | What a person sees before anything is written |
+| [`video-run/`](video-run) | advanced | `entrypoint-mismatch` | repaired | The run the submission video shows being made |
+| [`video-run-rejected/`](video-run-rejected) | advanced | `entrypoint-mismatch` | patch rejected by the oracle | The attempt before it, on the same case, kept for the same reason |
 | [`run/`](run) | scripted stand-in | `entrypoint-mismatch` | repaired | The artifact shapes, reproducible with no API key |
 
 ## live-run: the hardest fixture
@@ -63,6 +65,14 @@ Run `20260830T060136Z-7a08e1`, advanced, patch produced and rejected by the orac
 This is not a fixture. The repository is [`examples/bring-your-own-oracle/repo`](../../examples/bring-your-own-oracle), and the oracle was supplied with `--oracle-dir`, which is how anyone points this tool at their own code.
 
 The agent rewrote a duration parser to accumulate every unit and to reject trailing junk. Five of the six contract checks passed. The sixth did not: `parseDuration("")` returns 0 instead of throwing. The repository's own tests pass on this patch, the agent's ledger says the fault is fixed, and the run is still reported as `unverified-patch` because the oracle disagreed. That gap is the entire product.
+
+## video-run and video-run-rejected: the run in the video, and the one before it
+
+Runs `20260830T205502Z-0a731f` and `20260830T205332Z-603341`, both advanced, both on `entrypoint-mismatch`, recorded twenty seconds apart. The first produced a patch the hidden oracle rejected. The second produced a one-line patch the oracle passed, and that is the run [`video/`](../../video) records and shows.
+
+Two runs are here rather than one because the video selects. `video/recordings/03a-attempts.json` lists every attempt with its outcome, and both are published so the list can be checked rather than taken.
+
+The case matters to how this reads. `entrypoint-mismatch` scored 7 of 7 for advanced mode in the confirmatory batch, and it still failed on the first draw here. Nothing changed between the two runs: same repository, same mode, same model at temperature zero. It is the variance the evaluation spends thirteen point three points measuring, arriving unannounced in a demo.
 
 ## apply-session.txt: the human checkpoint
 

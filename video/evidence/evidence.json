@@ -1,0 +1,627 @@
+{
+  "generatedAt": "2026-08-30T21:25:08.746Z",
+  "generatedBy": "video/pipeline/evidence.mjs",
+  "comparison": {
+    "batch": {
+      "generatedAt": "2026-08-30T15:18:26.854Z",
+      "model": "openai/gpt-4.1-mini",
+      "executor": "docker",
+      "repeats": 7,
+      "cases": [
+        "broken-test-discovery",
+        "case-sensitive-import",
+        "chained-two-faults",
+        "entrypoint-mismatch",
+        "env-contract",
+        "esm-cjs-mismatch",
+        "health-route-port",
+        "manifest-lockfile-mismatch",
+        "monorepo-build-order",
+        "tsconfig-include-scope"
+      ],
+      "runs": 140
+    },
+    "baseline": {
+      "runs": 70,
+      "verified": 42,
+      "percent": 60,
+      "low": 48.293583076211256,
+      "high": 70.66591942644307,
+      "medianWallClockMs": 25412.5,
+      "medianCostUsd": null,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "advanced": {
+      "runs": 70,
+      "verified": 51,
+      "percent": 72.85714285714285,
+      "low": 61.4554665291375,
+      "high": 81.88053919121523,
+      "medianWallClockMs": 28856.5,
+      "medianCostUsd": null,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "difference": {
+      "points": 12.857142857142856,
+      "low": -2.755674322981086,
+      "high": 27.637598824240705,
+      "includesZero": true
+    }
+  },
+  "strata": [
+    {
+      "name": "saturated",
+      "cases": [
+        "case-sensitive-import",
+        "entrypoint-mismatch",
+        "env-contract",
+        "esm-cjs-mismatch",
+        "health-route-port"
+      ],
+      "baseline": {
+        "runs": 35,
+        "verified": 31,
+        "percent": 88.57142857142857,
+        "low": 74.04820521187976,
+        "high": 95.46489414551024,
+        "medianWallClockMs": 24899,
+        "medianCostUsd": 0.006031,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "advanced": {
+        "runs": 35,
+        "verified": 35,
+        "percent": 100,
+        "low": 90.10957324106113,
+        "high": 100,
+        "medianWallClockMs": 26244,
+        "medianCostUsd": 0.00658,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "difference": {
+        "points": 11.428571428571432,
+        "low": -0.6271495824251072,
+        "high": 25.951794788120242,
+        "includesZero": true
+      }
+    },
+    {
+      "name": "hard",
+      "cases": [
+        "broken-test-discovery",
+        "chained-two-faults",
+        "manifest-lockfile-mismatch",
+        "monorepo-build-order",
+        "tsconfig-include-scope"
+      ],
+      "baseline": {
+        "runs": 35,
+        "verified": 11,
+        "percent": 31.428571428571427,
+        "low": 18.550658059782457,
+        "high": 47.98007187925197,
+        "medianWallClockMs": 26774,
+        "medianCostUsd": null,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "advanced": {
+        "runs": 35,
+        "verified": 16,
+        "percent": 45.714285714285715,
+        "low": 30.46577363376085,
+        "high": 61.81054865986248,
+        "medianWallClockMs": 28885,
+        "medianCostUsd": null,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "difference": {
+        "points": 14.285714285714285,
+        "low": -8.219158249778799,
+        "high": 34.89955268488636,
+        "includesZero": true
+      }
+    }
+  ],
+  "variance": {
+    "batches": [
+      {
+        "label": "Development batch, 29 August",
+        "verified": 16,
+        "runs": 30,
+        "percent": 53.333333333333336,
+        "source": "docs/EVALUATION.md"
+      },
+      {
+        "label": "Exploratory batch, 30 August",
+        "verified": 14,
+        "runs": 30,
+        "percent": 46.666666666666664,
+        "source": "submission/evidence/exploratory/eval.json"
+      },
+      {
+        "label": "Confirmatory batch, 30 August",
+        "verified": 42,
+        "runs": 70,
+        "percent": 60,
+        "source": "submission/evidence/confirmatory/eval.json"
+      }
+    ],
+    "spreadPoints": 13.333333333333336,
+    "effectPoints": 12.857142857142856,
+    "note": "The baseline arm is byte-identical across all three. Only advanced instructions changed."
+  },
+  "ablation": {
+    "name": "ablation",
+    "title": "Bounded-retry ablation",
+    "batch": {
+      "generatedAt": "2026-08-30T15:52:37.887Z",
+      "model": "openai/gpt-4.1-mini",
+      "executor": "docker",
+      "repeats": 7,
+      "cases": [
+        "broken-test-discovery",
+        "chained-two-faults",
+        "manifest-lockfile-mismatch",
+        "monorepo-build-order",
+        "tsconfig-include-scope"
+      ],
+      "runs": 70
+    },
+    "cases": [
+      "broken-test-discovery",
+      "chained-two-faults",
+      "manifest-lockfile-mismatch",
+      "monorepo-build-order",
+      "tsconfig-include-scope"
+    ],
+    "hypothesis": "The bounded evidence-driven retry is the ingredient that carries advanced mode. Removing it lowers the verified repair rate on hard faults.",
+    "rule": "Call the bounded retry load-bearing only if the 95 percent interval on control minus treatment excludes zero, over the same cases, repeats, model and budget. An interval that includes zero is reported as unresolved, never as evidence that the retry does not help.",
+    "controlLabel": "control (advanced as published)",
+    "treatmentLabel": "treatment (advanced without the retry)",
+    "removes": "treatment (advanced without the retry)",
+    "control": {
+      "runs": 35,
+      "verified": 13,
+      "percent": 37.142857142857146,
+      "low": 23.16560736889106,
+      "high": 53.663359511978925,
+      "medianWallClockMs": 25270,
+      "medianCostUsd": 0.0075,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "treatment": {
+      "runs": 35,
+      "verified": 1,
+      "percent": 2.857142857142857,
+      "low": 0.5061361365853362,
+      "high": 14.53340909327131,
+      "medianWallClockMs": 22768,
+      "medianCostUsd": null,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "difference": {
+      "points": 34.285714285714285,
+      "low": 16.073116874559876,
+      "high": 50.97266221300959,
+      "includesZero": false
+    },
+    "decision": {
+      "status": "keep",
+      "keep": true,
+      "repairRateDeltaPoints": 34.285714285714285,
+      "costChangePercent": null,
+      "intervalLowPoints": 16.073116874559876,
+      "intervalHighPoints": 50.97266221300959,
+      "reason": "removing it cost +34.3 points (95% CI +16.1 to +51.0), an interval that excludes zero, so it is load-bearing",
+      "verdict": "The retry is load-bearing"
+    }
+  },
+  "mechanism": {
+    "statuses": [
+      {
+        "status": "repaired",
+        "label": "Verified repair",
+        "control": 13,
+        "treatment": 1
+      },
+      {
+        "status": "unverified-patch",
+        "label": "Patch produced, oracle rejected it",
+        "control": 19,
+        "treatment": 11
+      },
+      {
+        "status": "no-patch",
+        "label": "No patch at all",
+        "control": 3,
+        "treatment": 20
+      },
+      {
+        "status": "budget-exhausted",
+        "label": "Budget exhausted",
+        "control": 0,
+        "treatment": 3
+      }
+    ],
+    "note": {
+      "text": "Twenty of its thirty-five treatment runs produced no patch at all, and eighteen of those twenty had a patch refused for running out of tool calls.",
+      "source": "docs/EVALUATION.md"
+    }
+  },
+  "reserve": {
+    "name": "reserve",
+    "title": "Retry turn ablation, reservation held",
+    "batch": {
+      "generatedAt": "2026-08-30T16:49:59.199Z",
+      "model": "openai/gpt-4.1-mini",
+      "executor": "docker",
+      "repeats": 7,
+      "cases": [
+        "broken-test-discovery",
+        "chained-two-faults",
+        "manifest-lockfile-mismatch",
+        "monorepo-build-order",
+        "tsconfig-include-scope"
+      ],
+      "runs": 70
+    },
+    "cases": [
+      "broken-test-discovery",
+      "chained-two-faults",
+      "manifest-lockfile-mismatch",
+      "monorepo-build-order",
+      "tsconfig-include-scope"
+    ],
+    "hypothesis": "The second repair attempt carries part of the bounded retry design on its own, separately from the pacing effect of the reservation shrinking the budget the agent reads.",
+    "rule": "Call the retry turn load-bearing on its own only if the 95 percent interval on control minus treatment excludes zero. An interval that includes zero is reported as unresolved, and the difference against the fully ablated arm is reported as suggestive because the two were measured in different batches.",
+    "controlLabel": "control (advanced as published)",
+    "treatmentLabel": "treatment (no retry turn, reservation kept)",
+    "removes": "treatment (no retry turn, reservation kept)",
+    "control": {
+      "runs": 35,
+      "verified": 17,
+      "percent": 48.57142857142857,
+      "low": 32.99398039125274,
+      "high": 64.43146037328836,
+      "medianWallClockMs": 26793,
+      "medianCostUsd": 0.00746,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "treatment": {
+      "runs": 35,
+      "verified": 8,
+      "percent": 22.857142857142858,
+      "low": 12.065736746179102,
+      "high": 39.017637780102,
+      "medianWallClockMs": 23284,
+      "medianCostUsd": 0.00742,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "difference": {
+      "points": 25.71428571428571,
+      "low": 3.2683843520981943,
+      "high": 44.89748290890762,
+      "includesZero": false
+    },
+    "decision": {
+      "status": "keep",
+      "keep": true,
+      "repairRateDeltaPoints": 25.71428571428571,
+      "costChangePercent": -0.5361930294906064,
+      "intervalLowPoints": 3.2683843520981943,
+      "intervalHighPoints": 44.89748290890762,
+      "reason": "removing it cost +25.7 points (95% CI +3.3 to +44.9), an interval that excludes zero, so it is load-bearing",
+      "verdict": "The retry turn is load-bearing on its own"
+    }
+  },
+  "critic": {
+    "name": "critic",
+    "title": "Critic experiment",
+    "batch": {
+      "generatedAt": "2026-08-30T06:38:18.992Z",
+      "model": "openai/gpt-4.1-mini",
+      "executor": "docker",
+      "repeats": 3,
+      "cases": [
+        "broken-test-discovery",
+        "chained-two-faults",
+        "manifest-lockfile-mismatch"
+      ],
+      "runs": 18
+    },
+    "cases": [
+      "broken-test-discovery",
+      "manifest-lockfile-mismatch",
+      "chained-two-faults"
+    ],
+    "hypothesis": "A critic call that reviews the proposed patch against the hypothesis ledger, and can send it back once, catches patches that satisfy the visible check without satisfying the contract.",
+    "rule": "Keep the critic only for at least +10 percentage points of verified repair rate at no more than +25 percent median cost, measured against advanced mode without the critic over the same cases and repeats.",
+    "controlLabel": "control (advanced)",
+    "treatmentLabel": "treatment (advanced with a critic)",
+    "removes": null,
+    "control": {
+      "runs": 9,
+      "verified": 4,
+      "percent": 44.44444444444444,
+      "low": 18.8775429471914,
+      "high": 73.33526542559703,
+      "medianWallClockMs": 24264,
+      "medianCostUsd": 0.007504,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "treatment": {
+      "runs": 9,
+      "verified": 1,
+      "percent": 11.11111111111111,
+      "low": 1.9890371327130507,
+      "high": 43.50062147680602,
+      "medianWallClockMs": 23676,
+      "medianCostUsd": 0.007257,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "difference": {
+      "points": -33.33333333333333,
+      "low": -63.63006204506678,
+      "high": 7.931019731990468,
+      "includesZero": true
+    },
+    "decision": {
+      "status": "discard",
+      "keep": false,
+      "repairRateDeltaPoints": -33.33333333333333,
+      "costChangePercent": -3.291577825159912,
+      "intervalLowPoints": -63.63006204506678,
+      "intervalHighPoints": 7.931019731990468,
+      "reason": "repair rate gain of -33.3 points is below the 10 point threshold",
+      "verdict": "Discard the critic"
+    }
+  },
+  "subgroup": {
+    "cases": [
+      "broken-test-discovery",
+      "chained-two-faults",
+      "manifest-lockfile-mismatch",
+      "monorepo-build-order",
+      "tsconfig-include-scope"
+    ],
+    "exploratory": {
+      "baseline": {
+        "runs": 15,
+        "verified": 0,
+        "percent": 0,
+        "low": 0,
+        "high": 20.388926630434785,
+        "medianWallClockMs": 24710,
+        "medianCostUsd": 0.008249,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "advanced": {
+        "runs": 15,
+        "verified": 6,
+        "percent": 40,
+        "low": 19.82422808259466,
+        "high": 64.2535572434923,
+        "medianWallClockMs": 29772,
+        "medianCostUsd": 0.007546,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "difference": {
+        "points": 40,
+        "low": 11.316030581448205,
+        "high": 64.2535572434923,
+        "includesZero": false
+      }
+    },
+    "confirmatory": {
+      "baseline": {
+        "runs": 35,
+        "verified": 11,
+        "percent": 31.428571428571427,
+        "low": 18.550658059782457,
+        "high": 47.98007187925197,
+        "medianWallClockMs": 26774,
+        "medianCostUsd": null,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "advanced": {
+        "runs": 35,
+        "verified": 16,
+        "percent": 45.714285714285715,
+        "low": 30.46577363376085,
+        "high": 61.81054865986248,
+        "medianWallClockMs": 28885,
+        "medianCostUsd": null,
+        "unsafeMutations": 0,
+        "budgetViolations": 0,
+        "oracleAccessViolations": 0
+      },
+      "difference": {
+        "points": 14.285714285714285,
+        "low": -8.219158249778799,
+        "high": 34.89955268488636,
+        "includesZero": true
+      }
+    },
+    "note": "The five cases were chosen after seeing the exploratory batch, so they became the next batch’s hypothesis rather than its headline."
+  },
+  "failureProfile": [
+    {
+      "key": "oracle-rejected",
+      "label": "Patch produced, oracle rejected it",
+      "baseline": 16,
+      "advanced": 12
+    },
+    {
+      "key": "no-patch",
+      "label": "No patch at all",
+      "baseline": 11,
+      "advanced": 6
+    },
+    {
+      "key": "budget-exhausted",
+      "label": "Budget exhausted",
+      "baseline": 1,
+      "advanced": 1
+    }
+  ],
+  "demo": {
+    "publishedAt": "submission/examples/video-run",
+    "runId": "20260830T205502Z-0a731f",
+    "caseId": "entrypoint-mismatch",
+    "mode": "advanced",
+    "model": "openai/gpt-4.1-mini",
+    "sandbox": {
+      "executor": "docker",
+      "image": "repro-doctor-runner:1",
+      "network": "none",
+      "readOnlyRootFilesystem": true,
+      "noNewPrivileges": false,
+      "dockerSocketMounted": false,
+      "oracleMountedDuringRepair": false,
+      "secretsMounted": false,
+      "cpuLimit": "1",
+      "memoryLimit": "1g",
+      "commandTimeoutSeconds": 60,
+      "productionSafe": true
+    },
+    "checksumBefore": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "checksumAfter": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "mutated": false,
+    "filesChanged": [
+      "package.json"
+    ],
+    "verification": {
+      "kind": "passed",
+      "exitCode": 0,
+      "durationMs": 3119,
+      "checks": [
+        "PASS the project compiles",
+        "PASS package.json is still valid JSON",
+        "PASS the declared entry point exists on disk",
+        "PASS greet(\"world\") returns \"hello world\" through the entry point",
+        "PASS the source of greet was not deleted"
+      ]
+    },
+    "usage": {
+      "toolCalls": 9,
+      "patchAttempts": 1,
+      "wallClockMs": 25157,
+      "tokens": {
+        "inputTokens": 11905,
+        "outputTokens": 475,
+        "totalTokens": 12380,
+        "requests": 7
+      },
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005522
+      },
+      "limitHit": null
+    },
+    "attempts": [
+      {
+        "runId": "20260830T205332Z-603341",
+        "status": "unverified-patch",
+        "verification": "failed"
+      },
+      {
+        "runId": "20260830T205502Z-0a731f",
+        "status": "repaired",
+        "verification": "passed"
+      }
+    ],
+    "attemptsNote": "Every attempt is listed. The kept recording is the first whose hidden oracle exited zero. The case this runs on scored 7/7 for advanced mode in the confirmatory batch; the first attempt here did not, which is the between-run variance the comparison section is about."
+  },
+  "changelog": [
+    {
+      "stage": "Baseline",
+      "what": "A generic instruction, four tools, one unstructured loop, the same budget and scorer as everything below",
+      "evidence": "42/70 verified, 60.0% (95% CI 48.3 to 70.7); no patch at all in 11 of its 28 failures",
+      "decision": "The control"
+    },
+    {
+      "stage": "Iteration 1",
+      "what": "Structure around the loop: preflight, hypothesis ledger, minimal-patch instruction, evidence-driven retry",
+      "evidence": "51/70, 72.9%; +12.9 points, 95% CI -2.8 to +27.6",
+      "decision": "Kept, with the effect reported as not established"
+    },
+    {
+      "stage": "Iteration 2",
+      "what": "Tell the agent the budget it actually has, and reserve the retry's call",
+      "evidence": "Three live runs on chained-two-faults, each failing a different way, ending in a repaired run",
+      "decision": "Kept"
+    },
+    {
+      "stage": "Iteration 3",
+      "what": "Bill a turn that ends by throwing",
+      "evidence": "One run in 60 with cost: unknown, which made a whole mode's median cost unreportable",
+      "decision": "Kept, and the spoiled batch re-run"
+    },
+    {
+      "stage": "Iteration 4",
+      "what": "Say that a check exiting zero is not evidence the repository works",
+      "evidence": "On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change",
+      "decision": "Kept on the first, null result reported on the second"
+    },
+    {
+      "stage": "Discarded",
+      "what": "A critic agent reviewing the patch before the retry decision",
+      "evidence": "1/9 against 4/9, negative in both runs of the experiment",
+      "decision": "Discarded by the rule written before it ran"
+    },
+    {
+      "stage": "Iteration 7",
+      "what": "Ablate the bounded retry, twice, to find which of advanced mode's five changes carries it",
+      "evidence": "Removing the retry design costs +34.3 points (95% CI +16.1 to +51.0); removing only its second turn costs +25.7 (95% CI +3.3 to +44.9). Both exclude zero",
+      "decision": "Kept, and for the first time on a measurement rather than an argument"
+    },
+    {
+      "stage": "Iteration 6",
+      "what": "Point the tool at a real third-party repository for the first time",
+      "evidence": "Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in",
+      "decision": "Two fixed, the third written down with the run that proves it"
+    },
+    {
+      "stage": "Iteration 5",
+      "what": "Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases",
+      "evidence": "Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases",
+      "decision": "Kept as the published result. The hypothesis was not confirmed and that is the headline"
+    },
+    {
+      "stage": "Final",
+      "what": "Everything except the critic",
+      "evidence": "51/70, zero safety violations in 200 runs across two batches",
+      "decision": "The submitted system"
+    }
+  ]
+}

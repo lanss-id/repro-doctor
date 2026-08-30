@@ -1,0 +1,17 @@
+oracle id: entrypoint-mismatch/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 3117ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 1
+--- stdout ---
+[oracle] FAIL the project compiles: Command failed: tsc -p tsconfig.json
+[oracle] PASS package.json is still valid JSON
+[oracle] FAIL the declared entry point exists on disk: main points at dist/index.js, which the build does not produce
+[oracle] FAIL greet("world") returns "hello world" through the entry point: Cannot find module '/work/dist/index.js' imported from /oracle/oracle.mjs
+[oracle] PASS the source of greet was not deleted
+[oracle] RESULT FAIL
+
+--- stderr ---
+

@@ -1,0 +1,23 @@
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,7 @@
+   "version": "1.0.0",
+   "private": true,
+   "type": "module",
+-  "main": "dist/main.js",
++  "main": "dist/index.js",
+   "scripts": {
+     "build": "tsc -p tsconfig.json",
+     "check": "tsc -p tsconfig.json && node scripts/smoke.mjs"
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -6,7 +6,8 @@
+     "rootDir": "src",
+     "outDir": "dist",
+     "strict": true,
+-    "declaration": true
++    "declaration": true,
++    "outFile": "dist/main.js"
+   },
+   "include": ["src/**/*"]
+ }
