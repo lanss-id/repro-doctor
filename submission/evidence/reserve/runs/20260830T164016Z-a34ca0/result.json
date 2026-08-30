@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T164016Z-a34ca0",
+  "caseId": "monorepo-build-order",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T16:40:16.845Z",
+  "finishedAt": "2026-08-30T16:40:45.420Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/monorepo-build-order/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/workspace",
+    "treeChecksumBefore": "9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211",
+    "treeChecksumAfter": "9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211",
+    "mutated": false,
+    "fileCount": 12
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 28576,
+    "tokens": {
+      "inputTokens": 17258,
+      "outputTokens": 433,
+      "totalTokens": 17691,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.007596
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 5477,
+    "checks": [
+      "PASS a clean build of every package succeeds",
+      "PASS both packages are still part of the build",
+      "PASS quote(1000) returns \"900 cents\"",
+      "PASS the app still uses the core package rather than a local copy"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/repair.patch",
+    "sha256": "1b44d78449282b71acb39fbaf278234ad9f1915d40adbbf30d57b4e965bf3c3d",
+    "changedFiles": [
+      "build.order.json"
+    ],
+    "addedLines": 1,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T164016Z-a34ca0/report.html"
+  }
+}

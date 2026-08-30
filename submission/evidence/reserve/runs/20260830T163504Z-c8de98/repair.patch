@@ -1,0 +1,13 @@
+--- a/package.json
++++ b/package.json
+@@ -5,8 +5,8 @@
+   "type": "module",
+   "main": "dist/index.js",
+   "scripts": {
+-    "build": "tsc -p tsconfig.json",
+-    "check": "npm ci --offline --no-audit --no-fund && tsc -p tsconfig.json && node scripts/smoke.mjs"
++    "build": "tsc -p tsconfig.json && cp -r vendor/strings dist/",
++    "check": "npm ci --offline --no-audit --no-fund && npm run build && node scripts/smoke.mjs"
+   },
+   "dependencies": {
+     "@fixture/strings": "file:vendor/strings"

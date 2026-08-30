@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T154701Z-967e04",
+  "caseId": "tsconfig-include-scope",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T15:47:01.221Z",
+  "finishedAt": "2026-08-30T15:47:31.644Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/tsconfig-include-scope/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/workspace",
+    "treeChecksumBefore": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "treeChecksumAfter": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 8,
+    "patchAttempts": 2,
+    "wallClockMs": 30423,
+    "tokens": {
+      "inputTokens": 12054,
+      "outputTokens": 774,
+      "totalTokens": 12828,
+      "requests": 7
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.00606
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 2858,
+    "checks": [
+      "PASS the project compiles with both source directories in scope",
+      "PASS package.json declares an entry point that exists",
+      "PASS describeCatalog sums the catalog through the entry point",
+      "PASS the shared library is still a separate module under src/lib"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/repair.patch",
+    "sha256": "ec38cc47675d50079d8547613f0f6858830ce3e7e6cef13264079de54358708d",
+    "changedFiles": [
+      "src/index.ts",
+      "src/lib/catalog.d.ts",
+      "src/lib/catalog.js",
+      "tsconfig.json"
+    ],
+    "addedLines": 11,
+    "removedLines": 2,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T154701Z-967e04/report.html"
+  }
+}

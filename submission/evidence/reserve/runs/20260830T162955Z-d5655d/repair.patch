@@ -1,0 +1,20 @@
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,7 @@
+   "version": "1.0.0",
+   "private": true,
+   "type": "module",
+-  "main": "dist/app.js",
++  "main": "dist/index.js",
+   "scripts": {
+     "build": "tsc -p tsconfig.json",
+     "check": "tsc -p tsconfig.json && node scripts/smoke.mjs"
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -3,5 +3,5 @@
+ export const DEFAULT_GREETING = 'hello';
+ 
+ export function loadGreeting(env: Environment): string {
+-  return env['APP_GREETING'] ?? DEFAULT_GREETING;
++  return env['GREETING'] ?? DEFAULT_GREETING;
+ }

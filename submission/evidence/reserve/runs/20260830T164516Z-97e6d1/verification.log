@@ -1,0 +1,16 @@
+oracle id: tsconfig-include-scope/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 3226ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles with both source directories in scope
+[oracle] PASS package.json declares an entry point that exists
+[oracle] PASS describeCatalog sums the catalog through the entry point
+[oracle] PASS the shared library is still a separate module under src/lib
+[oracle] RESULT PASS
+
+--- stderr ---
+

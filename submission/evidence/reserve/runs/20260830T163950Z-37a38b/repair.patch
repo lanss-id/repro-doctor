@@ -1,0 +1,16 @@
+--- a/packages/core/package.json
++++ b/packages/core/package.json
+@@ -1,8 +1,9 @@
+ {
+-  "name": "@pricing/core",
++  "name": "core",
+   "version": "1.0.0",
+-  "private": true,
+-  "type": "module",
+   "main": "dist/index.js",
+-  "types": "dist/index.d.ts"
++  "types": "dist/index.d.ts",
++  "scripts": {
++    "build": "tsc -p tsconfig.json"
++  }
+ }

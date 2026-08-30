@@ -1,0 +1,10 @@
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,6 @@
+     "check": "npm ci --offline --no-audit --no-fund && tsc -p tsconfig.json && node scripts/smoke.mjs"
+   },
+   "dependencies": {
+-    "@fixture/strings": "file:vendor/strings"
++    "@fixture/strings": "file:./vendor/strings"
+   }
+ }

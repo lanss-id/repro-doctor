@@ -1,0 +1,9 @@
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -8,5 +8,5 @@
+     "strict": true,
+     "declaration": true
+   },
+-  "include": ["src/**/*"]
++  "include": ["src/**/*", "vendor/**/*"]
+ }

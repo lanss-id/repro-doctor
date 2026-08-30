@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T153903Z-17eab1",
+  "caseId": "manifest-lockfile-mismatch",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T15:39:03.693Z",
+  "finishedAt": "2026-08-30T15:39:22.578Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/manifest-lockfile-mismatch/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/workspace",
+    "treeChecksumBefore": "bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b",
+    "treeChecksumAfter": "bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b",
+    "mutated": false,
+    "fileCount": 9
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 18885,
+    "tokens": {
+      "inputTokens": 16041,
+      "outputTokens": 321,
+      "totalTokens": 16362,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.00693
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3085,
+    "checks": [
+      "FAIL npm ci installs from the lockfile with no network: npm error code EUSAGE npm error npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.",
+      "PASS the manifest still declares the vendored dependency",
+      "FAIL the dependency is present in node_modules after the install: node_modules/@fixture/strings is missing",
+      "FAIL the project compiles against the installed dependency: Command failed: tsc -p tsconfig.json",
+      "FAIL label(\"hello world\") returns \"Hello World\": Cannot find package '@fixture/strings' imported from /work/dist/index.js"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/repair.patch",
+    "sha256": "1f3149f7f2617e877dbf4c23fb87fa63c7bc149bb65d3e2c0ee996654b1a0107",
+    "changedFiles": [
+      "src/index.ts"
+    ],
+    "addedLines": 1,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T153903Z-17eab1/report.html"
+  }
+}

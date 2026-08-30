@@ -1,0 +1,19 @@
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -6,7 +6,15 @@
+   "packages": {
+     "": {
+       "name": "widget-kit",
+-      "version": "1.0.0"
++      "version": "1.0.0",
++      "dependencies": {
++        "@fixture/strings": "file:vendor/strings"
++      }
++    },
++    "node_modules/@fixture/strings": {
++      "version": "1.0.0",
++      "resolved": "file:vendor/strings",
++      "integrity": ""
+     }
+   }
+ }

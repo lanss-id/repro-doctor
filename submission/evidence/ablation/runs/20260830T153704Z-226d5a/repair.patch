@@ -1,0 +1,12 @@
+--- a/vendor/strings/package.json
++++ b/vendor/strings/package.json
+@@ -3,5 +3,8 @@
+   "version": "1.0.0",
+   "type": "module",
+   "main": "index.js",
+-  "types": "index.d.ts"
++  "types": "index.d.ts",
++  "scripts": {
++    "prepare": "echo prepare script"
++  }
+ }

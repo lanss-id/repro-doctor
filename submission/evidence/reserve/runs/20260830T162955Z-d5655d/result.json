@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T162955Z-d5655d",
+  "caseId": "chained-two-faults",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T16:29:55.980Z",
+  "finishedAt": "2026-08-30T16:30:22.157Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/chained-two-faults/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/workspace",
+    "treeChecksumBefore": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
+    "treeChecksumAfter": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
+    "mutated": false,
+    "fileCount": 8
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 26177,
+    "tokens": {
+      "inputTokens": 18546,
+      "outputTokens": 733,
+      "totalTokens": 19279,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.008591
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 2745,
+    "checks": [
+      "PASS the project compiles",
+      "PASS fault one: the declared entry point exists after the build",
+      "PASS the entry point exports greet",
+      "PASS fault two: GREETING is the variable that is read",
+      "PASS the greeting falls back to \"hello\" when nothing is set",
+      "PASS the undocumented variable is no longer honoured"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/repair.patch",
+    "sha256": "444855531e74a72053d1637c00ebc3481989bc2ffb391d7960e1b3df7ba627b1",
+    "changedFiles": [
+      "package.json",
+      "src/config.ts"
+    ],
+    "addedLines": 2,
+    "removedLines": 2,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T162955Z-d5655d/report.html"
+  }
+}

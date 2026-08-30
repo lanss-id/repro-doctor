@@ -1,0 +1,3725 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-30T16:49:59.199Z",
+  "status": {
+    "kind": "complete"
+  },
+  "model": "openai/gpt-4.1-mini",
+  "executor": "docker",
+  "repeats": 7,
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "cases": [
+    "broken-test-discovery",
+    "chained-two-faults",
+    "manifest-lockfile-mismatch",
+    "monorepo-build-order",
+    "tsconfig-include-scope"
+  ],
+  "runs": [
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 1,
+      "runId": "20260830T162007Z-85a4c5",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 25862,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007442
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 26s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007442 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 1,
+      "runId": "20260830T162033Z-5c2b52",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 28198,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007598
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 28s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007598 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 2,
+      "runId": "20260830T162101Z-e9facc",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 26840,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007617
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007617 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 2,
+      "runId": "20260830T162128Z-717211",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 24627,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007486
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 25s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007486 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 3,
+      "runId": "20260830T162153Z-fb6027",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 26863,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007467
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007467 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 3,
+      "runId": "20260830T162220Z-dac964",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 25247,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00742
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 25s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007420 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 4,
+      "runId": "20260830T162245Z-5f8034",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 27132,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007512
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007512 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 4,
+      "runId": "20260830T162312Z-430162",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 28539,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007488
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 29s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007488 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 5,
+      "runId": "20260830T162340Z-d6f3d5",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 29783,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00753
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 30s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007530 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 5,
+      "runId": "20260830T162410Z-1de062",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21581,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.006947
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.006947 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 6,
+      "runId": "20260830T162432Z-d7be1c",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 28180,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00746
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 28s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007460 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 6,
+      "runId": "20260830T162500Z-2c472f",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 24146,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007593
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 24s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007593 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 7,
+      "runId": "20260830T162524Z-ba9531",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 25451,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00746
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 25s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007460 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "broken-test-discovery",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 7,
+      "runId": "20260830T162550Z-9d7def",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 27491,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007594
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007594 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 1,
+      "runId": "20260830T162617Z-d5b41b",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 23595,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.008086
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 24s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008086 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 1,
+      "runId": "20260830T162641Z-fbc1da",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 34142,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009697
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 34s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009697 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 2,
+      "runId": "20260830T162715Z-382897",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 27422,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.010654
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.010654 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 2,
+      "runId": "20260830T162742Z-aa40b4",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22514,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007998
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007998 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 3,
+      "runId": "20260830T162805Z-2c5ee6",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 26582,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.008675
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008675 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 3,
+      "runId": "20260830T162831Z-b53c01",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 32441,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009184
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 32s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009184 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 4,
+      "runId": "20260830T162904Z-ef5033",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 26663,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.008578
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008578 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 4,
+      "runId": "20260830T162930Z-21f27c",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 25050,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00879
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 25s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008790 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 5,
+      "runId": "20260830T162955Z-d5655d",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 26177,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.008591
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 26s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008591 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 5,
+      "runId": "20260830T163022Z-5e74e6",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 20813,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.006983
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "11/12 tool calls, 1/2 patch attempts, 21s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.006983 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 6,
+      "runId": "20260830T163042Z-524b51",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 24200,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00866
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 24s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008660 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 6,
+      "runId": "20260830T163107Z-8e54da",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 25728,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00874
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 26s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008740 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 7,
+      "runId": "20260830T163132Z-7776d8",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 31476,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009487
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 31s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 6 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009487 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "chained-two-faults",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 7,
+      "runId": "20260830T163204Z-3ef538",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 23284,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007225
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "11/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007225 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 1,
+      "runId": "20260830T163227Z-b8543d",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 22239,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.0103
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.010300 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 1,
+      "runId": "20260830T163249Z-e82904",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21245,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007156
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 21s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007156 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 2,
+      "runId": "20260830T163311Z-97fa24",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 14557,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007037
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 15s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007037 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 2,
+      "runId": "20260830T163325Z-f86894",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 33571,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.011786
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 34s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.011786 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 3,
+      "runId": "20260830T163359Z-d0aea3",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 20602,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007389
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 21s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007389 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 3,
+      "runId": "20260830T163419Z-c2bd7c",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21739,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007163
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007163 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 4,
+      "runId": "20260830T163441Z-ac8448",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22586,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007298
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007298 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 4,
+      "runId": "20260830T163504Z-c8de98",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21653,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007348
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007348 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 5,
+      "runId": "20260830T163525Z-dd1b58",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 18278,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.006987
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 18s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.006987 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 5,
+      "runId": "20260830T163544Z-839fc5",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 23749,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007372
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 24s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007372 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 6,
+      "runId": "20260830T163607Z-73a4c0",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22799,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007462
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007462 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 6,
+      "runId": "20260830T163630Z-7de158",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22610,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007081
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007081 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 7,
+      "runId": "20260830T163653Z-ee418d",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 18125,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007004
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 18s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007004 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "manifest-lockfile-mismatch",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 7,
+      "runId": "20260830T163711Z-931f92",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 19780,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007093
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (bae5c1cf13a00eecab741320972b096cbbcb94ba6640825e9d2ddc5cfc3f0b4b)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 20s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007093 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 1,
+      "runId": "20260830T163731Z-5aec80",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 27592,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007459
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 28s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007459 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 1,
+      "runId": "20260830T163758Z-a76bee",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 39193,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.016879
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 39s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.016879 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 2,
+      "runId": "20260830T163837Z-349353",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 21834,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009567
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009567 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 2,
+      "runId": "20260830T163859Z-1510d5",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 24285,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009458
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 24s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009458 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 3,
+      "runId": "20260830T163924Z-b85e9f",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 26793,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007398
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007398 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 3,
+      "runId": "20260830T163950Z-37a38b",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 25932,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007498
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 26s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007498 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 4,
+      "runId": "20260830T164016Z-a34ca0",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 28576,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007596
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 29s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007596 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 4,
+      "runId": "20260830T164045Z-7e52b5",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 22868,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.008082
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.008082 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 5,
+      "runId": "20260830T164108Z-fa7d41",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21457,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007239
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 21s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007239 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 5,
+      "runId": "20260830T164129Z-998a0a",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 26979,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.009336
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009336 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 6,
+      "runId": "20260830T164156Z-e291f7",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 21735,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00921
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.009210 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 6,
+      "runId": "20260830T164218Z-b59f96",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 25824,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.010622
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 26s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.010622 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 7,
+      "runId": "20260830T164244Z-e52029",
+      "status": "no-patch",
+      "verified": false,
+      "wallClockMs": 27455,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.01085
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 0/2 patch attempts, 27s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": false,
+          "detail": "verification produced no exit status: skipped"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: skipped"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.010850 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "monorepo-build-order",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 7,
+      "runId": "20260830T164311Z-03730f",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22108,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.007171
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "12/12 tool calls, 1/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.007171 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 1,
+      "runId": "20260830T164333Z-330cab",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 33341,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005506
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 33s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.005506 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 1,
+      "runId": "20260830T164407Z-e71720",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 16499,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.002254
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 16s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002254 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 2,
+      "runId": "20260830T164423Z-83d2ed",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 33870,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005016
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 34s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.005016 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 2,
+      "runId": "20260830T164457Z-3ea38a",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 19428,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.002258
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 19s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002258 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 3,
+      "runId": "20260830T164516Z-97e6d1",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 41339,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.006338
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 41s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.006338 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 3,
+      "runId": "20260830T164558Z-a2057e",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 22576,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.003673
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "7/12 tool calls, 1/2 patch attempts, 23s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.003673 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 4,
+      "runId": "20260830T164620Z-3ba9a5",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 40050,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005229
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 40s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.005229 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 4,
+      "runId": "20260830T164700Z-013be4",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 21827,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.002254
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 22s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002254 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 5,
+      "runId": "20260830T164722Z-b45611",
+      "status": "repaired",
+      "verified": true,
+      "wallClockMs": 32448,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.004838
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 32s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 0"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": true,
+          "detail": "oracle passed 4 checks"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.004838 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 5,
+      "runId": "20260830T164755Z-88ab65",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 16828,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00233
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 17s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002330 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 6,
+      "runId": "20260830T164812Z-14eeee",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 36158,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005652
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 36s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.005652 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 6,
+      "runId": "20260830T164848Z-d1bb35",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 17652,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.002512
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 18s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002512 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "control",
+      "repeat": 7,
+      "runId": "20260830T164905Z-c5cf23",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 35818,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.005267
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "6/12 tool calls, 2/2 patch attempts, 36s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.005267 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    },
+    {
+      "caseId": "tsconfig-include-scope",
+      "mode": "advanced",
+      "arm": "treatment",
+      "repeat": 7,
+      "runId": "20260830T164941Z-978910",
+      "status": "unverified-patch",
+      "verified": false,
+      "wallClockMs": 17501,
+      "cost": {
+        "kind": "measured",
+        "usd": 0.00232
+      },
+      "checks": [
+        {
+          "name": "oracle-access",
+          "passed": true,
+          "detail": "no hidden fixture path appears in the trajectory"
+        },
+        {
+          "name": "source-immutability",
+          "passed": true,
+          "detail": "input tree unchanged (ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5)"
+        },
+        {
+          "name": "budget-compliance",
+          "passed": true,
+          "detail": "5/12 tool calls, 1/2 patch attempts, 18s/360s"
+        },
+        {
+          "name": "verification-exit-status",
+          "passed": true,
+          "detail": "oracle exited 1, which is a valid negative result"
+        },
+        {
+          "name": "semantic-oracle",
+          "passed": false,
+          "detail": "oracle did not pass: failed"
+        },
+        {
+          "name": "production-sandbox",
+          "passed": true,
+          "detail": "docker sandbox, image repro-doctor-runner:1"
+        },
+        {
+          "name": "cost-accounting",
+          "passed": true,
+          "detail": "measured $0.002320 against a limit of $0.3"
+        }
+      ],
+      "error": null
+    }
+  ],
+  "summaries": [
+    {
+      "mode": "advanced",
+      "runs": 70,
+      "verifiedRepairs": 25,
+      "verifiedRepairRate": 0.35714285714285715,
+      "medianWallClockMs": 25148.5,
+      "medianCostUsd": 0.00746,
+      "costUnknownRuns": 0,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    }
+  ],
+  "experiment": {
+    "name": "reserve",
+    "hypothesis": "The second repair attempt carries part of the bounded retry design on its own, separately from the pacing effect of the reservation shrinking the budget the agent reads.",
+    "rule": "Call the retry turn load-bearing on its own only if the 95 percent interval on control minus treatment excludes zero. An interval that includes zero is reported as unresolved, and the difference against the fully ablated arm is reported as suggestive because the two were measured in different batches.",
+    "cases": [
+      "broken-test-discovery",
+      "chained-two-faults",
+      "manifest-lockfile-mismatch",
+      "monorepo-build-order",
+      "tsconfig-include-scope"
+    ],
+    "control": {
+      "mode": "advanced",
+      "runs": 35,
+      "verifiedRepairs": 17,
+      "verifiedRepairRate": 0.4857142857142857,
+      "medianWallClockMs": 26793,
+      "medianCostUsd": 0.00746,
+      "costUnknownRuns": 0,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "treatment": {
+      "mode": "advanced",
+      "runs": 35,
+      "verifiedRepairs": 8,
+      "verifiedRepairRate": 0.22857142857142856,
+      "medianWallClockMs": 23284,
+      "medianCostUsd": 0.00742,
+      "costUnknownRuns": 0,
+      "unsafeMutations": 0,
+      "budgetViolations": 0,
+      "oracleAccessViolations": 0
+    },
+    "decision": {
+      "status": "keep",
+      "keep": true,
+      "repairRateDeltaPoints": 25.71428571428571,
+      "costChangePercent": -0.5361930294906064,
+      "intervalLowPoints": 3.2683843520981943,
+      "intervalHighPoints": 44.89748290890762,
+      "reason": "removing it cost +25.7 points (95% CI +3.3 to +44.9), an interval that excludes zero, so it is load-bearing"
+    }
+  }
+}
