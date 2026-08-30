@@ -4,7 +4,7 @@ Four minutes fifty-six against a five minute limit. One terminal, and charts dra
 
 The brief asks for six things: the problem and the simple baseline, one realistic execution end to end, the final comparison, the changelog, the change that contributed most, and one discarded experiment. They are the six sections below, in that order.
 
-Record at 1920x1080, terminal font large enough to read at half size. Build the Docker image beforehand so nothing waits on a pull.
+The terminal is recorded as a 100 by 30 character grid rather than as pixels, so there is no capture resolution to set: the renderer picks the largest type that fits the 1920x1080 frame. Build the Docker image with `npm run docker:build` before re-recording the repair scene, so nothing waits on a pull.
 
 This script is also the input to [../video/](../video), which builds the recording rather than films it: the section headings below set the timing, the blockquotes are the narration, and the `On screen` lines are what has to be up while each one is said. Editing a heading or a blockquote changes the video. See [../video/README.md](../video/README.md) for what in it is synthetic.
 
