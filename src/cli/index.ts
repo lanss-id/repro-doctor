@@ -7,6 +7,7 @@ import { applyCommand } from './commands/apply.js';
 import { diagnoseCommand } from './commands/diagnose.js';
 import { evalCommand } from './commands/eval.js';
 import { fixturesCommand } from './commands/fixtures.js';
+import { replayCommand } from './commands/replay.js';
 import { reportCommand } from './commands/report.js';
 import { HELP_TEXT, createPresenter } from './presenter.js';
 
@@ -31,6 +32,8 @@ export async function main(argv: readonly string[]): Promise<number> {
       return await evalCommand(args, presenter);
     case 'report':
       return await reportCommand(args, presenter);
+    case 'replay':
+      return await replayCommand(args, presenter);
     case 'fixtures':
       return await fixturesCommand(args, presenter);
     default:
