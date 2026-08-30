@@ -69,14 +69,21 @@ npm run doctor -- diagnose <repo> --mode baseline|advanced
 # Review a patch and apply it to a real repository, with a confirmation prompt.
 npm run doctor -- apply <run-id> --to <repo>
 
-# Run every fixture in both modes, three times each, and score the results.
-npm run eval -- --repeats 3
+# Run every fixture in both modes, seven times each, and score the results.
+npm run eval -- --repeats 7
 
-# Run the critic A/B experiment instead, against its pre-registered decision rule.
-npm run eval -- --experiment critic --repeats 3
+# Run a two-arm experiment instead, against its pre-registered decision rule.
+# Each writes its own report file, so it cannot overwrite what it is measured against.
+npm run eval -- --experiment critic|ablation --repeats 7
+
+# Ask whether the advantage is capability or only efficiency under a tight budget.
+npm run eval -- --repeats 3 --max-tool-calls 25
 
 # Build the comparison page from whatever real results are on disk.
 npm run report
+
+# Recompute a published result from its committed runs. No API key, no model, no network.
+npm run doctor -- replay submission/evidence/confirmatory
 ```
 
 `npm run doctor -- help` prints every option. Note the `--` before the arguments: npm needs it to pass them through.
@@ -271,7 +278,15 @@ The second failure mode is narrower and was found late: when a repository's own 
 
 ## Hot take
 
-Most of what went wrong with this agent was not reasoning. It was bookkeeping.
+**The noise between batches was larger than the effect I was trying to measure.**
+
+The baseline arm never changed by a character. Run three times, on the same ten repositories, at temperature zero, it scored 53.3%, then 46.7%, then 60.0%. A spread of 13.3 points. The difference I set out to detect is 12.9.
+
+So a repair rate quoted from a run somebody did last week tells you nothing, and neither does mine unless you also know what the control scored in the same batch. Almost every agent evaluation I have read reports one number for the agent and one number for the baseline, and quite often those two numbers were not produced at the same time. Those comparisons are measuring the weather.
+
+I only found this because I ran the identical arm three times instead of once, which felt wasteful at the time and turned out to be the cheapest thing in the project.
+
+The second one is smaller and more practical. Most of what went wrong with this agent was not reasoning. It was bookkeeping.
 
 Four separate live failures were traced during development, and every one of them was the harness telling the agent something untrue, or failing to tell it something it needed:
 
