@@ -21,7 +21,7 @@ npm run lint
 npm test
 ```
 
-Expected: no output from typecheck or lint, and `pass 198` from the tests. The suite takes about a minute, most of it real subprocesses.
+Expected: no output from typecheck or lint, and `pass 201` from the tests. The suite takes about a minute, most of it real subprocesses.
 
 ```bash
 npm run doctor -- fixtures list

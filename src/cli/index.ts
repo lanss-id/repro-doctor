@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { ReproDoctorError, describeError } from '../domain/failure.js';
 import { createLogger } from '../infra/log.js';
@@ -44,8 +45,20 @@ export async function main(argv: readonly string[]): Promise<number> {
   }
 }
 
+/**
+ * True when this module was invoked as the program, false when imported.
+ *
+ * The realpath matters. Installed as a package, the command runs through the
+ * symlink npm puts in `node_modules/.bin`, so `process.argv[1]` is that link
+ * while `import.meta.url` is the file it points at. Comparing them raw made
+ * every installed invocation exit zero and print nothing, which is the worst
+ * shape a failure can take. Found by running the published install rather than
+ * by reading this line.
+ */
 const entryPath = process.argv[1];
-const isEntryPoint = entryPath !== undefined && pathToFileURL(entryPath).href === import.meta.url;
+const isEntryPoint =
+  entryPath !== undefined &&
+  pathToFileURL(realpathSync.native(entryPath)).href === import.meta.url;
 
 if (isEntryPoint) {
   main(process.argv.slice(2))
