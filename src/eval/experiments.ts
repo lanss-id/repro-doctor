@@ -18,6 +18,8 @@ import {
 export interface ArmSettings {
   readonly criticEnabled: boolean;
   readonly retryEnabled: boolean;
+  /** Whether the tool call the retry is paid for with is still held back. */
+  readonly reserveEnabled: boolean;
 }
 
 export interface ExperimentSpec {
@@ -45,8 +47,8 @@ const CRITIC: ExperimentSpec = {
   hypothesis:
     'A critic call that reviews the proposed patch against the hypothesis ledger, and can send it back once, catches patches that satisfy the visible check without satisfying the contract.',
   rule: `Keep the critic only for at least +${MIN_REPAIR_RATE_GAIN_POINTS} percentage points of verified repair rate at no more than +${MAX_COST_INCREASE_PERCENT} percent median cost, measured against advanced mode without the critic over the same cases and repeats.`,
-  control: { criticEnabled: false, retryEnabled: true },
-  treatment: { criticEnabled: true, retryEnabled: true },
+  control: { criticEnabled: false, retryEnabled: true, reserveEnabled: true },
+  treatment: { criticEnabled: true, retryEnabled: true, reserveEnabled: true },
   decide: decideExperiment,
   verdict: {
     pending: 'Decision pending',
@@ -85,8 +87,8 @@ const ABLATION: ExperimentSpec = {
     'The bounded evidence-driven retry is the ingredient that carries advanced mode. Removing it lowers the verified repair rate on hard faults.',
   rule:
     'Call the bounded retry load-bearing only if the 95 percent interval on control minus treatment excludes zero, over the same cases, repeats, model and budget. An interval that includes zero is reported as unresolved, never as evidence that the retry does not help.',
-  control: { criticEnabled: false, retryEnabled: true },
-  treatment: { criticEnabled: false, retryEnabled: false },
+  control: { criticEnabled: false, retryEnabled: true, reserveEnabled: true },
+  treatment: { criticEnabled: false, retryEnabled: false, reserveEnabled: false },
   decide: decideAblation,
   verdict: {
     pending: 'Decision pending',
@@ -96,9 +98,42 @@ const ABLATION: ExperimentSpec = {
   },
 };
 
+/**
+ * The same five cases and the same control as ABLATION, with one variable held
+ * still. The treatment keeps the tool-call reservation while losing the retry
+ * turn, which separates the second attempt from the pacing effect of a smaller
+ * advertised budget. ABLATION removed both at once and could not say which of
+ * them its 34.3 points belonged to.
+ *
+ * This treatment is not a shippable design. It reserves a call for a turn that
+ * will never happen. It exists to hold one variable still, which is what an
+ * ablation arm is for.
+ */
+const RESERVE: ExperimentSpec = {
+  name: 'reserve',
+  title: 'Retry turn ablation, reservation held',
+  controlLabel: 'control (advanced as published)',
+  treatmentLabel: 'treatment (no retry turn, reservation kept)',
+  cases: ABLATION.cases,
+  hypothesis:
+    'The second repair attempt carries part of the bounded retry design on its own, separately from the pacing effect of the reservation shrinking the budget the agent reads.',
+  rule:
+    'Call the retry turn load-bearing on its own only if the 95 percent interval on control minus treatment excludes zero. An interval that includes zero is reported as unresolved, and the difference against the fully ablated arm is reported as suggestive because the two were measured in different batches.',
+  control: { criticEnabled: false, retryEnabled: true, reserveEnabled: true },
+  treatment: { criticEnabled: false, retryEnabled: false, reserveEnabled: true },
+  decide: decideAblation,
+  verdict: {
+    pending: 'Decision pending',
+    keep: 'The retry turn is load-bearing on its own',
+    discard: 'Remove the retry turn',
+    unresolved: 'Unresolved at this sample size',
+  },
+};
+
 export const EXPERIMENTS: Readonly<Record<ExperimentName, ExperimentSpec>> = {
   critic: CRITIC,
   ablation: ABLATION,
+  reserve: RESERVE,
 };
 
 export const EXPERIMENT_NAMES: readonly ExperimentName[] = Object.keys(

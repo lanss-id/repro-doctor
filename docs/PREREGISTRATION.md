@@ -4,10 +4,16 @@ Written and committed before any of the three batches ran. The commit that adds 
 the proof of order: everything below was fixed while the results were still
 unknown, so nothing in it can have been chosen to fit an answer.
 
-Three experiments are registered here. E5 re-measures the headline comparison at
-a sample size large enough to settle it. E6 asks which ingredient of advanced
-mode carries the difference. E7 asks whether the difference is a capability
-difference at all, or only an efficiency difference under a tight budget.
+Four experiments are registered here, each before it ran. E5 re-measures the
+headline comparison at a sample size large enough to settle it. E6 asks which
+ingredient of advanced mode carries the difference. E7 asks whether the
+difference is a capability difference at all, or only an efficiency difference
+under a tight budget. E6b, added after E6 produced a significant result whose
+mechanism was not the one predicted, separates the two things E6 turned out to
+have moved together.
+
+E7 was registered and then not run, because the model credit ran out. That is
+recorded in its own section rather than deleted.
 
 ## What is already known, and what that entitles us to claim
 
@@ -167,7 +173,78 @@ tuned afterwards. It is large enough that budget starvation stops being the
 binding constraint and small enough that a run still finishes inside the
 existing 360 second wall clock.
 
-## Rules that bind all three experiments
+## E6b: separating the retry turn from the reservation it is paid for with
+
+**Written after E6 ran and before E6b ran.** E6's result is in the improvement
+changelog and is not repeated here; what matters is that it came out
+significant in a way that does not mean what the hypothesis said it would.
+
+**What E6 found that this exists to resolve.** Removing the retry design cost
+34.3 points, and the mechanism was not the missing second attempt. Twenty of
+E6's thirty-five treatment runs produced no patch at all, and eighteen of those
+twenty proposed a patch that was refused for exceeding the tool-call budget.
+
+The reservation turns out to do two jobs. It funds the retry turn, and it also
+subtracts one from the `[budget]` line the agent reads, which makes the agent
+patch earlier. E6's treatment released the reservation, so it lost both at once.
+
+**Which makes the reasoning registered for E6 wrong.** E6 argued that releasing
+the reservation made the ablation conservative, because the treatment arm would
+get more usable calls. It got more calls and used them worse: the binding
+constraint was pacing, not budget. The error runs in the direction that inflates
+the measured effect, and it is recorded here rather than quietly corrected.
+
+**Question.** How much of the 34.3 points is the second attempt, and how much is
+the pacing effect of a smaller advertised budget?
+
+**Design.** Two arms, both advanced mode, both on the five hard-stratum cases,
+seven repeats. 70 runs.
+
+- **Control:** advanced mode exactly as published.
+- **Treatment:** the retry turn removed and step 8 told truthfully, but the
+  tool-call reservation **kept**. The agent still sees one fewer call than it
+  has, still paces against that number, and still never gets a second turn. The
+  reserved call is simply never spent.
+
+**This treatment is not a design anyone would ship.** It wastes a tool call on a
+turn that will not happen. It exists to hold one variable still, which is what
+an ablation arm is for, and it is described that way rather than as a candidate.
+
+**Hypothesis.** The second attempt carries part of the 34.3 points on its own.
+
+**Decision rule.** Report three numbers with their intervals and claim only what
+each supports:
+
+1. control minus treatment here isolates the second attempt. The claim "the
+   retry turn is load-bearing on its own" may be published only if this interval
+   excludes zero.
+2. E6's treatment against this treatment isolates the pacing effect. Both are
+   measured in different batches, so this comparison is reported as suggestive
+   and never as an established difference. The batches were run within an hour
+   of each other on the same code and the same provider, which makes it worth
+   printing and does not make it sound.
+3. This batch's control against E6's control is a fifth independent estimate of
+   advanced mode on hard faults, and is published as a variance measurement
+   whatever it shows.
+
+**Paired control again.** Re-run rather than reused from E6, for the same reason
+E6 did not reuse E5's advanced arm.
+
+**What replaces E7.** E7, the budget-sensitivity batch, is not being run. The
+model credit for this submission ran out, and with what remained this question
+was worth more: E7 at the affordable sample size could not have resolved a 13
+point difference, while this batch sharpens the only interval in the project
+that excludes zero. The reason is external to both results and was decided
+before this batch ran. E7's design stays written down for whoever has the credit.
+
+A second reason surfaced while preparing the real-repository example and is
+worth recording: `maxTurns` was fixed at 16 regardless of the budget, so E7's
+25-call arms would have been stopped at about 19 calls while the `[budget]` line
+told the agent it had 25. E7 as registered would have measured a broken
+configuration. The defect is fixed, with a floor that leaves every batch at the
+published 12-call budget byte-identical, and it is in the improvement changelog.
+
+## Rules that bind every experiment here
 
 1. No fixture, hidden oracle, reference repair, budget, model, provider,
    executor, or agent instruction changes between this commit and the end of

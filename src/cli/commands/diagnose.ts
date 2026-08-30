@@ -5,6 +5,7 @@ import { ModeSchema } from '../../domain/mode.js';
 import { ExecutorKindSchema } from '../../domain/result.js';
 import { describeVerification } from '../../domain/verification.js';
 import { diagnose } from '../../agent/diagnose.js';
+import { parseCheckCommand } from '../../agent/check-command.js';
 import { findFixtureForRepo } from '../../fixtures/registry.js';
 import { createLogger } from '../../infra/log.js';
 import type { HiddenOracle } from '../../oracle/verify.js';
@@ -30,6 +31,7 @@ const KNOWN_FLAGS = [
   'max-seconds',
   'max-cost-usd',
   'command-timeout',
+  'check-command',
   'json',
 ];
 
@@ -49,12 +51,20 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
   const oracleDir = stringFlag(args, 'oracle-dir');
   const oracle = resolveOracle(oracleDir, args, fixture);
   const caseId = stringFlag(args, 'case-id') ?? fixture?.meta.id ?? null;
+  const checkFlag = stringFlag(args, 'check-command');
+  const checkCommand = checkFlag === null ? null : parseCheckCommand(checkFlag);
+  if (checkFlag !== null && checkCommand === null) {
+    throw new ReproDoctorError('internal-error', '--check-command was empty');
+  }
 
   presenter.heading('Diagnose');
   presenter.keyValue('repository', repoPath);
   presenter.keyValue('mode', mode);
   presenter.keyValue('case', caseId ?? '(not a registered fixture)');
   presenter.keyValue('hidden oracle', oracle === null ? 'none registered' : oracle.id);
+  if (checkCommand !== null) {
+    presenter.keyValue('check command', `${checkCommand.label} (given, not resolved from the manifest)`);
+  }
   presenter.keyValue(
     'budget',
     `${budget.maxToolCalls} tool calls, ${budget.maxPatchAttempts} patch attempts, ${budget.maxWallClockSeconds}s, $${budget.maxCostUsd}`,
@@ -68,6 +78,7 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
     oracle,
     logger: createLogger(),
     ...(executorKind === undefined ? {} : { executorKind }),
+    ...(checkCommand === null ? {} : { checkCommand }),
   });
 
   presenter.heading('Result');

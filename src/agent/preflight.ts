@@ -18,9 +18,15 @@ export interface PreflightReport {
  * each one is charged to the same budget. The structure is free of model
  * randomness, not free of cost.
  */
+export interface PreflightOptions {
+  /** Overrides the command resolved from the manifest. */
+  readonly checkCommand?: CheckCommand | null;
+}
+
 export async function runPreflight(
   session: RepairSession,
   trajectory: TrajectoryWriter,
+  options: PreflightOptions = {},
 ): Promise<PreflightReport> {
   const findings: string[] = [];
   const sections: string[] = [];
@@ -39,7 +45,7 @@ export async function runPreflight(
   }
 
   const manifest = await readManifest(session.workspacePath);
-  const checkCommand = checkCommandFor(manifest);
+  const checkCommand = checkCommandFor(manifest, options.checkCommand ?? null);
   findings.push(`check command resolved from ${checkCommand.source}: ${checkCommand.label}`);
 
   const check = await session.runCommand(checkCommand.command, checkCommand.args);

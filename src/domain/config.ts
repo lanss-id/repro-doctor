@@ -18,8 +18,30 @@ export const ModelSettingsSchema = z.object({
 });
 export type ModelSettings = z.infer<typeof ModelSettingsSchema>;
 
-export function defaultModelSettings(model: string): ModelSettings {
-  return { model, temperature: 0, topP: 1, maxTurns: 16, parallelToolCalls: false };
+/** The floor every published measurement was taken at. */
+export const BASELINE_MAX_TURNS = 16;
+
+/**
+ * `maxTurns` is the SDK's own ceiling on agent turns, and it used to be fixed
+ * at 16 regardless of the budget. Raising the tool-call budget above about
+ * sixteen therefore did nothing except make the `[budget]` line lie to the
+ * agent: it was told it had 25 calls and the SDK stopped it at 19. That was
+ * found by pointing the tool at a real repository, and it is the fourth time
+ * in this project that the harness was the thing telling the agent something
+ * untrue.
+ *
+ * The floor is kept so that every batch measured at the default budget is
+ * byte-identical to the ones already published: 12 tool calls still yields 16.
+ */
+export function defaultModelSettings(model: string, maxToolCalls?: number): ModelSettings {
+  const headroom = maxToolCalls === undefined ? 0 : maxToolCalls + 4;
+  return {
+    model,
+    temperature: 0,
+    topP: 1,
+    maxTurns: Math.max(BASELINE_MAX_TURNS, headroom),
+    parallelToolCalls: false,
+  };
 }
 
 export function fingerprintModelSettings(settings: ModelSettings): string {

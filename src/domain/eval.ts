@@ -64,7 +64,7 @@ export const EvalStatusSchema = z.discriminatedUnion('kind', [
 export type EvalStatus = z.infer<typeof EvalStatusSchema>;
 
 /** The experiments this repository has run. Each has its own report file. */
-export const ExperimentNameSchema = z.enum(['critic', 'ablation']);
+export const ExperimentNameSchema = z.enum(['critic', 'ablation', 'reserve']);
 export type ExperimentName = z.infer<typeof ExperimentNameSchema>;
 
 export const ExperimentDecisionSchema = z.object({

@@ -19,7 +19,21 @@ export interface CheckCommand {
   readonly command: string;
   readonly args: readonly string[];
   readonly label: string;
-  readonly source: 'script:check' | 'script:build' | 'script:test' | 'fallback';
+  readonly source: 'explicit' | 'script:check' | 'script:build' | 'script:test' | 'fallback';
+}
+
+/**
+ * Splits an explicit check command on whitespace. Deliberately not a shell:
+ * the sandbox runs an argv, so a command with pipes or redirection has to be
+ * put in a script the repository owns rather than smuggled through here.
+ */
+export function parseCheckCommand(text: string): CheckCommand | null {
+  const parts = text.trim().split(/\s+/u).filter((part) => part.length > 0);
+  const [command, ...args] = parts;
+  if (command === undefined) {
+    return null;
+  }
+  return { command, args, label: parts.join(' '), source: 'explicit' };
 }
 
 /**
@@ -27,7 +41,17 @@ export interface CheckCommand {
  * evidence gate, which re-runs it under harness control rather than trusting
  * the agent's summary of what happened.
  */
-export function checkCommandFor(manifest: PackageManifest | null): CheckCommand {
+export function checkCommandFor(
+  manifest: PackageManifest | null,
+  explicit: CheckCommand | null = null,
+): CheckCommand {
+  // A repository's own `check` script is a good default and a bad assumption.
+  // commander's runs lint and formatting, which say nothing about whether the
+  // library works and everything about whether its devDependencies are
+  // installed. The caller who knows the repository gets the last word.
+  if (explicit !== null) {
+    return explicit;
+  }
   const scripts = manifest?.scripts ?? {};
   if (typeof scripts['check'] === 'string') {
     return { command: 'npm', args: ['run', 'check', '--silent'], label: 'npm run check', source: 'script:check' };

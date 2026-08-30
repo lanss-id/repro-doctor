@@ -38,7 +38,7 @@ import { artifactsRoot } from '../infra/project-root.js';
 import { runHiddenOracle, type HiddenOracle } from '../oracle/verify.js';
 import { renderRunReport } from '../report/run-report.js';
 import { BudgetExceededError, BudgetTracker } from './budget-tracker.js';
-import { checkCommandFor, readManifest } from './check-command.js';
+import { checkCommandFor, readManifest, type CheckCommand } from './check-command.js';
 import {
   AgentsSdkDriver,
   createCriticDriver,
@@ -89,6 +89,23 @@ export interface DiagnoseOptions {
    */
   readonly retryEnabled?: boolean;
   /**
+   * Ablation treatment, advanced mode only. Default true. Setting it false
+   * without also disabling the retry is refused: the retry has to be paid for.
+   *
+   * It exists so an ablation can hold the reservation still while removing the
+   * retry turn. E6 removed both together and could not say which of them the
+   * result belonged to. See docs/PREREGISTRATION.md, E6b.
+   */
+  readonly reserveEnabled?: boolean;
+  /**
+   * The command that says whether the repository works, when the one resolved
+   * from the manifest is the wrong question. A repository's own `check` script
+   * often runs lint and formatting too, which report on its devDependencies
+   * rather than on its behaviour. Both modes and the evidence gate use whatever
+   * this resolves to, so it can never advantage one arm over the other.
+   */
+  readonly checkCommand?: CheckCommand | null;
+  /**
    * Test seam. Integration tests drive the real sandbox, patcher and oracle
    * with a scripted driver instead of a live model. Results produced this way
    * name the scripted model in result.json and are excluded from scoring.
@@ -109,7 +126,7 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   const budget = options.budget ?? DEFAULT_BUDGET;
   const executorKind = options.executorKind ?? config.defaultExecutor;
   const model = options.modelOverride ?? config.model;
-  const settings = defaultModelSettings(model);
+  const settings = defaultModelSettings(model, budget.maxToolCalls);
   const priceTable = options.priceTable ?? loadPriceTable(env);
   const startedAt = new Date();
 
@@ -202,6 +219,10 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   // switched off together. No experiment asks for that combination and the
   // registry in experiments.ts cannot express it.
   const retryEnabled = options.retryEnabled !== false;
+  // The reservation exists to fund the retry, so a run cannot keep the retry
+  // and drop the calls it needs. The other direction is allowed and is what
+  // the E6b ablation arm is.
+  const reserveEnabled = retryEnabled || options.reserveEnabled !== false;
 
   const driverOptions: DriverOptions = {
     apiKey: config.apiKey ?? 'scripted-driver-no-key',
@@ -264,13 +285,15 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   try {
     let task = taskMessage(path.basename(repoPath));
     if (options.mode === 'advanced') {
-      const preflight = await runPreflight(session, trajectory);
+      const preflight = await runPreflight(session, trajectory, {
+        checkCommand: options.checkCommand ?? null,
+      });
       task = `${task}\n\n${preflight.text}`;
       // Advanced mode promises one evidence-driven repair turn. Hold back the
       // calls that turn needs before the agent starts spending, or a first
       // patch on the last call cancels the promise without anyone noticing.
       tracker.setToolCallReserve(
-        (retryEnabled ? RETRY_TOOL_CALL_RESERVE : 0) +
+        (reserveEnabled ? RETRY_TOOL_CALL_RESERVE : 0) +
           (critic === null ? 0 : CRITIC_TOOL_CALL_RESERVE),
       );
       session.beginCheckpointedRepairTurn();
@@ -282,7 +305,14 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
     hypotheses = hypothesesFrom(turn.structured);
 
     if (options.mode === 'advanced') {
-      const gate = await runEvidenceGate(executor, tracker, trajectory, paths.workspaceDir, 1);
+      const gate = await runEvidenceGate(
+        executor,
+        tracker,
+        trajectory,
+        paths.workspaceDir,
+        1,
+        options.checkCommand ?? null,
+      );
 
       // The independent oracle runs here, after the agent's first attempt, on a
       // fresh copy. Its result drives the single retry; its code is never
@@ -333,7 +363,14 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
         await recordAssistantTurn(trajectory, turn);
         cost = accountFor(tracker, turn, priceTable, model);
         hypotheses = hypothesesFrom(turn.structured);
-        await runEvidenceGate(executor, tracker, trajectory, paths.workspaceDir, 2);
+        await runEvidenceGate(
+          executor,
+          tracker,
+          trajectory,
+          paths.workspaceDir,
+          2,
+          options.checkCommand ?? null,
+        );
       }
     }
 
@@ -546,10 +583,11 @@ async function runEvidenceGate(
   trajectory: TrajectoryWriter,
   workspacePath: string,
   attempt: number,
+  explicitCheck: CheckCommand | null,
 ): Promise<GateResult> {
   tracker.assertWallClock();
   const manifest = await readManifest(workspacePath);
-  const check = checkCommandFor(manifest);
+  const check = checkCommandFor(manifest, explicitCheck);
   const outcome = await executor.run({
     command: check.command,
     args: check.args,

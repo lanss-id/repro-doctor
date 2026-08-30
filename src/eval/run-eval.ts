@@ -58,6 +58,7 @@ interface PlannedRun {
   readonly repeat: number;
   readonly criticEnabled: boolean;
   readonly retryEnabled: boolean;
+  readonly reserveEnabled: boolean;
 }
 
 /**
@@ -130,6 +131,7 @@ export async function runEvaluation(options: EvalOptions): Promise<EvalReport> {
           modelOverride: model,
           criticEnabled: planned.criticEnabled,
           retryEnabled: planned.retryEnabled,
+          reserveEnabled: planned.reserveEnabled,
           ...(options.criticFactory === undefined ? {} : { criticFactory: options.criticFactory }),
           ...(options.allowLocalAdapter === undefined
             ? {}
@@ -213,6 +215,7 @@ function planRuns(
             repeat,
             criticEnabled: false,
             retryEnabled: true,
+            reserveEnabled: true,
           });
           continue;
         }

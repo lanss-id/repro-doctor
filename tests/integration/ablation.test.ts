@@ -133,6 +133,51 @@ test('the retry flag never reaches baseline mode', () => {
   );
 });
 
+test('the reservation can be kept while the retry turn is removed', async () => {
+  const feedback: string[] = [];
+  let turns = 0;
+
+  const result = await diagnose({
+    ...baseOptions,
+    retryEnabled: false,
+    reserveEnabled: true,
+    driverFactory: recordingDriver(async (session, turn) => {
+      turns = turn;
+      return await uselessPatch(session);
+    }, feedback),
+  });
+
+  assert.equal(turns, 1);
+  assert.equal(feedback.length, 0, 'no retry turn happens');
+  // The reserved call is held back and simply never spent, which is the whole
+  // point of the arm: it holds the pacing constant while removing the turn.
+  assert.ok(result.usage.toolCalls < DEFAULT_BUDGET.maxToolCalls);
+  assert.equal(result.outcome.status, 'unverified-patch');
+});
+
+test('the retry can never be kept while the calls it is paid for with are dropped', async () => {
+  const feedback: string[] = [];
+  const manifest = await readFile(path.join(fixture.repoDir, 'package.json'), 'utf8');
+  const fixed = manifest.split('*.test.mjs').join('*.spec.mjs');
+
+  const result = await diagnose({
+    ...baseOptions,
+    reserveEnabled: false,
+    driverFactory: recordingDriver(async (session, turn) => {
+      if (turn === 1) {
+        return await uselessPatch(session);
+      }
+      await session.proposePatch([{ path: 'package.json', content: fixed }], 'fix the glob');
+      return { text: 'fixed' };
+    }, feedback),
+  });
+
+  // reserveEnabled: false is ignored while the retry is on, because a retry
+  // with no calls reserved for it is the defect this project already fixed once.
+  assert.equal(feedback.length, 1);
+  assert.equal(result.outcome.status, 'repaired');
+});
+
 after(async () => {
   await artifacts.cleanup();
 });
