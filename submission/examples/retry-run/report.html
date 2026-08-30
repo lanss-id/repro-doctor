@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repro Doctor run 20260830T062910Z-e87630</title>
+<style>
+:root { color-scheme: light dark; --fg: #16181d; --muted: #5c6370; --line: #d9dce3; --bg: #ffffff; --panel: #f6f7f9; --pass: #14804a; --fail: #b3261e; --warn: #8a6100; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e6e8ec; --muted: #9aa1ad; --line: #333842; --bg: #14161a; --panel: #1c1f25; --pass: #4ac47f; --fail: #ff8a80; --warn: #e0b054; }
+}
+* { box-sizing: border-box; }
+body { margin: 0 auto; padding: 2rem 1.25rem 4rem; max-width: 68rem; background: var(--bg); color: var(--fg);
+  font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.15rem; margin: 2.25rem 0 .6rem; padding-bottom: .3rem; border-bottom: 1px solid var(--line); }
+h3 { font-size: 1rem; margin: 1.5rem 0 .4rem; }
+p { margin: .5rem 0; }
+.subtitle { color: var(--muted); margin: 0 0 1.5rem; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; margin: .5rem 0 1rem; }
+th, td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: .85rem; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: .8rem; overflow-x: auto; }
+.cards { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+.card { flex: 1 1 11rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: .8rem .9rem; }
+.card .label { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; }
+.card .value { font-size: 1.45rem; font-variant-numeric: tabular-nums; margin-top: .2rem; }
+.pass { color: var(--pass); font-weight: 600; }
+.fail { color: var(--fail); font-weight: 600; }
+.warn { color: var(--warn); font-weight: 600; }
+.muted { color: var(--muted); }
+.notice { background: var(--panel); border-left: 3px solid var(--warn); padding: .75rem .9rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+footer { margin-top: 3rem; color: var(--muted); font-size: .82rem; border-top: 1px solid var(--line); padding-top: .8rem; }
+</style>
+</head>
+<body>
+
+<h1>Repro Doctor run 20260830T062910Z-e87630</h1>
+<p class="subtitle">advanced mode on tsconfig-include-scope, model openai/gpt-4.1-mini</p>
+
+<div class="cards">
+  <div class="card"><div class="label">Outcome</div><div class="value pass">repaired</div></div>
+  <div class="card"><div class="label">Hidden oracle</div><div class="value pass">passed</div></div>
+  <div class="card"><div class="label">Tool calls</div><div class="value">9 / 12</div></div>
+  <div class="card"><div class="label">Patch attempts</div><div class="value">2 / 2</div></div>
+  <div class="card"><div class="label">Wall clock</div><div class="value">35.5s</div></div>
+  <div class="card"><div class="label">Cost</div><div class="value">$0.0075</div></div>
+</div>
+
+<h2>Safety</h2>
+<table>
+  <tr><th>Property</th><th>Value</th></tr>
+  <tr><td>Executor</td><td>docker</td></tr>
+  <tr><td>Sandbox image</td><td>repro-doctor-runner:1</td></tr>
+  <tr><td>Network during repair</td><td>none</td></tr>
+  <tr><td>Docker socket in sandbox</td><td>no</td></tr>
+  <tr><td>Oracle visible during repair</td><td>no</td></tr>
+  <tr><td>Input repository mutated</td><td class="pass">no</td></tr>
+  <tr><td>Checksum before</td><td><code>ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5</code></td></tr>
+  <tr><td>Checksum after</td><td><code>ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5</code></td></tr>
+</table>
+
+<h2>Hypothesis ledger</h2>
+<table><tr><th>Id</th><th>Statement</th><th>Evidence</th><th>Status</th></tr><tr><td><code>H1</code></td><td>The TypeScript compiler error TS6059 indicates that the file src/lib/catalog.ts is outside the rootDir configured as src/app, causing the build to fail.</td><td>src/app/index.ts(1,47): error TS6059: File &#39;/work/src/lib/catalog.ts&#39; is not under &#39;rootDir&#39; &#39;/work/src/app&#39;. &#39;rootDir&#39; is expected to contain all source files.</td><td>fixed</td></tr>
+<tr><td><code>H2</code></td><td>The build output does not produce dist/index.js as expected by package.json main field, causing module not found errors when importing the package entry point.</td><td>Error [ERR_MODULE_NOT_FOUND]: Cannot find module &#39;/work/lib/catalog.js&#39; imported from /work/dist/index.js
+FAIL package.json declares an entry point that exists: main is &quot;dist/index.js&quot;, which is not on disk after the build
+FAIL describeCatalog sums the catalog through the entry point: Cannot find module &#39;&lt;path&gt;/index.js&#39; imported from /oracle/&lt;verification&gt;</td><td>fixed</td></tr></table>
+
+<h2>Patch</h2>
+<p>4 file(s), +11 / -2 lines, sha256 <code>bdd3675ef416e4a9f1aa76335245abd43263e8472b72df8c18a6476d0e1e03cf</code> over the exact bytes of <code>repair.patch</code>.</p>
+<p class="muted">Shown redacted. <code>repair.patch</code> on disk is exact, unredacted repository content, which is what the checksum and <code>apply</code> need. Review it before publishing it anywhere.</p>
+<pre>--- /dev/null
++++ b/src/index.ts
+@@ -0,0 +1,1 @@
++export { describeCatalog } from &#39;./app/index.js&#39;;
+--- /dev/null
++++ b/src/lib/catalog.d.ts
+@@ -0,0 +1,5 @@
++export interface CatalogEntry {
++    readonly sku: string;
++    readonly priceCents: number;
++}
++export declare function totalCents(entries: readonly CatalogEntry[]): number;
+--- /dev/null
++++ b/src/lib/catalog.js
+@@ -0,0 +1,3 @@
++export function totalCents(entries) {
++    return entries.reduce((sum, entry) =&gt; sum + entry.priceCents, 0);
++}
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -3,10 +3,10 @@
+     &quot;target&quot;: &quot;ES2022&quot;,
+     &quot;module&quot;: &quot;NodeNext&quot;,
+     &quot;moduleResolution&quot;: &quot;NodeNext&quot;,
+-    &quot;rootDir&quot;: &quot;src/app&quot;,
++    &quot;rootDir&quot;: &quot;src&quot;,
+     &quot;outDir&quot;: &quot;dist&quot;,
+     &quot;strict&quot;: true,
+     &quot;declaration&quot;: true
+   },
+-  &quot;include&quot;: [&quot;src/app/**/*&quot;]
++  &quot;include&quot;: [&quot;src/**/*&quot;]
+ }
+</pre>
+
+<h2>Independent verification</h2>
+<p>oracle passed (4 checks)</p>
+<pre>oracle id: tsconfig-include-scope/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2547ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles with both source directories in scope
+[oracle] PASS package.json declares an entry point that exists
+[oracle] PASS describeCatalog sums the catalog through the entry point
+[oracle] PASS the shared library is still a separate module under src/lib
+[oracle] RESULT PASS
+
+--- stderr ---
+
+</pre>
+
+<h2>Artifacts</h2>
+<ul>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T062910Z-e87630/result.json</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T062910Z-e87630/trajectory.jsonl</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T062910Z-e87630/repair.patch</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T062910Z-e87630/verification.log</code></li>
+</ul>
+
+<footer>Generated by Repro Doctor from /example/repro-doctor/artifacts/runs/20260830T062910Z-e87630/result.json. Every number on this page comes from that file.</footer>
+
+</body>
+</html>

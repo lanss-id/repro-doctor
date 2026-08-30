@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
-  "runId": "20260829T194032Z-42c6b5",
+  "runId": "20260830T061056Z-e32fc9",
   "caseId": "chained-two-faults",
   "mode": "advanced",
   "model": "openai/gpt-4.1-mini",
   "modelSettingsFingerprint": "893de0c3c381b107",
-  "startedAt": "2026-08-29T19:40:32.771Z",
-  "finishedAt": "2026-08-29T19:41:12.938Z",
+  "startedAt": "2026-08-30T06:10:56.862Z",
+  "finishedAt": "2026-08-30T06:11:28.544Z",
   "sandbox": {
     "executor": "docker",
     "image": "repro-doctor-runner:1",
@@ -23,7 +23,7 @@
   },
   "repo": {
     "inputPath": "/example/repro-doctor/fixtures/chained-two-faults/repo",
-    "workspacePath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/workspace",
+    "workspacePath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/workspace",
     "treeChecksumBefore": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
     "treeChecksumAfter": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
     "mutated": false,
@@ -38,17 +38,17 @@
   },
   "usage": {
     "toolCalls": 12,
-    "patchAttempts": 2,
-    "wallClockMs": 40167,
+    "patchAttempts": 1,
+    "wallClockMs": 31682,
     "tokens": {
-      "inputTokens": 22071,
-      "outputTokens": 974,
-      "totalTokens": 23045,
+      "inputTokens": 22783,
+      "outputTokens": 806,
+      "totalTokens": 23589,
       "requests": 11
     },
     "cost": {
       "kind": "measured",
-      "usd": 0.010387
+      "usd": 0.010403
     },
     "limitHit": null
   },
@@ -58,7 +58,7 @@
   "verification": {
     "kind": "passed",
     "exitCode": 0,
-    "durationMs": 2644,
+    "durationMs": 2640,
     "checks": [
       "PASS the project compiles",
       "PASS fault one: the declared entry point exists after the build",
@@ -70,7 +70,7 @@
   },
   "patch": {
     "kind": "present",
-    "path": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/repair.patch",
+    "path": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/repair.patch",
     "sha256": "444855531e74a72053d1637c00ebc3481989bc2ffb391d7960e1b3df7ba627b1",
     "changedFiles": [
       "package.json",
@@ -81,11 +81,11 @@
     "sensitive": true
   },
   "artifacts": {
-    "runDir": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5",
-    "resultPath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/result.json",
-    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/trajectory.jsonl",
-    "patchPath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/repair.patch",
-    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/verification.log",
-    "reportPath": "/example/repro-doctor/artifacts/runs/20260829T194032Z-42c6b5/report.html"
+    "runDir": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9",
+    "resultPath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/result.json",
+    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/trajectory.jsonl",
+    "patchPath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/repair.patch",
+    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/verification.log",
+    "reportPath": "/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/report.html"
   }
 }

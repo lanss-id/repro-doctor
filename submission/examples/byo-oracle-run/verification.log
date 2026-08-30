@@ -1,0 +1,19 @@
+oracle id: oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2831ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 1
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS the entry point exports parseDuration and formatDuration
+[oracle] PASS single unit durations are still parsed
+[oracle] PASS every unit in a compound duration is added up
+[oracle] FAIL a string that is not a whole sequence of pairs is rejected: "" was parsed instead of rejected
+[oracle] PASS formatDuration is still the inverse for whole units
+[oracle] PASS the repository still has its own test suite
+[oracle] RESULT FAIL
+
+--- stderr ---
+

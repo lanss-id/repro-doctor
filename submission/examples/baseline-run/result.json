@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T060402Z-95ef4b",
+  "caseId": "broken-test-discovery",
+  "mode": "baseline",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T06:04:02.391Z",
+  "finishedAt": "2026-08-30T06:04:29.292Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/example/repro-doctor/fixtures/broken-test-discovery/repo",
+    "workspacePath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/workspace",
+    "treeChecksumBefore": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "treeChecksumAfter": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 0,
+    "wallClockMs": 26904,
+    "tokens": {
+      "inputTokens": 16869,
+      "outputTokens": 641,
+      "totalTokens": 17510,
+      "requests": 14
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.007773
+    },
+    "limitHit": "tool-calls"
+  },
+  "outcome": {
+    "status": "no-patch",
+    "detail": "the agent finished without changing any file"
+  },
+  "verification": {
+    "kind": "skipped",
+    "why": "no-patch-produced"
+  },
+  "patch": {
+    "kind": "empty",
+    "path": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/repair.patch"
+  },
+  "artifacts": {
+    "runDir": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b",
+    "resultPath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/result.json",
+    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/trajectory.jsonl",
+    "patchPath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/repair.patch",
+    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/verification.log",
+    "reportPath": "/example/repro-doctor/artifacts/runs/20260830T060402Z-95ef4b/report.html"
+  }
+}

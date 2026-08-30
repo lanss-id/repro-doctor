@@ -7,7 +7,7 @@
 // It copies artifacts, it never produces them, so nothing here can change a
 // result. The only edit is replacing the checkout path with a placeholder.
 //
-// Usage: npm run build && node scripts/publish-live-example.mjs <run-id>
+// Usage: npm run build && node scripts/publish-live-example.mjs <run-id> [directory-name]
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,8 +17,13 @@ const { redactedPatchView } = await import(path.join(root, 'dist/src/infra/artif
 const { redactText } = await import(path.join(root, 'dist/src/infra/redact.js'));
 
 const runId = process.argv[2];
+const directoryName = process.argv[3] ?? 'live-run';
 if (runId === undefined) {
-  console.error('usage: node scripts/publish-live-example.mjs <run-id>');
+  console.error('usage: node scripts/publish-live-example.mjs <run-id> [directory-name]');
+  process.exit(2);
+}
+if (!/^[a-z0-9-]+$/u.test(directoryName)) {
+  console.error(`refusing to publish to ${directoryName}: use lowercase letters, digits and dashes`);
   process.exit(2);
 }
 
@@ -34,7 +39,7 @@ if (!result.sandbox.productionSafe) {
   process.exit(1);
 }
 
-const destination = path.join(root, 'submission/examples/live-run');
+const destination = path.join(root, 'submission/examples', directoryName);
 const PLACEHOLDER = '/example/repro-doctor';
 const sanitize = (contents) => redactText(contents.split(root).join(PLACEHOLDER));
 

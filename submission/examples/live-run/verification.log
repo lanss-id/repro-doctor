@@ -2,7 +2,7 @@ oracle id: chained-two-faults/oracle
 oracle entry: oracle.mjs
 executor: docker
 timeout: 120s
-duration: 2644ms
+duration: 2640ms
 note: the oracle directory is never mounted while the repair agent is running
 exit code: 0
 --- stdout ---

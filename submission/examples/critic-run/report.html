@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Repro Doctor run 20260830T061056Z-e32fc9</title>
+<title>Repro Doctor run 20260830T063122Z-0a1cc1</title>
 <style>
 :root { color-scheme: light dark; --fg: #16181d; --muted: #5c6370; --line: #d9dce3; --bg: #ffffff; --panel: #f6f7f9; --pass: #14804a; --fail: #b3261e; --warn: #8a6100; }
 @media (prefers-color-scheme: dark) {
@@ -37,16 +37,16 @@ footer { margin-top: 3rem; color: var(--muted); font-size: .82rem; border-top: 1
 </head>
 <body>
 
-<h1>Repro Doctor run 20260830T061056Z-e32fc9</h1>
-<p class="subtitle">advanced mode on chained-two-faults, model openai/gpt-4.1-mini</p>
+<h1>Repro Doctor run 20260830T063122Z-0a1cc1</h1>
+<p class="subtitle">advanced mode on broken-test-discovery, model openai/gpt-4.1-mini</p>
 
 <div class="cards">
   <div class="card"><div class="label">Outcome</div><div class="value pass">repaired</div></div>
   <div class="card"><div class="label">Hidden oracle</div><div class="value pass">passed</div></div>
   <div class="card"><div class="label">Tool calls</div><div class="value">12 / 12</div></div>
   <div class="card"><div class="label">Patch attempts</div><div class="value">1 / 2</div></div>
-  <div class="card"><div class="label">Wall clock</div><div class="value">31.7s</div></div>
-  <div class="card"><div class="label">Cost</div><div class="value">$0.0104</div></div>
+  <div class="card"><div class="label">Wall clock</div><div class="value">27.4s</div></div>
+  <div class="card"><div class="label">Cost</div><div class="value">$0.0069</div></div>
 </div>
 
 <h2>Safety</h2>
@@ -58,70 +58,68 @@ footer { margin-top: 3rem; color: var(--muted); font-size: .82rem; border-top: 1
   <tr><td>Docker socket in sandbox</td><td>no</td></tr>
   <tr><td>Oracle visible during repair</td><td>no</td></tr>
   <tr><td>Input repository mutated</td><td class="pass">no</td></tr>
-  <tr><td>Checksum before</td><td><code>e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf</code></td></tr>
-  <tr><td>Checksum after</td><td><code>e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf</code></td></tr>
+  <tr><td>Checksum before</td><td><code>348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e</code></td></tr>
+  <tr><td>Checksum after</td><td><code>348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e</code></td></tr>
 </table>
 
 <h2>Hypothesis ledger</h2>
-<table><tr><th>Id</th><th>Statement</th><th>Evidence</th><th>Status</th></tr><tr><td><code>wrong-main-entry</code></td><td>The main entry in package.json is &#39;dist/app.js&#39; but the build output files are &#39;dist/index.js&#39; and &#39;dist/config.js&#39;, so the main entry is incorrect and causes module not found error.</td><td>npm run check error: Cannot find module &#39;/work/dist/app.js&#39; and dist directory listing shows no app.js but index.js and config.js</td><td>fixed</td></tr>
-<tr><td><code>env-var-name-mismatch</code></td><td>The environment variable used in src/config.ts is &#39;APP_GREETING&#39; but the README and smoke test expect &#39;GREETING&#39;, causing the greet function to not use the intended environment variable and fail the contract.</td><td>src/config.ts uses env[&#39;APP_GREETING&#39;], README and smoke.mjs expect GREETING, .env.example shows GREETING</td><td>fixed</td></tr></table>
+<table><tr><th>Id</th><th>Statement</th><th>Evidence</th><th>Status</th></tr><tr><td><code>H1</code></td><td>The tests are not running because the test files are named with .mjs extension and the test script uses node --test &quot;tests/**/*.test.mjs&quot; but the test file is named sum.spec.mjs, so no tests match the pattern.</td><td>npm run check output shows 0 tests run; test file is tests/sum.spec.mjs but script looks for tests/**/*.test.mjs</td><td>fixed</td></tr></table>
 
 <h2>Patch</h2>
-<p>2 file(s), +2 / -2 lines, sha256 <code>444855531e74a72053d1637c00ebc3481989bc2ffb391d7960e1b3df7ba627b1</code> over the exact bytes of <code>repair.patch</code>.</p>
+<p>1 file(s), +14 / -0 lines, sha256 <code>83c25a9699110799340bc4bf7e5efa54f93075665fd5d4772af3bdec7281f645</code> over the exact bytes of <code>repair.patch</code>.</p>
 <p class="muted">Shown redacted. <code>repair.patch</code> on disk is exact, unredacted repository content, which is what the checksum and <code>apply</code> need. Review it before publishing it anywhere.</p>
-<pre>--- a/package.json
-+++ b/package.json
-@@ -3,7 +3,7 @@
-   &quot;version&quot;: &quot;1.0.0&quot;,
-   &quot;private&quot;: true,
-   &quot;type&quot;: &quot;module&quot;,
--  &quot;main&quot;: &quot;dist/app.js&quot;,
-+  &quot;main&quot;: &quot;dist/index.js&quot;,
-   &quot;scripts&quot;: {
-     &quot;build&quot;: &quot;tsc -p tsconfig.json&quot;,
-     &quot;check&quot;: &quot;tsc -p tsconfig.json &amp;&amp; node scripts/smoke.mjs&quot;
---- a/src/config.ts
-+++ b/src/config.ts
-@@ -3,5 +3,5 @@
- export const DEFAULT_GREETING = &#39;hello&#39;;
- 
- export function loadGreeting(env: Environment): string {
--  return env[&#39;APP_GREETING&#39;] ?? DEFAULT_GREETING;
-+  return env[&#39;GREETING&#39;] ?? DEFAULT_GREETING;
- }
+<pre>--- /dev/null
++++ b/tests/sum.test.mjs
+@@ -0,0 +1,14 @@
++import assert from &#39;node:assert/strict&#39;;
++import test from &#39;node:test&#39;;
++
++const { mean, sum } = await import(new URL(&#39;../dist/index.js&#39;, import.meta.url).href);
++
++test(&#39;sum adds every value&#39;, () =&gt; {
++  assert.equal(sum([1, 2, 3]), 6);
++  assert.equal(sum([]), 0);
++});
++
++test(&#39;mean rejects an empty list&#39;, () =&gt; {
++  assert.equal(mean([2, 4]), 3);
++  assert.throws(() =&gt; mean([]), /empty/u);
++});
 </pre>
 
 <h2>Independent verification</h2>
 <p>oracle passed (6 checks)</p>
-<pre>oracle id: chained-two-faults/oracle
+<pre>oracle id: broken-test-discovery/oracle
 oracle entry: oracle.mjs
 executor: docker
-timeout: 120s
-duration: 2640ms
+timeout: 180s
+duration: 2948ms
 note: the oracle directory is never mounted while the repair agent is running
 exit code: 0
 --- stdout ---
 [oracle] PASS the project compiles
-[oracle] PASS fault one: the declared entry point exists after the build
-[oracle] PASS the entry point exports greet
-[oracle] PASS fault two: GREETING is the variable that is read
-[oracle] PASS the greeting falls back to &quot;hello&quot; when nothing is set
-[oracle] PASS the undocumented variable is no longer honoured
+[oracle] PASS npm test exits zero
+[oracle] PASS npm test runs at least two tests
+[oracle] PASS no test failed
+[oracle] PASS the tests still exercise the library
+[oracle] PASS sum and mean still behave as documented
 [oracle] RESULT PASS
 
 --- stderr ---
 
+
+no patch attempt followed this run, so it is also the final verification
 </pre>
 
 <h2>Artifacts</h2>
 <ul>
-  <li><code>/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/result.json</code></li>
-  <li><code>/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/trajectory.jsonl</code></li>
-  <li><code>/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/repair.patch</code></li>
-  <li><code>/example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/verification.log</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T063122Z-0a1cc1/result.json</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T063122Z-0a1cc1/trajectory.jsonl</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T063122Z-0a1cc1/repair.patch</code></li>
+  <li><code>/example/repro-doctor/artifacts/runs/20260830T063122Z-0a1cc1/verification.log</code></li>
 </ul>
 
-<footer>Generated by Repro Doctor from /example/repro-doctor/artifacts/runs/20260830T061056Z-e32fc9/result.json. Every number on this page comes from that file.</footer>
+<footer>Generated by Repro Doctor from /example/repro-doctor/artifacts/runs/20260830T063122Z-0a1cc1/result.json. Every number on this page comes from that file.</footer>
 
 </body>
 </html>

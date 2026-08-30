@@ -1,0 +1,75 @@
+Transcript of the human checkpoint: npm run doctor -- apply
+
+Recorded against run 20260830T061056Z-e32fc9, the advanced repair of
+chained-two-faults published in submission/examples/live-run. The target is a
+copy of fixtures/chained-two-faults/repo. Paths are replaced with placeholders;
+nothing else is edited.
+
+Three things are worth watching: the whole diff is printed before anything is
+asked, a piped answer is refused because a confirmation has to come from a
+person at a terminal, and a target that changed while the operator was reading
+is refused on its checksum rather than patched.
+
+=== 1. The operator reads the diff and declines ===
+
+> repro-doctor@0.1.0 doctor
+> npm run build --silent && node dist/src/cli/index.js apply 20260830T061056Z-e32fc9 --to /example/demo-repo
+
+
+Patch preview
+-------------
+  run id                      20260830T061056Z-e32fc9
+  mode                        advanced
+  produced by model           openai/gpt-4.1-mini
+  verification                passed
+  target repository           /example/demo-repo
+  target checksum             e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf
+  files changed               package.json, src/config.ts
+
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,7 @@
+   "version": "1.0.0",
+   "private": true,
+   "type": "module",
+-  "main": "dist/app.js",
++  "main": "dist/index.js",
+   "scripts": {
+     "build": "tsc -p tsconfig.json",
+     "check": "tsc -p tsconfig.json && node scripts/smoke.mjs"
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -3,5 +3,5 @@
+ export const DEFAULT_GREETING = 'hello';
+ 
+ export function loadGreeting(env: Environment): string {
+-  return env['APP_GREETING'] ?? DEFAULT_GREETING;
++  return env['GREETING'] ?? DEFAULT_GREETING;
+ }
+
+error command.failed reason=internal-error message=apply needs an interactive terminal to confirm
+error command.failed.detail detail=Run it in a terminal, or pass --yes-i-reviewed-the-patch to state that a human has read the patch printed above.
+
+=== 2. The target was edited while the operator was reading, so the patch is refused ===
+
+> repro-doctor@0.1.0 doctor
+> npm run build --silent && node dist/src/cli/index.js apply 20260830T061056Z-e32fc9 --to /example/demo-repo --yes-i-reviewed-the-patch
+
+error command.failed reason=patch-invalid message=the target repository is not in the state this patch was built against
+error command.failed.detail detail=expected=e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf actual=213e54e46ebba63c3fa59d4c02e79c5a92ab530e927ca674909974a365fa65ae. Restore the tree, or re-run diagnose against its current state.
+
+=== 3. A clean target, reviewed and applied ===
+ 
+ export function loadGreeting(env: Environment): string {
+-  return env['APP_GREETING'] ?? DEFAULT_GREETING;
++  return env['GREETING'] ?? DEFAULT_GREETING;
+ }
+
+Approval flag --yes-i-reviewed-the-patch was passed, so the prompt was skipped.
+
+Applied
+-------
+  - wrote package.json
+  - wrote src/config.ts
+  checksum before             e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf
+  checksum after              00d215f1bf3126d9d1b21a867250eb1e541f659357218a04f297bdea60d8b391
