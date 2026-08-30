@@ -72,11 +72,13 @@ Record at 1920x1080, terminal font large enough to read at half size. Do a dry r
 
 > Both modes run the same model, repository, tools, budget and scorer. The only difference is the instruction and the structure around the loop.
 >
-> Sixty runs. Baseline verified 16 of 30, advanced 22 of 30. That is 20 points, and the confidence interval on the difference runs from minus four to plus forty-one. It includes zero, so what I have is a direction, not an effect size, and the page prints it that way rather than letting you subtract two percentages and believe the answer.
+> Sixty runs. Baseline verified 14 of 30, advanced 21 of 30. That is 23 points, and the confidence interval on the difference runs from minus one and a half to plus forty-four. It includes zero, so what I have is a direction, not an effect size, and the page prints it that way rather than letting you subtract two percentages and believe the answer.
 >
-> Two things it does settle. The structure costs nothing extra: the advanced median run was slightly cheaper, because a baseline failure spends all twelve calls. And on the case whose own check passes while running zero tests, baseline got it once in three and advanced three times in three, on a retry that only the hidden oracle could trigger.
+> Two things it does settle. The structure costs nothing extra: the advanced median run was slightly cheaper, because a baseline failure spends all twelve calls. And on the case whose own check passes while running zero tests, baseline got it zero times in three and advanced twice.
 >
-> I also ran the critic experiment against a rule I wrote before running it. It lost, so the rule discarded it. That number is in the changelog next to the ones that went my way.
+> Here is the number I did not expect. The baseline arm did not change between two consecutive batches, and it scored 16 of 30 and then 14 of 30. Same code, same prompt, temperature zero. That swing is why every rate on this page carries an interval.
+>
+> I also ran the critic experiment against a rule I wrote before running it. It lost twice, so the rule discarded it. That number is in the changelog next to the ones that went my way.
 
 ---
 

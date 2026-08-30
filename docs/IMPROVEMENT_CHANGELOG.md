@@ -4,6 +4,20 @@ Three sections, kept apart on purpose. **Shipped and verified** is work that exi
 
 Nothing moves from the second section to the third without artifacts.
 
+## At a glance
+
+| Stage | What was tried, and why | Evidence | Decision |
+| --- | --- | --- | --- |
+| Baseline | A generic instruction, four tools, one unstructured loop, the same budget and scorer as everything below | 14/30 verified, 46.7% (95% CI 30.2 to 63.9); no patch at all in 9 of its 16 failures | The control |
+| Iteration 1 | Structure around the loop: preflight, hypothesis ledger, minimal-patch instruction, evidence-driven retry | 21/30, 70.0%; +23.3 points, 95% CI -1.5 to +44.5 | Kept, with the effect size reported as unestablished |
+| Iteration 2 | Tell the agent the budget it actually has, and reserve the retry's call | Three live runs on `chained-two-faults`, each failing a different way, ending in a repaired run | Kept |
+| Iteration 3 | Bill a turn that ends by throwing | One run in 60 with `cost: unknown`, which made a whole mode's median cost unreportable | Kept, and the spoiled batch re-run |
+| Iteration 4 | Say that a check exiting zero is not evidence the repository works | On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the first, null result reported on the second |
+| Discarded | A critic agent reviewing the patch before the retry decision | 1/9 against 4/9, negative in both runs of the experiment | Discarded by the rule written before it ran |
+| Final | Everything except the critic | 21/30, zero safety violations in 60 runs | The submitted system |
+
+Each row expands below. Failures are in here with the same weight as the wins, including a 60-run batch that was measured and thrown away.
+
 ## Shipped and verified
 
 Each line names the check that backs it. Every one of these was run in this repository.
@@ -47,11 +61,12 @@ Each line names the check that backs it. Every one of these was run in this repo
 - **Evidence gate events record the command's real exit code**, not a placeholder null. Asserted in the same test.
 - **A successful advanced patch checkpoints the model before self-verification can spend the retry.** Every tool is dynamically disabled until the harness has run the evidence gate and hidden oracle. Those scorer actions do not consume agent tool calls, but remain inside the same wall-clock deadline. A chained-case regression places the retry patch at call twelve and still requires both final checks to pass.
 
+- **A check that exits zero is not treated as evidence the repository works.** The advanced method now names the case where the preflight check passes and tells the agent to test what the README, manifest and configuration promise instead of trusting the exit code. Found by running the tool on a repository outside the benchmark, where the agent gave up after four calls; see [the user-path iteration](#iteration-on-the-user-path-30-august-2026).
 - **The agent is never told a budget it does not have.** Every tool result carries a live `[budget]` line, the advanced preflight states what it spent, and one tool call is reserved for the evidence-driven retry and released only when that retry starts. Verified by `tests/unit/tool-budget.test.ts` (the line counts down across list, read and patch calls, and a failed call still reports what it consumed) and by `tests/integration/advanced-retry.test.ts` ("an agent that spends every call it is offered still gets its retry"), which asserts the run still ends at twelve calls.
 
 ### Totals
 
-161 tests, 0 failures, about 60 seconds, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
+163 tests, 0 failures, about 60 seconds, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
 
 ## Planned experiments
 
@@ -76,7 +91,7 @@ Advanced control against advanced with a critic, over `broken-test-discovery`, `
 
 The rule is implemented as `decideExperiment` in `src/eval/scoring.ts`. It refuses to return "keep" when either the repair rate or the cost is unmeasured on either side, which stops the experiment being resolved by a half-measured run. Tested in `tests/unit/scoring.test.ts`, and the report page prints the rule next to the verdict.
 
-**Status.** Run, and discarded by its own rule: 5 of 9 against 6 of 9, -11.1 points at 8.4 percent less cost. See [the result](#e1-the-critic-discarded-29-august-2026). The plumbing is covered by a scripted integration test that proves the critic call is charged and that a critic asking for a revision triggers the one retry; that test said nothing about whether the critic helps, and the experiment answered it.
+**Status.** Run twice, and discarded by its own rule both times: -11.1 points, then 1 of 9 against 4 of 9 for -33.3 points. See [the result](#e1-the-critic-discarded-30-august-2026). The plumbing is covered by a scripted integration test that proves the critic call is charged and that a critic asking for a revision triggers the one retry; that test said nothing about whether the critic helps, and the experiment answered it.
 
 ### E2: anchor-based edit tool
 
@@ -106,7 +121,7 @@ The rule is implemented as `decideExperiment` in `src/eval/scoring.ts`. It refus
 
 **Decision rule.** Not a keep-or-discard experiment. Run it if the first evaluation shows a difference between 5 and 15 points, which is exactly the range three repeats cannot resolve.
 
-**Status.** Not run, and not triggered. The evaluation came in at 20.0 points, outside the 5 to 15 band the rule names. The interval on that difference still includes zero, so more repeats would sharpen it, and the rule as written does not fire. It is left as written rather than widened after the fact to justify a run that would have been convenient.
+**Status.** Not run, and not triggered. The evaluation came in at 23.3 points, outside the 5 to 15 band the rule names. The interval on that difference still includes zero, so more repeats would sharpen it, and the rule as written does not fire. It is left as written rather than widened after the fact to justify a run that would have been convenient.
 
 ## Measured results
 
@@ -140,35 +155,57 @@ The first complete 60-run batch finished with baseline at 46.7 percent and advan
 
 The fix reads the usage off the run state the SDK error carries. The batch was then run again from scratch rather than published with a hole in it, and the numbers below are the second batch. The first one is recorded here because deleting a discarded measurement is how benchmarks start lying.
 
-### Final evaluation, 29 August 2026
+### Iteration on the user path, 30 August 2026
 
-Ten fixtures, both modes, three repeats, 60 runs. `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, 12 tool calls, 2 patch attempts, 360 second deadline, $0.30 ceiling per run. Report generated `2026-08-29T20:52:48Z`. Total measured spend $0.4149.
+Everything above was measured on the ten fixtures. Running the tool the way a user would, against a repository outside the benchmark with an oracle written from scratch, produced a failure the benchmark could not have shown.
+
+Run `20260830T055854Z-89d6da`, advanced, on [`examples/bring-your-own-oracle/repo`](../examples/bring-your-own-oracle): **no patch, 4 of 12 tool calls, $0.0015.** The agent listed the root, read `package.json`, ran `npm run check`, saw it exit zero, and stopped. It never opened the README. The repository's documented duration parser was broken and its own tests passed, which is the exact bug class this project exists for, and the agent had no procedure for a repository whose check is already green.
+
+**What was tried.** One sentence added to the advanced method: a check that exits zero is not evidence the repository works, so read what the README, manifest and configuration promise and test that promise directly with `run_command`. No knowledge of that example is in the production code.
+
+**Evidence.** On the same repository, run `20260830T060136Z-7a08e1`: the agent went to 11 of 12 tool calls, used both patch attempts, rewrote the parser to accumulate every unit and to reject trailing input, and passed five of the six contract checks. The sixth failed, `parseDuration("")` returning 0 instead of throwing, and the run is reported as `unverified-patch`. Both runs are published: [`submission/examples/byo-oracle-run/`](../submission/examples/byo-oracle-run).
+
+On the benchmark, the same change produced **no measurable improvement**: advanced went from 22/30 to 21/30 and the difference against baseline from +20.0 to +23.3 points, both inside the noise this benchmark has. That is not surprising in hindsight. Only one of the ten fixtures, `broken-test-discovery`, has a check that passes while the repository is broken, so the benchmark can barely measure the thing the change addresses. That is a limitation of the fixture set, and it is recorded here rather than quietly ignored.
+
+**Decision.** Kept, on the strength of the user-path evidence, with the benchmark result reported as the null result it is.
+
+### Final evaluation, 30 August 2026
+
+Ten fixtures, both modes, three repeats, 60 runs. `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, 12 tool calls, 2 patch attempts, 360 second deadline, $0.30 ceiling per run. Report generated `2026-08-30T06:30:50Z`. Total measured spend $0.4262.
 
 | | Baseline | Advanced |
 | --- | --- | --- |
-| Verified repair rate | 16/30, 53.3% (95% CI 36.1 to 69.8) | 22/30, 73.3% (95% CI 55.6 to 85.8) |
-| Median wall clock | 25.2s | 25.3s |
-| Median cost per run | $0.0072 | $0.0068 |
+| Verified repair rate | 14/30, 46.7% (95% CI 30.2 to 63.9) | 21/30, 70.0% (95% CI 52.1 to 83.3) |
+| Median wall clock | 24.3s | 25.7s |
+| Median cost per run | $0.0074 | $0.0072 |
 | Unsafe mutations, budget violations, oracle access violations | 0, 0, 0 | 0, 0, 0 |
 
-**Advanced minus baseline: +20.0 points, 95% CI -4.2 to +41.2.** The interval includes zero, so this batch shows the direction and not the size of the effect. Sixty runs bought a demonstration that the structure does not cost more, that it changes which failures happen, and that it moves `broken-test-discovery` from 1 of 3 to 3 of 3. It did not buy a proven effect size, and no document here says it did.
+**Advanced minus baseline: +23.3 points, 95% CI -1.5 to +44.5.** The interval includes zero, so this batch shows the direction and not the size of the effect. The failure profile moved more clearly than the headline: baseline produced no patch at all in 9 of its 16 failures, advanced in 4 of its 9.
 
-The failure profile moved more clearly than the headline. Baseline produced no patch at all in 6 of its 14 failures; advanced in 2 of its 8. The preflight and the live budget line were aimed at exactly that failure, and it is the one that moved.
+Six of the thirty advanced runs used their retry and four of those ended verified, so seventeen of the twenty-one verified advanced runs never needed it. The structure, not the second attempt, is doing most of the work.
 
 `manifest-lockfile-mismatch` was repaired zero times out of six across both modes. The full per-case grid is in [EVALUATION.md](EVALUATION.md#per-case-three-runs-each).
 
-### E1, the critic: discarded, 29 August 2026
+### What one identical arm did twice
 
-Eighteen runs, three cases, three repeats, generated `2026-08-29T21:00:44Z`, total measured spend $0.1405.
+The baseline arm did not change between the two 60-run batches: only the advanced instructions did. It scored 16/30 in the first and 14/30 in the second. Same code, same prompt, same fixtures, same model at temperature zero, 6.7 points apart.
+
+That is the cheapest lesson in this file. A 6.7 point swing from nothing, measured, is why every rate here is printed with an interval and why the +23.3 point headline is reported as a direction rather than a size.
+
+### E1, the critic: discarded, 30 August 2026
+
+Eighteen runs, three cases, three repeats, generated `2026-08-30T06:38:18Z`, total measured spend $0.1370.
 
 | | Control | Treatment with critic |
 | --- | --- | --- |
-| Verified repair rate | 6/9, 66.7% (95% CI 35.4 to 87.9) | 5/9, 55.6% (95% CI 26.7 to 81.1) |
-| Median cost per run | $0.0072 | $0.0066 |
+| Verified repair rate | 4/9, 44.4% (95% CI 18.9 to 73.3) | 1/9, 11.1% (95% CI 2.0 to 43.5) |
+| Median cost per run | $0.0075 | $0.0073 |
 
-Difference: -11.1 points, 95% CI -47.0 to +29.3, at 8.4 percent less cost. The rule fixed in advance required at least +10 points for no more than +25 percent cost, so `decideExperiment` returned **discard**, and the critic stays behind `--experiment critic`, off by default.
+Difference: -33.3 points, 95% CI -63.6 to +7.9, at 3.3 percent less cost. The rule fixed in advance required at least +10 points for no more than +25 percent cost, so `decideExperiment` returned **discard**, and the critic stays behind `--experiment critic`, off by default.
 
-Nine runs per arm cannot separate -11 points from +29, so this is not evidence that the critic hurts. It is a pre-registered rule reporting that the critic was not shown to help, which is the outcome it was written to be able to return. One resource note belongs with it: the treatment holds back two tool calls to the control's one, because the critic's own call comes from the same budget, so part of the gap is one fewer investigation call.
+It was run twice, before and after the instruction change above, and lost both times: -11.1 points, then -33.3. Nine runs per arm cannot separate -33 from +8, so this is not evidence that the critic hurts. It is a pre-registered rule reporting that the critic was not shown to help. A trajectory from the treatment arm, including the `critic.reviewed` event, is published at [`submission/examples/critic-run/`](../submission/examples/critic-run).
+
+One resource note belongs with it: the treatment holds back two tool calls to the control's one, because the critic's own call comes from the same budget, so part of the gap is one fewer investigation call.
 
 ### What these numbers are not
 

@@ -14,7 +14,7 @@ Everything in this section has been run in this repository.
 - [x] TypeScript on Node 22 with `strict`, `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`
 - [x] `npm run typecheck` clean
 - [x] `npm run lint` clean, with `any` and stray `console` calls banned
-- [x] `npm test`: 161 tests, 0 failures, no API key or network needed after dependencies are installed
+- [x] `npm test`: 163 tests, 0 failures, no API key or network needed after dependencies are installed
 - [x] `npm run build` produces a working CLI at `dist/src/cli/index.js`
 - [x] Two runtime dependencies: `@openai/agents` and `zod`, both pinned exactly, `package-lock.json` committed
 
@@ -64,12 +64,22 @@ Everything in this section has been run in this repository.
 
 ### Evaluation
 
-- [x] 60-run comparison, ten fixtures, both modes, three repeats: baseline 16/30, advanced 22/30, difference +20.0 points with a 95% CI of -4.2 to +41.2
-- [x] 18-run critic experiment, decided by its pre-registered rule: discard
+- [x] 60-run comparison, ten fixtures, both modes, three repeats: baseline 14/30, advanced 21/30, difference +23.3 points with a 95% CI of -1.5 to +44.5
+- [x] 18-run critic experiment, decided by its pre-registered rule: discard, run twice and negative both times
 - [x] Zero unsafe mutations, zero budget violations and zero oracle access violations across all 60 runs
 - [x] Every rate published with its interval, and the comparison published with a Newcombe interval for the difference
-- [x] The first 60-run batch was discarded after it exposed a cost-accounting bug in the harness, the bug was fixed, and both the discarded batch and the fix are recorded in the improvement changelog
+- [x] Two 60-run batches discarded and re-run rather than published: one after it exposed a cost-accounting bug, one after an instruction change made its advanced arm stale. Both are in the improvement changelog
+- [x] Run-to-run variance measured rather than asserted: the identical baseline arm scored 16/30 and then 14/30 across two batches
 - [x] `config/pricing.json` carries the OpenRouter route used for the published run, verified on 2026-08-30
+
+### Submission package
+
+- [x] Complete solution code, tests, and a clearly labelled improvement changelog with a stage table in the shape the brief asks for
+- [x] Reproduction guide with exact setup, run, baseline and evaluation commands, versions, expected output, runtime and cost
+- [x] A representative trajectory for every agent used: baseline, advanced, advanced with the retry, advanced on the user path, and the critic
+- [x] The human checkpoint recorded as a transcript, including the two refusal paths
+- [x] Coding-agent use disclosed, with what pre-existed the competition stated explicitly, in [AGENT_USE.md](AGENT_USE.md)
+- [x] A worked example of pointing the tool at a repository outside the benchmark with a user-written oracle
 
 ## Not done, and honestly so
 

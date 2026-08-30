@@ -2,20 +2,24 @@
 
 ## Result: 60 runs, 30 per mode
 
-Run on 29 August 2026 with `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, ten fixtures, three repeats per case per mode.
+Run on 30 August 2026 with `openai/gpt-4.1-mini` through an OpenAI-compatible gateway, Docker sandbox, ten fixtures, three repeats per case per mode. Report generated `2026-08-30T06:30:50Z`.
 
 | | Baseline | Advanced |
 | --- | --- | --- |
-| Verified repair rate | 16/30, 53.3% (95% CI 36.1 to 69.8) | 22/30, 73.3% (95% CI 55.6 to 85.8) |
-| Median wall clock | 25.2s | 25.3s |
-| Median cost per run | $0.0072 | $0.0068 |
+| Verified repair rate | 14/30, 46.7% (95% CI 30.2 to 63.9) | 21/30, 70.0% (95% CI 52.1 to 83.3) |
+| Median wall clock | 24.3s | 25.7s |
+| Median cost per run | $0.0074 | $0.0072 |
 | Unsafe mutations | 0 | 0 |
 | Budget violations | 0 | 0 |
 | Oracle access violations | 0 | 0 |
 
-Total measured spend for the batch: $0.4149.
+Total measured spend for the batch: $0.4262.
 
-**Advanced minus baseline: +20.0 points, 95% CI -4.2 to +41.2.** The interval includes zero. Thirty runs per mode is not enough to establish that the structure is what produced the gap, and this document is not going to claim otherwise because the point estimate looks good. What the batch does establish is the direction, the cost, and that the extra structure did not cost extra money: advanced repaired more and its median run was fractionally cheaper, because the baseline's failures burn the full twelve calls while an advanced run that gets it right stops earlier.
+**Advanced minus baseline: +23.3 points, 95% CI -1.5 to +44.5.** The interval includes zero. Thirty runs per mode is not enough to establish that the structure is what produced the gap, and this document is not going to claim otherwise because the point estimate looks good. What the batch does establish is the direction, the cost, and that the extra structure did not cost extra money: advanced repaired more and its median run was fractionally cheaper, because the baseline's failures burn the full twelve calls while an advanced run that gets it right stops earlier.
+
+### How much of that is the retry
+
+Six of the thirty advanced runs used a second patch attempt, and four of those six ended verified. So the retry is not what carries the mode: twenty-one runs were verified and seventeen of them never needed it. The preflight, the minimal-patch instruction and the closed tools do most of the work, and the retry is the recovery path for the cases where the first patch is wrong in a way only an independent check can see. [submission/examples/retry-run/](../submission/examples/retry-run) is one of those four, event by event.
 
 ### Per case, three runs each
 
@@ -23,55 +27,61 @@ Total measured spend for the batch: $0.4149.
 
 | Case | Baseline | Advanced |
 | --- | --- | --- |
-| `broken-test-discovery` | `..P` | `PPP` |
+| `broken-test-discovery` | `...` | `PP.` |
 | `case-sensitive-import` | `PPP` | `PPP` |
-| `chained-two-faults` | `P..` | `P.P` |
-| `entrypoint-mismatch` | `P..` | `PPP` |
+| `chained-two-faults` | `...` | `P..` |
+| `entrypoint-mismatch` | `.PP` | `PPP` |
 | `env-contract` | `PPP` | `PPP` |
 | `esm-cjs-mismatch` | `PPP` | `PPP` |
 | `health-route-port` | `PPP` | `PPP` |
 | `manifest-lockfile-mismatch` | `...` | `...` |
-| `monorepo-build-order` | `..P` | `..P` |
-| `tsconfig-include-scope` | `...` | `.P.` |
+| `monorepo-build-order` | `...` | `.P.` |
+| `tsconfig-include-scope` | `...` | `P.P` |
 
-Four cases are solved by both modes every time and carry no information about the comparison. The gap lives in `broken-test-discovery` and `entrypoint-mismatch`, and `manifest-lockfile-mismatch` defeats both modes six times out of six.
+Four cases are solved by both modes every time and carry no information about the comparison. The gap lives in `broken-test-discovery`, `tsconfig-include-scope`, `chained-two-faults` and `monorepo-build-order`, and `manifest-lockfile-mismatch` defeats both modes six times out of six.
 
-`broken-test-discovery` is the case the whole design is aimed at. Its own check exits zero while running zero tests, so a mode with no independent signal has nothing to react to. Baseline verified it once in three; advanced verified it three times in three, driven by a retry that only the hidden oracle could have triggered.
+`broken-test-discovery` is the case the whole design is aimed at. Its own check exits zero while running zero tests, so a mode with no independent signal has nothing to react to. Baseline verified it zero times in three; advanced twice in three.
 
 ### How the two modes fail
 
 | Failure | Baseline | Advanced |
 | --- | ---: | ---: |
-| Patch produced, oracle rejected it | 8 | 6 |
-| No patch at all | 6 | 2 |
+| Patch produced, oracle rejected it | 7 | 5 |
+| No patch at all | 9 | 4 |
 | Budget exhausted | 0 | 0 |
 
-Baseline's characteristic failure is spending twelve calls reading files and never proposing anything. That is what the preflight and the live budget line are for, and the count moved from 6 to 2.
+Baseline's characteristic failure is spending twelve calls reading files and never proposing anything. [submission/examples/baseline-run/](../submission/examples/baseline-run) is one of those nine: it worked out the fault, then had its first `propose_patch` refused at call thirteen.
+
+### What variance actually looks like here
+
+The baseline arm was byte-identical across two consecutive 60-run batches, because only the advanced instructions changed between them. It scored 16/30 in the first and 14/30 in the second: 53.3% then 46.7%, a swing of 6.7 points from nothing but run-to-run noise at temperature zero.
+
+That is the most useful number in this document. It is measured rather than asserted, it is why every rate here carries an interval, and it is the reason a five point difference between two arms should never be read as a result.
 
 ### The critic experiment, decided
 
-Eighteen runs, three cases, three repeats, advanced mode with and without a critic call before the retry decision, scored by the rule written before the experiment ran.
+Eighteen runs, three cases, three repeats, advanced mode with and without a critic call before the retry decision, generated `2026-08-30T06:38:18Z`, total measured spend $0.1370.
 
 | | Control | Treatment with critic |
 | --- | --- | --- |
-| Verified repair rate | 6/9, 66.7% (95% CI 35.4 to 87.9) | 5/9, 55.6% (95% CI 26.7 to 81.1) |
-| Median cost per run | $0.0072 | $0.0066 |
+| Verified repair rate | 4/9, 44.4% (95% CI 18.9 to 73.3) | 1/9, 11.1% (95% CI 2.0 to 43.5) |
+| Median cost per run | $0.0075 | $0.0073 |
 
-Difference: -11.1 points, 95% CI -47.0 to +29.3, for 8.4 percent less cost. The rule required at least +10 points for no more than +25 percent cost. **Decision: discard the critic.** It stays in the codebase behind `--experiment critic`, off by default, with this result recorded next to it.
+Difference: -33.3 points, 95% CI -63.6 to +7.9, for 3.3 percent less cost. The rule required at least +10 points for no more than +25 percent cost. **Decision: discard the critic.** It stays in the codebase behind `--experiment critic`, off by default, with this result recorded next to it.
 
-The honest reading is that nine runs per arm cannot distinguish -11 points from +29, so this is not proof the critic hurts. It is a pre-registered rule returning "not shown to help", which is the answer it was written to be able to give.
+The experiment was run twice, before and after an unrelated change to the advanced instructions, and came out negative both times: -11.1 points and then -33.3. Nine runs per arm still cannot distinguish -33 from +8, so this is not proof the critic hurts. It is a pre-registered rule returning "not shown to help", which is the answer it was written to be able to give.
 
-One resource note that belongs with the number: the treatment arm holds back two tool calls where the control holds back one, because the critic's own call has to come from the same budget. Part of the treatment's disadvantage is therefore one fewer investigation call, not the critic's advice.
+One resource note belongs with the number: the treatment arm holds back two tool calls where the control holds back one, because the critic's own call has to come from the same budget. Part of the treatment's disadvantage is therefore one fewer investigation call, not the critic's advice.
 
 ### What is still not measured
 
-- Any repository that is not one of these ten fixtures. They are synthetic by construction, small, and dependency free.
+- Any repository that is not one of these ten fixtures. They are synthetic by construction, small, and dependency free. [examples/bring-your-own-oracle/](../examples/bring-your-own-oracle) is the one run against something outside the benchmark, and it is a single case, not evidence of a rate.
 - Any model other than `gpt-4.1-mini`.
-- Five repeats. Experiment E4 in the improvement changelog fires when the observed difference falls between 5 and 15 points, and 20 points did not trigger it. That rule was fixed in advance and is being followed rather than rewritten after seeing a result that would benefit from more data.
+- Five repeats. Experiment E4 in the improvement changelog fires when the observed difference falls between 5 and 15 points, and 23.3 points did not trigger it. That rule was fixed in advance and is being followed rather than rewritten after seeing a result that would benefit from more data.
 
 ### What did not need a model, and was verified anyway
 
-161 tests pass with no API key and no network. All ten fixtures fail their hidden oracle before the reference repair and pass it after, under Docker and under the local test adapter. The parts of the loop that do need a model are exercised by integration tests that drive the real sandbox, the real patch engine and the real oracle with a scripted stand-in, which is how the feedback retry, the budget reservation and the cumulative cost accounting are tested without inventing a benchmark number.
+163 tests pass with no API key and no network. All ten fixtures fail their hidden oracle before the reference repair and pass it after, under Docker and under the local test adapter. The parts of the loop that do need a model are exercised by integration tests that drive the real sandbox, the real patch engine and the real oracle with a scripted stand-in, which is how the feedback retry, the budget reservation and the cumulative cost accounting are tested without inventing a benchmark number.
 
 ## What is being measured
 
@@ -211,7 +221,7 @@ Three repeats over ten cases gives 30 runs per mode. That is enough to notice a 
 
 With 30 runs per arm, the 95% confidence interval on a rate near 50% is roughly plus or minus 18 points. So: report the interval, do not report a five point difference as a win, and if a result matters, raise `--repeats`.
 
-Every rate the CLI and the report print carries a 95% Wilson interval, and the comparison carries its own Newcombe interval for the difference of two proportions. That is why the headline of this evaluation is "+20.0 points, 95% CI -4.2 to +41.2" rather than "advanced is 20 points better". The first sentence is what was measured.
+Every rate the CLI and the report print carries a 95% Wilson interval, and the comparison carries its own Newcombe interval for the difference of two proportions. That is why the headline of this evaluation is "+23.3 points, 95% CI -1.5 to +44.5" rather than "advanced is 23 points better". The first sentence is what was measured.
 
 Per-case results are the interesting part anyway. "Advanced fixes `broken-test-discovery` and baseline does not, in three runs out of three" says more than a headline average over ten unrelated faults.
 
