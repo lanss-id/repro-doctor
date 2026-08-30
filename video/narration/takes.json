@@ -1,0 +1,173 @@
+{
+  "provider": "higgsfield",
+  "model": "seed_audio",
+  "voice": {
+    "name": "Arthur",
+    "voiceId": "30fc8796-ceb6-4a66-b3a7-4a145ef7f346",
+    "voiceType": "preset"
+  },
+  "note": "Two takes per section. Take a ran at the model's default speed; take b re-ran it at a speech_rate derived from how far take a overran the script's own timing for that section. The kept take is whichever landed closer to that timing. Both are archived under narration/takes so the choice can be checked rather than taken. Take a was generated as wav and is archived re-encoded to mp3; its duration is the original.",
+  "totalSeconds": 290.28,
+  "sections": [
+    {
+      "id": "01",
+      "scriptDuration": 32,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 32.505,
+          "file": "narration/takes/01-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 3,
+          "seconds": 48.408,
+          "file": "narration/takes/01-b.mp3"
+        }
+      ],
+      "kept": "a",
+      "seconds": 32.568
+    },
+    {
+      "id": "02",
+      "scriptDuration": 26,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 28.2,
+          "file": "narration/takes/02-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 10,
+          "seconds": 29.472,
+          "file": "narration/takes/02-b.mp3"
+        }
+      ],
+      "kept": "a",
+      "seconds": 28.248
+    },
+    {
+      "id": "03",
+      "scriptDuration": 47,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 49.0,
+          "file": "narration/takes/03-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 6,
+          "seconds": 45.552,
+          "file": "narration/takes/03-b.mp3"
+        }
+      ],
+      "kept": "b",
+      "seconds": 45.552
+    },
+    {
+      "id": "04",
+      "scriptDuration": 43,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 46.08,
+          "file": "narration/takes/04-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 9,
+          "seconds": 32.472,
+          "file": "narration/takes/04-b.mp3"
+        }
+      ],
+      "kept": "a",
+      "seconds": 46.128
+    },
+    {
+      "id": "05",
+      "scriptDuration": 37,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 32.28,
+          "file": "narration/takes/05-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": -11,
+          "seconds": 43.032,
+          "file": "narration/takes/05-b.mp3"
+        }
+      ],
+      "kept": "a",
+      "seconds": 32.328
+    },
+    {
+      "id": "06",
+      "scriptDuration": 55,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 66.9,
+          "file": "narration/takes/06-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 23,
+          "seconds": 49.44,
+          "file": "narration/takes/06-b.mp3"
+        }
+      ],
+      "kept": "b",
+      "seconds": 49.44
+    },
+    {
+      "id": "07",
+      "scriptDuration": 38,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 50.2,
+          "file": "narration/takes/07-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 34,
+          "seconds": 37.656,
+          "file": "narration/takes/07-b.mp3"
+        }
+      ],
+      "kept": "b",
+      "seconds": 37.656
+    },
+    {
+      "id": "08",
+      "scriptDuration": 18,
+      "takes": [
+        {
+          "take": "a",
+          "speechRate": 0,
+          "seconds": 22.78,
+          "file": "narration/takes/08-a.mp3"
+        },
+        {
+          "take": "b",
+          "speechRate": 29,
+          "seconds": 18.36,
+          "file": "narration/takes/08-b.mp3"
+        }
+      ],
+      "kept": "b",
+      "seconds": 18.36
+    }
+  ]
+}

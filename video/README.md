@@ -12,6 +12,7 @@ The reason for building it this way rather than screen-recording it is the same 
 | `result.json`, the patch, the checksums, the oracle's verdict | Real. From `artifacts/runs/<id>/`, produced by an actual `diagnose` run against a real model in a real container. |
 | Every rate, difference and interval | Real. Computed by `dist/src/eval/scoring.js` from `submission/evidence/*/eval.json`. |
 | Keystroke timing at the prompt | **Synthetic.** `type_cmd` emits the command one character at a time so the recording has a human-paced prompt. The command that then runs is the command that was typed. |
+| The voice | **Synthetic.** Generated speech, not a person. The words are the script's, verbatim; see below. |
 | Long waits | **Cut, never sped up.** Idle stretches over 2.5s are deleted whole and the window's title bar says how many seconds went. No event is rescaled. |
 | Which visual is on screen during which sentence | An editing decision, in `pipeline/build.mjs`. |
 
@@ -61,15 +62,22 @@ node pipeline/trim.mjs 01-baseline 02-idea 03a-diagnose 03b-evidence 03c-apply 0
 
 ## Narration
 
-Without `ELEVENLABS_API_KEY`, the video renders silent with the script burned in as captions, and each section runs for exactly as long as the script's own heading says (`## 0:00 to 0:32, …`). Total runtime is 4:56 against a five minute limit.
+A section's voice track is `public/narration/<id>.mp3`. Where one exists, **its duration becomes the section's duration**, so the visuals follow the voice rather than the other way round, and captions turn themselves off. What produced the file does not matter: a person at a microphone, ElevenLabs through `pipeline/narrate.mjs`, or anything else writing into that directory. With no files at all, each section runs for exactly as long as the script's own heading says and the video renders silent with the script burned in as captions — a complete video missing only a voice.
 
-With the key set, `pipeline/narrate.mjs` synthesises one file per section and the **audio duration becomes the section duration**, so the visuals follow the voice rather than the other way round. Captions turn themselves off. `ELEVENLABS_VOICE_ID` and `ELEVENLABS_MODEL_ID` override the defaults.
+The track that ships was generated with Higgsfield's `seed_audio`, preset voice *Arthur*. It is a synthetic voice reading the script verbatim, and `narration/takes.json` records how it was made.
+
+**Two takes per section.** Take *a* ran at the model's default speed and came in at 327.9s against the 296s the script budgets — pacing varied from 118 to 177 words per minute across sections with no rate set. Take *b* re-ran each section at a `speech_rate` derived from how far take *a* had overrun its own heading. The kept take is whichever landed closer to the script's timing; both are archived under `narration/takes/` so the choice can be checked rather than taken. Four of each were kept, for 4:55.1 total.
+
+The rate is not linear and the model does not repeat itself: section 01 ran 32.5s at rate 0 and 48.4s at rate +3. Two takes were enough here; a third pass would be a slot machine, not a fix.
+
+To re-do the voice with ElevenLabs instead:
 
 ```bash
+rm public/narration/*.mp3
 ELEVENLABS_API_KEY=... npm run video
 ```
 
-A human recording is the better option if there is time for one: drop one mp3 per section into `narration/` named `01.mp3` … `08.mp3`, run `narrate.mjs` with the key set (it skips synthesis when the file already exists), and the rest of the pipeline treats them the same way.
+`ELEVENLABS_VOICE_ID` and `ELEVENLABS_MODEL_ID` override the defaults. A human recording is better than either if there is time for one — the script's own note is that the hard part is tonal, and a null result has to sound flat rather than managed. Drop `01.mp3` … `08.mp3` into `public/narration/` and the rest of the pipeline treats them identically.
 
 ## The pieces
 
@@ -79,12 +87,14 @@ A human recording is the better option if there is time for one: drop one mp3 pe
 | `record/0*.sh` | One scene each. These are the only files that run project commands |
 | `pipeline/trim.mjs` | Deletes idle stretches, records what it deleted in the cast header |
 | `pipeline/evidence.mjs` | Derives every figure through the project's own scoring code |
-| `pipeline/narrate.mjs` | Script to spoken segments, optionally to audio |
+| `pipeline/narrate.mjs` | Script to spoken segments, and to their durations once a voice track exists |
 | `pipeline/build.mjs` | The edit: which visual, on which sentence, boxing which phrase |
 | `pipeline/appearances.mjs` | Says when a phrase first appears in a recording. A cutting aid |
 | `remotion/lib/vt.ts` | A deterministic terminal emulator, so frame N depends only on the recording and N |
 | `remotion/components/Terminal.tsx` | The window, the replay, and the highlight boxes |
-| `remotion/components/Panels.tsx` | The five data slides |
+| `remotion/components/Panels.tsx` | The data panels |
+| `public/narration/` | The voice track Remotion reads through `staticFile` |
+| `narration/takes.json` | Every take generated, its speed, its length, and which one was kept |
 
 ## Two checks the build will not let you past
 

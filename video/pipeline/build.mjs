@@ -262,7 +262,7 @@ for (const segment of narration.segments) {
     onScreen: segment.onScreen,
     start: segment.start,
     duration: segment.duration,
-    audio: segment.audio === null ? null : path.relative(VIDEO, path.join(ROOT, segment.audio)),
+    audio: segment.audio,
     text: segment.text,
     captions,
     beats: resolved,

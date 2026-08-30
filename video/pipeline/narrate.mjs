@@ -9,11 +9,14 @@
  * it is said. Nothing here paraphrases the script: if a sentence is not in
  * VIDEO_SCRIPT.md it is not in the video.
  *
- * With ELEVENLABS_API_KEY set, each section is synthesised and its real audio
- * duration becomes the section's duration, so the visuals follow the voice
- * rather than the other way round. Without a key the script's own declared
- * timings are used and the video renders silent with captions, which is a
- * complete video missing only a voice.
+ * A section's voice track is `public/narration/<id>.mp3`. Where one exists its
+ * real duration becomes the section's duration, so the visuals follow the voice
+ * rather than the other way round, and it does not matter what produced it: a
+ * person at a microphone, ElevenLabs through this file, or any other generator
+ * writing into that directory. With no file and ELEVENLABS_API_KEY set, this
+ * synthesises one. With neither, the script's own declared timings are used and
+ * the video renders silent with captions, which is a complete video missing
+ * only a voice.
  */
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
@@ -25,8 +28,10 @@ const run = promisify(execFile);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
 const SCRIPT = path.join(ROOT, 'docs/VIDEO_SCRIPT.md');
-const OUT_DIR = path.join(ROOT, 'video/narration');
-const MANIFEST = path.join(OUT_DIR, 'manifest.json');
+const MANIFEST = path.join(ROOT, 'video/narration/manifest.json');
+// Remotion resolves staticFile() against public/, so the audio has to live
+// there and the manifest has to name it the way staticFile expects.
+const AUDIO_DIR = path.join(ROOT, 'video/public/narration');
 
 /** ElevenLabs defaults. Both are overridable from the environment. */
 const VOICE_ID = process.env.ELEVENLABS_VOICE_ID ?? 'JBFqnCBsd6RMkjVDRZzb';
@@ -133,7 +138,8 @@ if (sections.length === 0) {
   throw new Error(`no timed sections found in ${SCRIPT}`);
 }
 
-await mkdir(OUT_DIR, { recursive: true });
+await mkdir(AUDIO_DIR, { recursive: true });
+await mkdir(path.dirname(MANIFEST), { recursive: true });
 
 const apiKey = process.env.ELEVENLABS_API_KEY ?? null;
 const force = process.argv.includes('--force');
@@ -148,15 +154,16 @@ for (const section of sections) {
   let duration = scriptDuration;
   let source = 'script-timings';
 
-  if (apiKey !== null) {
-    const file = path.join(OUT_DIR, `${section.id}.mp3`);
-    if (force || !(await exists(file))) {
-      process.stdout.write(`synthesising ${section.id} (${words} words)\n`);
-      await synthesise(text, file, apiKey);
-    }
+  const file = path.join(AUDIO_DIR, `${section.id}.mp3`);
+  const present = await exists(file);
+  if (apiKey !== null && (force || !present)) {
+    process.stdout.write(`synthesising ${section.id} (${words} words)\n`);
+    await synthesise(text, file, apiKey);
+  }
+  if (await exists(file)) {
     // A little air after the last word so the next section does not clip in.
     duration = (await durationOf(file)) + 0.6;
-    audio = path.relative(ROOT, file);
+    audio = `narration/${section.id}.mp3`;
     source = 'audio';
   }
 
@@ -177,11 +184,13 @@ for (const section of sections) {
   cursor += duration;
 }
 
+const voiced = segments.filter((segment) => segment.audio !== null).length;
 const manifest = {
   generatedAt: new Date().toISOString(),
   source: path.relative(ROOT, SCRIPT),
-  hasAudio: apiKey !== null,
-  voice: apiKey === null ? null : { provider: 'elevenlabs', voiceId: VOICE_ID, modelId: MODEL_ID },
+  // Every section, or none. A half-voiced video is worse than a silent one.
+  hasAudio: voiced === segments.length && voiced > 0,
+  voicedSections: voiced,
   totalSeconds: Number(cursor.toFixed(3)),
   totalWords: segments.reduce((total, segment) => total + segment.words, 0),
   segments,
@@ -194,8 +203,10 @@ const seconds = Math.round(manifest.totalSeconds % 60);
 console.log(`wrote ${path.relative(ROOT, MANIFEST)}`);
 console.log(`  ${segments.length} sections, ${manifest.totalWords} spoken words`);
 console.log(
-  `  total ${minutes}:${String(seconds).padStart(2, '0')} from ${manifest.hasAudio ? 'synthesised audio' : "the script's own timings"}`,
+  `  total ${minutes}:${String(seconds).padStart(2, '0')} from ${manifest.hasAudio ? 'the voice track' : "the script's own timings"}`,
 );
 if (!manifest.hasAudio) {
-  console.log('  set ELEVENLABS_API_KEY to replace the estimate with a real voice track');
+  console.log(
+    `  ${voiced}/${segments.length} sections have audio in video/public/narration; drop the rest in, or set ELEVENLABS_API_KEY`,
+  );
 }
