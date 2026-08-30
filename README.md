@@ -38,7 +38,9 @@ The ten fixtures are mine, which is a fair objection to the whole benchmark: if 
 
 [examples/real-world-commander/](examples/real-world-commander) removes that objection for one case. The repository is [commander](https://github.com/tj/commander.js), 216 files and 17,700 lines. The fault is the line commander itself had before it fixed the bug in PR #2350. The oracle is commander's own regression test from that same PR. `prepare.sh` prints a full diff of the two edits it makes, so you can check that rather than take it.
 
-The reason it is worth having: **`npm run check` exits zero and all 1371 of commander's tests pass while the bug is present.** The regression test that catches it did not exist until the commit that fixed it, which is the normal condition of every bug that has ever shipped.
+The reason it is worth having: **all 1371 of commander's own tests pass while the bug is present.** The regression test that catches it did not exist until the commit that fixed it, which is the normal condition of every bug that has ever shipped.
+
+**The agent did not repair it.** Three runs exposed three defects in this harness and none in the model: the workspace copy had stripped commander's installed dependencies, the `[budget]` line overstated the ceiling by six calls, and `read_file` returns the first four per cent of the 87,607 byte file the fault is in, so the agent read the same opening three times and then invented a fault inside the part it could see. Two are fixed. The third needs a change to the tool set that every published measurement was taken against, so it is written down rather than done in the last day of a competition. [RESULT.md](examples/real-world-commander/RESULT.md) has all three trajectories and what each one cost.
 
 ## Requirements
 

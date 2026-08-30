@@ -14,6 +14,7 @@ Nothing moves from the second section to the third without artifacts.
 | Iteration 3 | Bill a turn that ends by throwing | One run in 60 with `cost: unknown`, which made a whole mode's median cost unreportable | Kept, and the spoiled batch re-run |
 | Iteration 4 | Say that a check exiting zero is not evidence the repository works | On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the first, null result reported on the second |
 | Discarded | A critic agent reviewing the patch before the retry decision | 1/9 against 4/9, negative in both runs of the experiment | Discarded by the rule written before it ran |
+| Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down with the run that proves it |
 | Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
 | Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system |
 
@@ -264,6 +265,53 @@ Iteration 3 above fixed a run that ended by throwing losing the usage of every m
 It was **not** fixed while the batches were running. [PREREGISTRATION.md](PREREGISTRATION.md) rule 1 forbids code changes between the pre-registration commit and the end of the batches being compared, and two batches have already been discarded for breaking exactly that rule. The defect is recorded, the median over the 138 runs with measured cost is $0.007144, and the fix waits for the batches to finish.
 
 The lesson is narrower than it looks: a fix aimed at one error path is not a fix for a class of error paths, and the only reason this one was caught is that the reporting fails loudly rather than quietly averaging over what it has.
+
+### Leaving the benchmark, 30 August 2026
+
+**What was tried, and why.** Every fixture in this project is mine. If I write
+the fault and I write the check that catches it, a good score proves I can write
+two halves of one puzzle. So: [commander](https://github.com/tj/commander.js) at
+a pinned upstream commit, 216 files and 17,700 lines, with the fault restored
+from the line commander itself had before PR #2350 and the oracle lifted from
+commander's own regression test from that same PR. Neither was written here.
+
+The property that makes it worth having: `node --test` runs all 1,371 of
+commander's tests with zero failures while the bug is present, because the
+regression test that catches it did not exist until the commit that fixed it.
+That is the normal condition of every bug that has ever shipped, and it is the
+exact condition this project is built for.
+
+**Evidence.** Three runs, three defects in the harness, none of them in the
+model. The full account is in
+[`examples/real-world-commander/RESULT.md`](../examples/real-world-commander/RESULT.md).
+
+| Run | Outcome | What it exposed |
+| --- | --- | --- |
+| `20260830T160959Z-2d2043` | budget-exhausted, no patch | The workspace copy skips `node_modules`, so commander's own check failed on a missing `@types/node`. The agent spent sixteen calls chasing a dependency the harness had removed |
+| `20260830T161421Z-d13af7` | budget-exhausted at 19 of 25 calls | `maxTurns` was fixed at 16 whatever the budget said. Every `[budget]` line told the agent it had 25 calls; the SDK stopped it at 19 |
+| `20260830T161557Z-886ac8` | no patch, 25/25 calls, $0.1079 | `read_file` returns the first four per cent of an 87,607 byte file. The agent read `lib/command.js` three times, got the same opening each time, and invented a fault inside the part it could see |
+
+**Decision.** Two fixes, one refusal.
+
+Fixed: `--check-command` lets the caller name the command that says whether the
+repository works, because a project's own `check` script often runs lint and
+formatting, which report on whether its devDependencies are installed. And
+`maxTurns` is now derived from the budget, with a floor that leaves every batch
+at the published 12-call budget byte-identical, verified by a test on the
+settings fingerprint that is written into every result.
+
+Not fixed: `read_file` needs an offset and a length. Adding one changes the tool
+set that every published measurement was taken against, and there was no credit
+left to re-measure. It is written down with the run that proves it.
+
+**Learning.** Three defects, and all three were the harness telling the agent
+something untrue or taking something away without saying so. That is now seven
+of this project's defects in the same class and zero in the other one. The
+benchmark could not have found any of them, because ten dependency-free
+repositories of six to twelve files never stress a single one of those paths.
+
+The general form: **a benchmark you built cannot tell you what your harness
+assumes.** It was built under the same assumptions.
 
 ### What these numbers are not
 
