@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repro Doctor: proof, not a transcript</title>
+<meta name="description" content="Repairs a broken TypeScript repository in a sandbox, then judges the result with an oracle the model never saw. 60 measured runs, every rate published with its interval.">
+<meta property="og:title" content="Repro Doctor: proof, not a transcript">
+<meta property="og:description" content="An agent that can run your check can satisfy it without repairing anything. The verdict here comes from a program the model could not reach.">
+<meta property="og:type" content="website">
+<style>
+/* One theme, auto by preference. One accent. One radius: 0. System fonts only,
+   so the page makes zero network requests and cannot be slowed by a font host. */
+:root {
+  --bg: #fbfbfa;
+  --surface: #f2f2f0;
+  --ink: #14151a;
+  --ink-2: #4b4f58;
+  --ink-3: #7c8189;
+  --line: #dcdcd8;
+  --accent: #1a4fd8;
+  --accent-ink: #ffffff;
+  --pass: #0f6b3f;
+  --fail: #a8271b;
+  --max: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d0e11;
+    --surface: #16181d;
+    --ink: #edeef1;
+    --ink-2: #a7acb6;
+    --ink-3: #767c87;
+    --line: #262a31;
+    --accent: #8ab0ff;
+    --accent-ink: #0d0e11;
+    --pass: #4bbd84;
+    --fail: #ff8a7a;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+h1, h2, h3 { margin: 0; letter-spacing: -0.02em; line-height: 1.08; }
+p { margin: 0; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Nav: one line, 64px, never grows. */
+nav {
+  height: 64px; display: flex; align-items: center; gap: 24px;
+  border-bottom: 1px solid var(--line); position: sticky; top: 0;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); z-index: 10;
+}
+nav .wrap { display: flex; align-items: center; gap: 24px; width: 100%; }
+.brand { font-weight: 600; letter-spacing: -0.01em; margin-right: auto; }
+.brand span { color: var(--ink-3); font-weight: 400; }
+nav a { color: var(--ink-2); text-decoration: none; font-size: 14px; white-space: nowrap; }
+nav a:hover { color: var(--ink); }
+@media (max-width: 640px) { nav a.hide-sm { display: none; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 10px 18px; border: 1px solid var(--accent); background: var(--accent);
+  color: var(--accent-ink); text-decoration: none; font-size: 14px; font-weight: 500;
+  white-space: nowrap; transition: transform .12s ease;
+}
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn:active { transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+
+section { border-bottom: 1px solid var(--line); }
+.pad { padding: 88px 0; }
+@media (max-width: 768px) { .pad { padding: 56px 0; } }
+h2 { font-size: clamp(26px, 3.4vw, 38px); }
+.lede { color: var(--ink-2); max-width: 62ch; margin-top: 16px; }
+
+/* Hero */
+.hero { padding-top: 72px; padding-bottom: 72px; }
+.hero h1 { font-size: clamp(40px, 7vw, 76px); }
+.hero p { color: var(--ink-2); font-size: clamp(17px, 1.6vw, 20px); max-width: 54ch; margin-top: 22px; }
+.cta-row { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+
+/* Problem: text and real terminal output */
+.split { display: grid; grid-template-columns: 1fr; gap: 40px; }
+@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; } }
+pre.term {
+  margin: 0; background: var(--surface); border: 1px solid var(--line);
+  padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.7; color: var(--ink-2);
+}
+pre.term b { color: var(--ink); font-weight: 600; }
+.pass { color: var(--pass); }
+.fail { color: var(--fail); }
+.cap { color: var(--ink-3); font-size: 13px; margin-top: 12px; }
+
+/* Steps: a numbered rail, not cards */
+.steps { margin-top: 48px; display: grid; gap: 0; }
+.step { display: grid; grid-template-columns: 44px 1fr; gap: 20px; padding: 24px 0; border-top: 1px solid var(--line); }
+.step:last-child { border-bottom: 1px solid var(--line); }
+.step .n { font-family: ui-monospace, monospace; font-size: 13px; color: var(--ink-3); padding-top: 4px; }
+.step h3 { font-size: 18px; }
+.step p { color: var(--ink-2); margin-top: 8px; max-width: 60ch; font-size: 15px; }
+
+/* Result */
+.figure { margin-top: 44px; border: 1px solid var(--line); padding: 28px 24px; background: var(--surface); }
+.figure figcaption { color: var(--ink-3); font-size: 13px; margin-top: 18px; max-width: 70ch; }
+table { border-collapse: collapse; width: 100%; margin-top: 36px; font-size: 15px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+th { color: var(--ink-3); font-weight: 500; font-size: 13px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; }
+.note { margin-top: 28px; padding-left: 18px; border-left: 2px solid var(--accent); color: var(--ink-2); max-width: 68ch; }
+
+/* Verify grid */
+.links { display: grid; grid-template-columns: 1fr; gap: 0; margin-top: 40px; }
+@media (min-width: 760px) { .links { grid-template-columns: 1fr 1fr; } }
+.links a {
+  display: block; padding: 22px 0; border-top: 1px solid var(--line);
+  text-decoration: none; color: var(--ink);
+}
+@media (min-width: 760px) { .links a:nth-child(odd) { padding-right: 36px; } .links a:nth-child(even) { padding-left: 36px; border-left: 1px solid var(--line); } }
+.links a:hover .t { color: var(--accent); }
+.links .t { font-weight: 500; }
+.links .d { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+
+footer { padding: 48px 0 72px; color: var(--ink-3); font-size: 14px; }
+footer a { color: var(--ink-2); }
+
+/* Motion: opacity and transform only, off entirely under reduced motion. */
+.reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Repro Doctor <span>/ verified repair</span></div>
+    <a href="#problem" class="hide-sm">Problem</a>
+    <a href="#how" class="hide-sm">How it works</a>
+    <a href="#result">Result</a>
+    <a href="https://github.com/lanss-id/repro-doctor">GitHub</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Proof, not<br>a transcript.</h1>
+    <p>Repro Doctor repairs your repository inside a sandbox, then judges the result with an oracle the model never saw.</p>
+    <div class="cta-row">
+      <a class="btn" href="#result">See the numbers</a>
+      <a class="btn ghost" href="#use">Use it on your repo</a>
+    </div>
+  </div>
+</section>
+
+<section id="problem" class="pad">
+  <div class="wrap split">
+    <div>
+      <h2>Your check passing is not the same as your code working.</h2>
+      <p class="lede">An agent that can run your test suite will stop the moment it goes green. So will the suite itself. This repository compiles, its check exits zero, and it runs no tests at all, because the glob says <code>.test.mjs</code> and the files are named <code>.spec.mjs</code>.</p>
+      <p class="lede">Hand that to a repair agent and it reports success. The transcript looks perfect. Reading the patch closely enough to catch it costs about as much attention as writing the patch yourself, and that review is the part nobody wants to do at the end of a day.</p>
+    </div>
+    <div>
+      <pre class="term"><b>$ npm run check</b>
+
+&gt; tsc -p tsconfig.json &amp;&amp; node --test "tests/**/*.test.mjs"
+
+<span class="fail">tests 0</span>
+suites 0
+pass 0
+fail 0
+duration_ms 8.291896
+
+<b>$ echo $?</b>
+<span class="pass">0</span></pre>
+      <p class="cap">Real output from <code>fixtures/broken-test-discovery</code>. Zero tests ran. The exit code says everything is fine.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="pad">
+  <div class="wrap">
+    <h2>The verdict comes from somewhere the agent cannot reach.</h2>
+    <p class="lede">You write down what your repository is supposed to do, once, as a script. Everything else is the harness keeping that script honest.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="n">01</div>
+        <div>
+          <h3>Your repository is copied, never touched</h3>
+          <p>The tree is checksummed before and after. Every run publishes both hashes, so "it did not modify my code" is something you check rather than something you are told.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="n">02</div>
+        <div>
+          <h3>The agent works inside a container with nothing in it</h3>
+          <p>No network, read-only root, all capabilities dropped, no Docker socket, no credentials, no mount beyond the workspace copy. Four tools, twelve calls, one deadline.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="n">03</div>
+        <div>
+          <h3>Your oracle runs afterwards, on a fresh copy</h3>
+          <p>One Node script, mounted read-only, started only after the agent's session has ended. Its exit status is the answer. The agent never sees the file, and the harness re-runs your project's own check independently as well.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="n">04</div>
+        <div>
+          <h3>You get a patch with its evidence attached</h3>
+          <p>Every tool call and its output, the oracle's log, the cost, both checksums. Applying it prints the whole diff, refuses a target that changed while you were reading, and waits for you to type <code>apply</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="pad">
+  <div class="wrap">
+    <h2>Sixty runs, and the honest reading of them.</h2>
+    <p class="lede">Ten broken repositories, both modes, three repeats each, on <code>gpt-4.1-mini</code>. Baseline is a generic instruction and an unstructured loop. Advanced adds a deterministic preflight, a hypothesis ledger, and one retry driven by evidence the harness collected rather than by the agent's opinion. Same model, tools, budget and scorer.</p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 720 200" width="100%" height="200" role="img" aria-label="Verified repair rate. Baseline 46.7 percent, 95 percent interval 30.2 to 63.9. Advanced 70.0 percent, 95 percent interval 52.1 to 83.3.">
+        <g font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.55">
+          <text x="120" y="184">0%</text>
+          <text x="255" y="184">25%</text>
+          <text x="395" y="184">50%</text>
+          <text x="535" y="184">75%</text>
+          <text x="668" y="184">100%</text>
+        </g>
+        <g stroke="currentColor" opacity="0.16">
+          <line x1="126" y1="28" x2="126" y2="168"></line>
+          <line x1="264" y1="28" x2="264" y2="168"></line>
+          <line x1="402" y1="28" x2="402" y2="168"></line>
+          <line x1="540" y1="28" x2="540" y2="168"></line>
+          <line x1="678" y1="28" x2="678" y2="168"></line>
+        </g>
+        <g>
+          <title>Baseline: 14 of 30 verified, 46.7 percent, 95% CI 30.2 to 63.9</title>
+          <text x="0" y="70" font-size="14" fill="currentColor">Baseline</text>
+          <text x="0" y="88" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">14 / 30</text>
+          <line x1="293" y1="72" x2="479" y2="72" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="293" y1="65" x2="293" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="479" y1="65" x2="479" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <circle cx="384" cy="72" r="6" fill="currentColor"></circle>
+          <text x="384" y="52" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="currentColor">46.7%</text>
+        </g>
+        <g>
+          <title>Advanced: 21 of 30 verified, 70.0 percent, 95% CI 52.1 to 83.3</title>
+          <text x="0" y="134" font-size="14" fill="currentColor">Advanced</text>
+          <text x="0" y="152" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">21 / 30</text>
+          <line x1="414" y1="136" x2="586" y2="136" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="414" y1="129" x2="414" y2="143" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="586" y1="129" x2="586" y2="143" stroke="var(--accent)" stroke-width="2"></line>
+          <circle cx="512" cy="136" r="6" fill="var(--accent)"></circle>
+          <text x="512" y="116" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">70.0%</text>
+        </g>
+      </svg>
+      <figcaption>Verified repair rate with 95 percent Wilson intervals, 30 runs per mode. A run counts only when the hidden oracle exits zero and every safety check passes.</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <svg viewBox="0 0 720 118" width="100%" height="118" role="img" aria-label="Difference, advanced minus baseline: plus 23.3 points, 95 percent interval minus 1.5 to plus 44.5, which crosses zero.">
+        <g font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.55">
+          <text x="86" y="104">-20</text>
+          <text x="238" y="104">0</text>
+          <text x="376" y="104">+20</text>
+          <text x="516" y="104">+40</text>
+          <text x="650" y="104">+60</text>
+        </g>
+        <line x1="245" y1="18" x2="245" y2="88" stroke="currentColor" stroke-width="1" opacity="0.5" stroke-dasharray="3 3"></line>
+        <text x="245" y="14" text-anchor="middle" font-size="11" font-family="ui-monospace, monospace" fill="currentColor" opacity="0.6">no difference</text>
+        <g>
+          <title>Advanced minus baseline: +23.3 points, 95% CI -1.5 to +44.5</title>
+          <line x1="235" y1="56" x2="560" y2="56" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="235" y1="49" x2="235" y2="63" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="560" y1="49" x2="560" y2="63" stroke="var(--accent)" stroke-width="2"></line>
+          <circle cx="408" cy="56" r="6" fill="var(--accent)"></circle>
+          <text x="408" y="38" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">+23.3 points</text>
+        </g>
+      </svg>
+      <figcaption>The same comparison as a difference, with its own Newcombe interval. The interval crosses zero, so sixty runs show a direction and not a size.</figcaption>
+    </figure>
+
+    <table>
+      <tr><th>Measured over 60 runs</th><th class="num">Baseline</th><th class="num">Advanced</th></tr>
+      <tr><td>Verified repair rate</td><td class="num">46.7%</td><td class="num">70.0%</td></tr>
+      <tr><td>95 percent interval</td><td class="num">30.2 to 63.9</td><td class="num">52.1 to 83.3</td></tr>
+      <tr><td>Median cost per run</td><td class="num">$0.0074</td><td class="num">$0.0072</td></tr>
+      <tr><td>Median wall clock</td><td class="num">24.3s</td><td class="num">25.7s</td></tr>
+      <tr><td>Runs with no patch at all</td><td class="num">9</td><td class="num">4</td></tr>
+      <tr><td>Unsafe mutations, budget violations, oracle access</td><td class="num">0</td><td class="num">0</td></tr>
+    </table>
+
+    <p class="note">The interval on the difference includes zero, so this is not a claim that the structure is worth 23 points. Two things it does settle: the structure is not paid for in money, because the advanced median run came out slightly cheaper, and it changes which failures happen. There is a sharper measurement of the noise underneath it. The baseline arm was byte-identical across two consecutive batches and scored 16 of 30, then 14 of 30. Same code, same prompt, temperature zero, 6.7 points apart. That is why every rate here carries an interval.</p>
+  </div>
+</section>
+
+<section id="use" class="pad">
+  <div class="wrap">
+    <div style="max-width:68ch">
+      <h2>What a hidden oracle actually catches.</h2>
+      <p class="lede">Pointed at a repository outside the benchmark with <code>--oracle-dir</code>, the agent rewrote a broken duration parser. Its patch handles compound durations, rejects trailing junk, and passes the repository's own test suite. The ledger says the fault is fixed. The oracle disagreed on one case out of six, so the run is reported as an unverified patch, and you see that before you type <code>apply</code>.</p>
+    </div>
+    <div style="margin-top:36px">
+      <pre class="term"><b>$ cat verification.log</b>
+
+<span class="pass">[oracle] PASS</span> the project compiles
+<span class="pass">[oracle] PASS</span> the entry point exports both functions
+<span class="pass">[oracle] PASS</span> single unit durations are still parsed
+<span class="pass">[oracle] PASS</span> every unit in a compound duration is added up
+<span class="fail">[oracle] FAIL</span> a string that is not a whole
+   sequence of pairs is rejected:
+   "" was parsed instead of rejected
+<span class="pass">[oracle] PASS</span> formatDuration is still the inverse
+<span class="pass">[oracle] PASS</span> the repository still has its own tests
+
+<span class="fail">[oracle] RESULT FAIL</span></pre>
+      <p class="cap">Real log from run <code>20260830T060136Z-7a08e1</code>, published in full in the repository.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pad">
+  <div class="wrap">
+    <h2>Nothing here asks to be believed.</h2>
+    <p class="lede">Every number on this page traces to a file you can open, and the whole evaluation reruns from a clean clone for well under a dollar.</p>
+    <pre class="term" style="margin-top:32px"><b>$ npm run docker:build</b>
+<b>$ npm run doctor -- fixtures verify</b>     <span style="opacity:.6"># the benchmark checks itself first</span>
+<b>$ npm run eval -- --repeats 3</b>           <span style="opacity:.6"># 60 runs, both modes, about $0.43</span>
+<b>$ npm run report</b></pre>
+    <div class="links">
+      <a href="https://github.com/lanss-id/repro-doctor/tree/main/submission/examples">
+        <div class="t">A trajectory for every agent</div>
+        <div class="d">Baseline, advanced, the retry firing event by event, the discarded critic, and the user path. Every tool call with its output.</div>
+      </a>
+      <a href="https://github.com/lanss-id/repro-doctor/blob/main/docs/EVALUATION.md">
+        <div class="t">The evaluation protocol</div>
+        <div class="d">Per case grid, failure profile, the fairness contract between the two modes, and what is still unmeasured.</div>
+      </a>
+      <a href="https://github.com/lanss-id/repro-doctor/blob/main/docs/IMPROVEMENT_CHANGELOG.md">
+        <div class="t">Every iteration, including the failures</div>
+        <div class="d">Four bugs found in live runs, a critic experiment discarded by its own rule, and two 60 run batches measured and thrown away.</div>
+      </a>
+      <a href="https://github.com/lanss-id/repro-doctor/tree/main/examples/bring-your-own-oracle">
+        <div class="t">Write an oracle for your own repository</div>
+        <div class="d">The contract, a worked example, and the two runs that were done against it, one of which failed.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Repro Doctor is MIT licensed and built for the micro1 Frontier Engineering Challenge 2026.
+    <a href="https://github.com/lanss-id/repro-doctor">Source</a>,
+    <a href="https://github.com/lanss-id/repro-doctor/blob/main/docs/REPRODUCTION.md">reproduction guide</a>.
+  </div>
+</footer>
+
+<script>
+// One reveal on entry, transform and opacity only, and nothing at all when the
+// visitor has asked for reduced motion.
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    }
+  }, { rootMargin: '0px 0px -10% 0px' });
+  for (const el of document.querySelectorAll('.reveal')) io.observe(el);
+} else {
+  for (const el of document.querySelectorAll('.reveal')) el.classList.add('in');
+}
+</script>
+</body>
+</html>

@@ -10,3 +10,8 @@ artifacts/
 fixtures/*/repo/dist/
 fixtures/*/repo/node_modules/
 fixtures/*/repo/packages/*/dist/
+
+# Agent tooling installed locally, disclosed in docs/AGENT_USE.md rather than vendored
+.agents/
+.claude/
+skills-lock.json

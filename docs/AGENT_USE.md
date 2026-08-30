@@ -27,6 +27,12 @@ used under their own licences:
 No starter template, no forked repository, no code carried over from earlier
 work. `git log` starts at the first commit of this project.
 
+The landing page under `site/` was built in the same way, with one addition: a
+third-party frontend design skill, `Leonxlnx/taste-skill`, was installed locally
+and followed for that page's layout, colour and motion decisions. It is agent
+instructions rather than code, nothing from it ships in this repository, and the
+page it produced has no dependencies at all.
+
 The coding-agent session transcripts are not committed here. They contain the
 author's local paths and unrelated shell history, and they are supplied
 separately with the submission rather than pasted into a public repository.

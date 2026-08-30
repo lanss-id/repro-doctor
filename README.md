@@ -1,5 +1,7 @@
 # Repro Doctor
 
+**[lanss-id.github.io/repro-doctor](https://lanss-id.github.io/repro-doctor/)** is the one page version: the problem, how the verdict is produced, and the measured result.
+
 Repro Doctor takes a TypeScript repository that does not work, copies it into a sandbox, lets a model try to repair the copy, and then checks the result with an oracle the model never saw. What you get back is a patch with evidence attached: a trajectory of every command, the oracle's exit status, and a checksum proving the original repository was not touched.
 
 The reason for the hidden oracle is simple. An agent that can see the test can make the test pass. Most "the agent fixed it" claims are really "the agent convinced itself it fixed it", and the two look identical in a transcript. Here the pass or fail signal comes from a program stored outside the workspace, mounted read-only, and run after the agent's session has ended.
