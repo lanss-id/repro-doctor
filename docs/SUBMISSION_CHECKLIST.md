@@ -83,7 +83,7 @@ Everything in this section has been run in this repository.
 
 ## Not done, and honestly so
 
-- [ ] **E2, E3 and E4.** Written with decision rules, not built. E4 did not trigger: its rule fires between 5 and 15 points and the measured difference was 20.
+- [ ] **E2, E3 and E4.** Written with decision rules, not built. E4 did not trigger: its rule fires between 5 and 15 points and the measured difference was 23.3.
 - [ ] **Anything outside the ten fixtures.** No real-world repository, one model, one provider, one machine.
 - [ ] **Video.** Script written, not recorded.
 
@@ -101,7 +101,7 @@ The evaluation work in this list is done. What is left:
 
 ## The rule for the last hour
 
-The evaluation ran, so the temptation changes shape. It is no longer "quote a number you do not have", it is "quote the number without the interval". Advanced beat baseline by 20 points and the 95% interval on that difference runs from -4.2 to +41.2. Every place that says 20 points has to say the interval too, including the video and anything written in a submission form.
+The evaluation ran, so the temptation changes shape. It is no longer "quote a number you do not have", it is "quote the number without the interval". Advanced beat baseline by 23.3 points and the 95% interval on that difference runs from -1.5 to +44.5, which includes zero. Every place that says 23.3 points has to say the interval too, including the video and anything written in a submission form.
 
 The same applies to the critic: its rule discarded it, and "the critic did not help" is the claim. "The critic hurts" is not, because nine runs per arm cannot support it.
 

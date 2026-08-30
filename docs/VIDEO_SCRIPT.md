@@ -86,5 +86,5 @@ Record at 1920x1080, terminal font large enough to read at half size. Do a dry r
 
 - Have `npm run docker:build` done beforehand. The first pull is slow and boring.
 - Trim the wait during `diagnose`. Cut, do not speed up: sped-up terminal output looks like a trick.
-- The last section quotes real numbers. Say the interval out loud every time the 20 points is said; a viewer who hears only the point estimate has been misled by omission.
+- The last section quotes real numbers. Say the interval out loud every time the point estimate is said; a viewer who hears only the point estimate has been misled by omission.
 - Resist the urge to add music.

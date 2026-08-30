@@ -21,7 +21,7 @@ npm run lint
 npm test
 ```
 
-Expected: no output from typecheck or lint, and `pass 145` from the tests. The suite takes about a minute, most of it real subprocesses.
+Expected: no output from typecheck or lint, and `pass 163` from the tests. The suite takes about a minute, most of it real subprocesses.
 
 ```bash
 npm run doctor -- fixtures list
@@ -108,13 +108,17 @@ npm run report
 open artifacts/report/index.html
 ```
 
-Sixty runs. See [EVALUATION.md](EVALUATION.md) for what the numbers mean and how many of them you should believe.
+Sixty runs. Measured on the machine that produced the published result: **26.8 minutes of wall clock and $0.4262** of model spend, with a median of 25 seconds and $0.0073 per run. The per-run ceiling is 360 seconds, so a pathological batch could take six hours, but none has come close.
+
+See [EVALUATION.md](EVALUATION.md) for what the numbers mean and how many of them you should believe.
 
 To run the critic experiment instead, eighteen runs over the three hardest fixtures, scored by the rule fixed in advance:
 
 ```bash
 npm run eval -- --experiment critic --repeats 3
 ```
+
+Eighteen runs, about 8 minutes, about $0.13.
 
 Both commands stop before spending anything if the pinned model has no token price in `config/pricing.json`, since an unpriced batch cannot enforce its cost budget.
 
