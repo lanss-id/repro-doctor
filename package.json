@@ -11,6 +11,12 @@
   "bin": {
     "repro-doctor": "dist/src/cli/index.js"
   },
+  "files": [
+    "dist",
+    "fixtures",
+    "config",
+    "Dockerfile"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
