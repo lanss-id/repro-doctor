@@ -32,6 +32,14 @@ npm run doctor -- diagnose path/to/your/repo \
 
 An oracle is one Node script. It gets a fresh copy of the repaired tree, no network, and `REPO_DIR` pointing at it; exit 0 means the repository keeps its promises. [examples/bring-your-own-oracle/](examples/bring-your-own-oracle) is a worked example with the full contract, a repository whose own tests pass while its documented behaviour is broken, and the two real runs that were done against it, including the one where the agent's patch looked right and the oracle caught the case it missed.
 
+### A repository I did not write, and a bug I did not write either
+
+The ten fixtures are mine, which is a fair objection to the whole benchmark: if I write the fault and I write the check that catches it, a good score proves I can write two halves of one puzzle.
+
+[examples/real-world-commander/](examples/real-world-commander) removes that objection for one case. The repository is [commander](https://github.com/tj/commander.js), 216 files and 17,700 lines. The fault is the line commander itself had before it fixed the bug in PR #2350. The oracle is commander's own regression test from that same PR. `prepare.sh` prints a full diff of the two edits it makes, so you can check that rather than take it.
+
+The reason it is worth having: **`npm run check` exits zero and all 1371 of commander's tests pass while the bug is present.** The regression test that catches it did not exist until the commit that fixed it, which is the normal condition of every bug that has ever shipped.
+
 ## Requirements
 
 - Node.js 22 or newer
