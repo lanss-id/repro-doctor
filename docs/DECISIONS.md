@@ -163,3 +163,29 @@ Each entry is a call I made, what I gave up, and what would change my mind.
 **Why not.** The instructions said "you have at most 12 tool calls" while the advanced preflight had already spent 3 before the model read a word, so the sentence was false from the first turn. Three live runs on `chained-two-faults` showed what that costs: one arrived at the correct diagnosis on call 13 and had it refused, one landed its first patch on call 12 and left the promised retry with nothing to spend, and one reached the retry and used its single remaining call to re-read a file it had already read. None of those was a reasoning failure. The agent was planning against numbers that were not true.
 
 **Cost.** The budget line is in every tool result, so it costs tokens on every call, and the reservation takes one investigation call away from the first turn. Both modes get the same line from the same function, so the comparison is unaffected. The reservation is advanced-only because the retry is advanced-only, and it partitions the twelve calls rather than raising them: `tests/integration/advanced-retry.test.ts` asserts that an agent which spends every call it is offered still finishes at twelve.
+
+## 15. The caller can name the check, and the SDK ceiling follows the budget
+
+**Decision.** `--check-command` overrides the command resolved from the manifest, for both modes and the evidence gate at once. And `maxTurns`, the SDK's own ceiling on agent turns, is derived from the tool-call budget instead of being fixed at 16, with a floor that leaves every batch at the published 12-call budget byte-identical.
+
+**Alternative.** Keep resolving the check from `package.json` and keep the ceiling fixed. It worked on all ten fixtures.
+
+**Why not.** It worked on all ten fixtures because I wrote all ten fixtures. The first time this tool was pointed at a repository somebody else wrote, both assumptions broke inside three minutes.
+
+commander's `check` script runs `eslint` and `prettier` alongside the type check. In a sandbox with no network those report on whether its devDependencies are installed, which is a fact about the harness and not about whether the library works. The agent spent sixteen of nineteen calls chasing a missing `@types/node` that the workspace copy had removed on the way in.
+
+The ceiling was worse, because it was a lie rather than a wrong answer. A run given `--max-tool-calls 25` was told it had 25 in every `[budget]` line and was stopped by the SDK at 19. That is the same defect as decision 14, in a place decision 14 did not look, and the benchmark could never have found it: at the default budget, 3 preflight calls plus 12 agent calls never reaches 16 turns.
+
+**Cost.** Two more things a caller can get wrong, and a settings fingerprint that now varies with the budget. The fingerprint is written into every result, so a test asserts it is unchanged at the published budget; if that test ever fails, every published measurement has become incomparable and the failure says so.
+
+## 16. An installed copy writes its runs beside your repository
+
+**Decision.** `npx github:lanss-id/repro-doctor` installs and builds through a `prepare` script. An installed copy writes artifacts to `.repro-doctor/` in the working directory rather than to `artifacts/` under its own package root. `REPRO_DOCTOR_ARTIFACTS_DIR` overrides both.
+
+**Alternative.** Keep one rule: artifacts always live under the project root.
+
+**Why not.** Under `npx` the project root is a cache directory npm is free to clear. Every run's evidence would be written somewhere the operator cannot find, and `apply <run-id>` would break the moment `diagnose` returned, which is the one workflow this tool exists for.
+
+**Cost.** Two locations instead of one, decided by whether the package path contains `node_modules`. It is a pure function with its own test rather than a condition buried in an accessor, because a rule about where evidence goes is worth being able to read.
+
+**Not published to npm.** The competition this was built for takes ownership of submissions, so claiming a registry name is not mine to do. A git install needs no registry entry, and `private: true` stays in the manifest so a publish cannot happen by accident.

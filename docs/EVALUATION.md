@@ -89,13 +89,68 @@ Two cases deserve to be named rather than averaged away.
 
 Baseline's characteristic failure remains producing nothing at all: eleven runs spent twelve tool calls reading files and never proposed a patch. Advanced halves that, to six.
 
-### How much of that is the retry
+### Which ingredient carries it: the ablation
 
-Nineteen of the seventy advanced runs received the evidence-driven feedback turn, which fires only when the harness's own re-run of the check or the hidden oracle rejects the first patch. **Eighteen of those nineteen ended verified.**
+Advanced mode shipped five changes at once. Two pre-registered ablations, 140
+runs, say which of them the difference belongs to. Both run on the five
+hard-stratum cases with seven repeats, both re-run their own control rather than
+borrowing one from another batch.
 
-That is a striking conditional rate and it needs stating carefully. Those nineteen runs had a first patch that an independent check rejected, so without a second turn they would have ended `unverified-patch`. Eighteen of advanced mode's fifty-one verified repairs, more than a third, arrived through a turn that only exists because something outside the agent said the first attempt was wrong.
+| Experiment | What the treatment removes | Control | Treatment | Difference |
+| --- | --- | --- | --- | --- |
+| `ablation` | the retry turn and the tool call reserved for it | 13/35, 37.1% | 1/35, 2.9% | **+34.3 points (95% CI +16.1 to +51.0)** |
+| `reserve` | the retry turn only, reservation held | 17/35, 48.6% | 8/35, 22.9% | **+25.7 points (95% CI +3.3 to +44.9)** |
 
-If that reasoning is right, advanced mode without the retry would score around 33 of 70, which is below baseline. The `--experiment ablation` batch measures it directly instead of inferring it, because a conditional rate is not a causal one: the ablated arm also gets back the tool call the retry reserves, and may not produce the same first patch at all.
+**Both intervals exclude zero.** They are the only intervals in this project
+that do. The bounded retry is load-bearing, and the second attempt carries most
+of it on its own.
+
+The first experiment alone would have been misleading, and reading its runs is
+what showed it. Twenty of its thirty-five treatment runs produced no patch at
+all, and eighteen of those twenty had a patch **refused for running out of tool
+calls**. The reservation was doing two jobs: funding the retry turn, and
+subtracting one from the `[budget]` line the agent reads, which made it patch
+earlier. Releasing it removed both at once.
+
+The pre-registration for that experiment argued the opposite. It reasoned that
+releasing the reservation made the ablation conservative, because the treatment
+would get more usable calls. It got more calls and used them worse, because the
+binding constraint was pacing rather than budget. The error runs in the
+direction that inflates the effect, and the second experiment exists because of
+it.
+
+Comparing the two treatment arms isolates the pacing effect: 8/35 with the
+reservation against 1/35 without it, +20.0 points with a 95 percent CI of +4.1
+to +36.3. **That comparison is across two batches and is reported as suggestive,
+never as established.** The batches ran an hour apart on the same code and the
+same provider, which makes it worth printing and does not make it sound.
+
+### What the retry does in an ordinary batch
+
+Nineteen of the seventy advanced runs in the confirmatory batch received the
+evidence-driven feedback turn, which fires only when the harness's own re-run of
+the check or the hidden oracle rejects the first patch. **Eighteen of those
+nineteen ended verified.** Those nineteen had a first patch an independent check
+rejected, so without a second turn they would have ended `unverified-patch`.
+More than a third of advanced mode's verified repairs arrived through a turn
+that exists only because something outside the agent said the first attempt was
+wrong.
+
+### Advanced mode on hard faults, measured four times
+
+The ablations give two more estimates of the published advanced mode on the same
+five cases, which makes four in total on unchanged code:
+
+| Batch | Advanced on the hard stratum |
+| --- | --- |
+| Exploratory, 3 repeats | 6/15, 40.0% |
+| Confirmatory, 7 repeats | 16/35, 45.7% |
+| `ablation` control, 7 repeats | 13/35, 37.1% |
+| `reserve` control, 7 repeats | 17/35, 48.6% |
+
+A spread of 11.5 points, from nothing. It is the same lesson as the baseline arm
+and it is why both ablations paid to re-run their own control instead of
+borrowing one.
 
 ### The critic experiment, decided
 

@@ -14,6 +14,7 @@ Nothing moves from the second section to the third without artifacts.
 | Iteration 3 | Bill a turn that ends by throwing | One run in 60 with `cost: unknown`, which made a whole mode's median cost unreportable | Kept, and the spoiled batch re-run |
 | Iteration 4 | Say that a check exiting zero is not evidence the repository works | On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the first, null result reported on the second |
 | Discarded | A critic agent reviewing the patch before the retry decision | 1/9 against 4/9, negative in both runs of the experiment | Discarded by the rule written before it ran |
+| Iteration 7 | Ablate the bounded retry, twice, to find which of advanced mode's five changes carries it | Removing the retry design costs +34.3 points (95% CI +16.1 to +51.0); removing only its second turn costs +25.7 (95% CI +3.3 to +44.9). Both exclude zero | Kept, and for the first time on a measurement rather than an argument |
 | Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down with the run that proves it |
 | Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
 | Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system |
@@ -265,6 +266,68 @@ Iteration 3 above fixed a run that ended by throwing losing the usage of every m
 It was **not** fixed while the batches were running. [PREREGISTRATION.md](PREREGISTRATION.md) rule 1 forbids code changes between the pre-registration commit and the end of the batches being compared, and two batches have already been discarded for breaking exactly that rule. The defect is recorded, the median over the 138 runs with measured cost is $0.007144, and the fix waits for the batches to finish.
 
 The lesson is narrower than it looks: a fix aimed at one error path is not a fix for a class of error paths, and the only reason this one was caught is that the reporting fails loudly rather than quietly averaging over what it has.
+
+### E6 and E6b, the ablations: the first intervals that exclude zero, 30 August 2026
+
+**What was tried, and why.** Advanced mode shipped five changes at once and
+nobody knew which of them carried the difference. The brief asks which design
+choices actually help the agent reach the goal reliably, and the honest answer
+until now was that I did not know.
+
+**E6, generated `2026-08-30T15:52:37Z`, 70 runs, $0.5271, 30.5 minutes.**
+Treatment: advanced without the bounded retry, which the pre-registration
+defined as three coupled things, the retry turn, the tool call reserved for it,
+and a step 8 that tells the truth about not getting a second turn.
+
+| | Control | Treatment |
+| --- | --- | --- |
+| Verified repair rate | 13/35, 37.1% (95% CI 23.2 to 53.7) | 1/35, 2.9% (95% CI 0.5 to 14.5) |
+
+Difference **+34.3 points, 95% CI +16.1 to +51.0**. The rule fixed in advance
+required the interval to exclude zero. It does, and it is the first interval in
+this project that ever has.
+
+**Then the runs said the number did not mean what the hypothesis said.** Twenty
+of the thirty-five treatment runs produced no patch at all, and eighteen of
+those twenty had a patch refused for running out of tool calls. The reservation
+turns out to do two jobs: it funds the retry turn, and it subtracts one from the
+`[budget]` line the agent reads, which makes the agent patch earlier. Releasing
+it removed both at once.
+
+The pre-registration had argued that releasing the reservation made the ablation
+**conservative**, because the treatment would get more usable calls. It got more
+calls and used them worse, because the binding constraint was pacing and not
+budget. The error runs in the direction that inflates the measured effect. The
+procedure was followed exactly as registered; the reasoning was wrong, and that
+is recorded rather than corrected in place.
+
+**E6b, generated `2026-08-30T16:49:41Z`, 70 runs, $0.5182, 29.9 minutes.**
+Registered before it ran, with the E6 finding written into it. Treatment: the
+retry turn removed, the reservation **kept**. Not a design anyone would ship, it
+reserves a call for a turn that will never happen, and that is exactly what an
+ablation arm is for.
+
+| | Control | Treatment |
+| --- | --- | --- |
+| Verified repair rate | 17/35, 48.6% (95% CI 33.0 to 64.4) | 8/35, 22.9% (95% CI 12.1 to 39.0) |
+
+Difference **+25.7 points, 95% CI +3.3 to +44.9**. Also excludes zero.
+
+**Decision and learning.** The bounded retry stays, and for the first time the
+reason is a measurement rather than an argument. The second attempt is
+load-bearing on its own, and it exists only because something outside the agent
+said the first attempt was wrong.
+
+Comparing the two treatment arms isolates the pacing effect: +20.0 points with a
+95 percent CI of +4.1 to +36.3. That is across two batches and is reported as
+suggestive, never as established, which is the same rule the rest of this file
+lives by.
+
+The ablations also hand over two more measurements of unchanged advanced mode on
+the same five cases. With the earlier batches that makes four: 40.0%, 45.7%,
+37.1%, 48.6%. A spread of 11.5 points from nothing, which is why both ablations
+paid to re-run their own control instead of borrowing one, and why E7 was
+dropped rather than run at a sample size that could not have said anything.
 
 ### Leaving the benchmark, 30 August 2026
 

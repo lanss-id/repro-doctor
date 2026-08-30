@@ -217,6 +217,23 @@ separates:
 | saturated | 31/35, 88.6% | 35/35, 100.0% | +11.4 points (95% CI -0.6 to +26.0) |
 | hard | 11/35, 31.4% | 16/35, 45.7% | +14.3 points (95% CI -8.2 to +34.9) |
 
+### The one thing this project did establish
+
+The comparison against baseline is not settled. Which ingredient of advanced mode matters is.
+
+Advanced mode shipped five changes at once, so two pre-registered ablations removed the bounded retry and measured what broke. 140 runs, on the five hard-stratum cases, each re-running its own control rather than borrowing one.
+
+| What the treatment removes | Control | Treatment | Difference |
+| --- | --- | --- | --- |
+| the retry turn and the call reserved for it | 13/35, 37.1% | 1/35, 2.9% | **+34.3 points (95% CI +16.1 to +51.0)** |
+| the retry turn only, reservation held | 17/35, 48.6% | 8/35, 22.9% | **+25.7 points (95% CI +3.3 to +44.9)** |
+
+Both intervals exclude zero. They are the only intervals here that do.
+
+The second experiment exists because the first one's reasoning was wrong, and the runs said so. Twenty of the first treatment's thirty-five runs produced no patch at all, and eighteen of those had a patch **refused for running out of tool calls**. The reservation was doing two jobs: paying for the retry turn, and quietly making the agent patch earlier by subtracting one from the budget line it reads. The pre-registration had argued that releasing it would make the ablation conservative. It did the opposite, in the direction that inflates the effect, so a second ablation held the reservation still and measured the turn alone.
+
+What that buys is a sentence worth more than the headline: **the second attempt is load-bearing, and it exists only because something outside the agent said the first attempt was wrong.** Not the agent's confidence, not its ledger, not its summary. An independent check.
+
 ### What the exploratory batch had said, and why it was wrong
 
 The first batch, 60 runs at three repeats, measured baseline 14/30, 46.7%
@@ -361,12 +378,15 @@ tests           Unit and integration tests, mostly against real processes
 ## Documentation
 
 - [docs/REPRODUCTION.md](docs/REPRODUCTION.md), how to reproduce a run from a clean machine
+- [docs/PREREGISTRATION.md](docs/PREREGISTRATION.md), every hypothesis, sample size and decision rule, committed before the batch it governs ran
+- [docs/POSITIONING.md](docs/POSITIONING.md), where this sits next to the tools it shares a name with, and where it is behind them
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), how the pieces fit and why the seams are where they are
 - [docs/EVALUATION.md](docs/EVALUATION.md), the protocol, the fairness contract and the honesty rules
 - [docs/DECISIONS.md](docs/DECISIONS.md), the calls I made and what I gave up
 - [docs/IMPROVEMENT_CHANGELOG.md](docs/IMPROVEMENT_CHANGELOG.md), every iteration with its evidence, including the ones that were thrown away
 - [docs/AGENT_USE.md](docs/AGENT_USE.md), which agents were used to build this and which run inside it, with a trajectory for each
 - [examples/bring-your-own-oracle/](examples/bring-your-own-oracle), the oracle contract and a worked example on a repository outside the benchmark
+- [examples/real-world-commander/](examples/real-world-commander), a real third-party repository with a fault and an oracle written by its own maintainers, and the three defects the attempt found
 - [submission/examples/](submission/examples), committed trajectories for every agent and a transcript of the human checkpoint
 - [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md)
 

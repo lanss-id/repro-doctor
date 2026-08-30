@@ -77,14 +77,19 @@ Everything in this section has been run in this repository.
 - [x] 18-run critic experiment, decided by its pre-registered rule: discard, run twice and negative both times
 - [x] Zero unsafe mutations, zero budget violations and zero oracle access violations across all 200 scored runs
 - [x] Every rate published with its interval, and every difference with a Newcombe interval, including the ones that make the project look worse
+- [x] Two pre-registered ablations, 140 runs, the only intervals in the project that exclude zero: removing the retry design costs +34.3 points (95% CI +16.1 to +51.0), removing only its second turn costs +25.7 (95% CI +3.3 to +44.9)
+- [x] The second ablation exists because the first one's registered reasoning was wrong in the direction that inflates the effect, which is recorded rather than corrected in place
+- [x] Advanced mode on hard faults measured four times on unchanged code: 40.0%, 45.7%, 37.1%, 48.6%
 - [x] A case where advanced mode is worse than baseline, `monorepo-build-order` at 1/7 against 6/7, published rather than dropped
 - [x] Two 60-run batches discarded and re-run rather than published: one after it exposed a cost-accounting bug, one after an instruction change made its advanced arm stale
 - [x] `config/pricing.json` carries the OpenRouter route used for the published run, verified on 2026-08-30
 
 ### Reproducibility
 
-- [x] Every run behind every published number committed under `submission/evidence/`: 218 runs across three bundles
+- [x] Every run behind every published number committed under `submission/evidence/`: 358 runs across five bundles
 - [x] `npm run doctor -- replay submission/evidence/confirmatory` recomputes all 140 runs, all seven checks each, with no API key, no model call, no Docker and no network, and exits non-zero on a single disagreement
+- [x] CI runs that replay on every push, so a document drifting from its evidence fails the build
+- [x] Installable with `npx github:lanss-id/repro-doctor`, with runs written beside the repository rather than into the npx cache
 - [x] The exploratory bundle replays to 14/30 and 21/30, proving the scorer did not drift under the results it produced
 - [x] A test computes the headline numbers from the committed bundle and fails if `README.md` or `docs/EVALUATION.md` quotes a different one
 - [x] A test pins the digest of the instruction text every published rate was measured against
@@ -104,6 +109,8 @@ Everything in this section has been run in this repository.
 
 - [ ] **A sample large enough to settle the difference.** 70 runs per mode cannot resolve 13 points. It needs about 206 runs per arm, roughly 420 runs and $3.30 at the measured cost per run, which exceeded the model credit available for this submission. The number is written into `docs/EVALUATION.md` so nobody has to derive it again.
 - [ ] **E2 and E3.** Written with decision rules, not built.
+- [ ] **E7, the budget-sensitivity batch.** Registered, then not run: the model credit ran out and the third ablation arm was worth more with what remained. Its design stays written down. A defect found while preparing the real-repository example would also have invalidated it as registered, and that is recorded next to it.
+- [ ] **`read_file` has no offset or length.** On a 2,787 line source file it returns four per cent. It is why the commander run failed, and fixing it changes the tool set every published measurement was taken against.
 - [ ] **More than one repository outside the benchmark.** There are two worked examples, one synthetic and one real, and neither is a rate.
 - [ ] **More than one model, one provider, one machine.**
 - [ ] **The cost-accounting defect on the `budget-exhausted` path.** Found by the confirmatory batch, deliberately not fixed while the batches being compared were still running, because the pre-registration forbids it and two batches have already been discarded for breaking that rule.

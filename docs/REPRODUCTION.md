@@ -21,7 +21,7 @@ npm run lint
 npm test
 ```
 
-Expected: no output from typecheck or lint, and `pass 163` from the tests. The suite takes about a minute, most of it real subprocesses.
+Expected: no output from typecheck or lint, and `pass 198` from the tests. The suite takes about a minute, most of it real subprocesses.
 
 ```bash
 npm run doctor -- fixtures list
@@ -70,6 +70,8 @@ Two other bundles are committed and replay the same way:
 
 ```bash
 npm run doctor -- replay submission/evidence/exploratory   # the 60-run batch that came first
+npm run doctor -- replay submission/evidence/ablation      # the retry ablation
+npm run doctor -- replay submission/evidence/reserve       # the retry ablation with the reservation held
 npm run doctor -- replay submission/evidence/critic        # the discarded critic experiment
 ```
 
@@ -151,7 +153,8 @@ The two pre-registered experiments, each writing its own report file so it canno
 
 ```bash
 npm run eval -- --experiment critic --repeats 3      # 18 runs, about 8 minutes, about $0.13
-npm run eval -- --experiment ablation --repeats 7    # 70 runs, about 35 minutes, about $0.55
+npm run eval -- --experiment ablation --repeats 7    # 70 runs, about 31 minutes, about $0.53
+npm run eval -- --experiment reserve --repeats 7     # 70 runs, about 30 minutes, about $0.52
 ```
 
 The budget-sensitivity batch, which raises the tool-call ceiling for both modes at once:
