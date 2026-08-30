@@ -183,7 +183,12 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
     tracker.markLimit('wall-clock');
     deadline.abort(new Error(`run deadline of ${budget.maxWallClockSeconds}s expired`));
   }, budget.maxWallClockSeconds * 1000);
-  deadlineTimer.unref();
+  // Deliberately referenced. A model call that hangs without holding an open
+  // handle leaves this timer as the only pending work, and an unreferenced
+  // timer lets Node 22 exit before the deadline can abort the run: the process
+  // dies quietly instead of producing a budget-exhausted result with its
+  // artifacts. The finally block below always clears it, so a finished run is
+  // never held open by it.
 
   const driverOptions: DriverOptions = {
     apiKey: config.apiKey ?? 'scripted-driver-no-key',

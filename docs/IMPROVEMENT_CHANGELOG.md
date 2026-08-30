@@ -35,6 +35,7 @@ Each line names the check that backs it. Every one of these was run in this repo
 - **`apply` re-checks the target immediately before the first write.** A repository edited while the operator was reading the diff is refused, not patched. Verified by `tests/integration/apply-safety.test.ts`.
 - **`apply` validates every path component before creating anything.** A target containing a symlink out of the repository cannot be used to create a directory or a file outside it. Verified by a test that asserts the outside directory is still empty after the refusal.
 - **The workspace containment check is canonical, not a string prefix.** A sibling directory whose name begins with the workspace path, and a workdir that is a symlink out of it, are both refused. Verified by two tests in `tests/integration/executor.test.ts`.
+- **The run deadline fires even when nothing else is pending.** The timer was unreferenced, so a model call that hangs without holding an open handle left it as the only pending work and Node 22 exited before it could abort: the process died quietly instead of producing a `budget-exhausted` result with its artifacts. Found by CI, which runs Node 22, while the development machine's Node 25 hid it. Reproduced three times out of three inside a `node:22` container, fixed by keeping the timer referenced, and the `finally` block still clears it so a finished run is never held open.
 - **One deadline covers model calls, tools, the retry and verification.** Enforced by an abort signal, classified as `budget-exhausted` with limit `wall-clock`. Verified by `tests/integration/deadline.test.ts`, which blocks the driver until the deadline fires.
 - **Token usage accumulates across every model call in a run.** The first turn, the retry and any critic call sum before the cost is computed and the budget checked. Verified in `tests/unit/budget.test.ts` and end to end in `tests/integration/advanced-retry.test.ts`, which asserts the exact summed cost.
 - **repair.patch is exact, and its checksum matches the stored bytes.** Publishable artifacts use a redacted view. Verified by `tests/integration/patch-artifacts.test.ts`, which puts a credential-shaped string in a patched file and asserts the patch applies, the checksum matches, and the report, the trajectory and `result.json` do not contain it.
@@ -206,6 +207,18 @@ Difference: -33.3 points, 95% CI -63.6 to +7.9, at 3.3 percent less cost. The ru
 It was run twice, before and after the instruction change above, and lost both times: -11.1 points, then -33.3. Nine runs per arm cannot separate -33 from +8, so this is not evidence that the critic hurts. It is a pre-registered rule reporting that the critic was not shown to help. A trajectory from the treatment arm, including the `critic.reviewed` event, is published at [`submission/examples/critic-run/`](../submission/examples/critic-run).
 
 One resource note belongs with it: the treatment holds back two tool calls to the control's one, because the critic's own call comes from the same budget, so part of the gap is one fewer investigation call.
+
+### The bug only CI could see, 30 August 2026
+
+`tests/integration/deadline.test.ts` passed on the development machine and was cancelled in every CI run. Not flaky: deterministic, and deterministically invisible locally.
+
+The deadline timer was created with `unref()`, which tells Node not to keep the process alive for it. In the test, a blocked model call holds no open handle, so that timer is the only pending work in the loop, and Node 22 exits. Node 25, on the development machine, does not, which is why three green local runs said nothing.
+
+Reproduced by running the same compiled test inside a `node:22-bookworm-slim` container: three failures out of three before the change, three passes out of three after it, and the full 163-test suite green under Node 22 in 51 seconds, so the referenced timer does not hold a finished run open.
+
+This is not only a CI problem. The guarantee the project makes is that one deadline covers model calls, tools, the retry and verification, and produces a `budget-exhausted` result with artifacts. An unreferenced timer meant that on Node 22 a hung provider call could end the process instead, with no result written at all. The fix restores the guarantee; the test was already correct and was not touched.
+
+The lesson worth keeping: a version difference between the development machine and CI hid a real defect in the product, not just in the pipeline. The green local suite was the misleading signal.
 
 ### What these numbers are not
 
