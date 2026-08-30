@@ -22,6 +22,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - name: Every published number recomputes from its committed runs
+        # No API key, no model, no Docker, no network. It re-scores all 140 runs
+        # of the published batch and exits non-zero on a single verdict that
+        # comes out differently from the report.
+        run: npm run doctor -- replay submission/evidence/confirmatory
 
   benchmark:
     name: Fixtures fail before repair and pass after it
