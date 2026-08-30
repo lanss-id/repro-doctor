@@ -49,8 +49,37 @@ function isProjectManifest(manifestPath: string): boolean {
   }
 }
 
+const NODE_MODULES_SEGMENT = `${path.sep}node_modules${path.sep}`;
+
+/**
+ * Where runs are written.
+ *
+ * In a checkout that is `artifacts/` beside the source. Installed as a package,
+ * through `npx` or as a dependency, the project root is somebody's cache
+ * directory: anything written there is unfindable and may be cleared between
+ * commands, which would break `apply <run-id>` the moment `diagnose` returned.
+ * So an installed copy writes next to the repository the operator is working
+ * on instead. `REPRO_DOCTOR_ARTIFACTS_DIR` overrides both.
+ */
+export function resolveArtifactsRoot(
+  projectRootPath: string,
+  workingDirectory: string,
+  override: string | undefined,
+): string {
+  if (override !== undefined && override !== '') {
+    return override;
+  }
+  return projectRootPath.includes(NODE_MODULES_SEGMENT)
+    ? path.join(workingDirectory, '.repro-doctor')
+    : path.join(projectRootPath, 'artifacts');
+}
+
 export function artifactsRoot(): string {
-  return process.env['REPRO_DOCTOR_ARTIFACTS_DIR'] ?? path.join(projectRoot(), 'artifacts');
+  return resolveArtifactsRoot(
+    projectRoot(),
+    process.cwd(),
+    process.env['REPRO_DOCTOR_ARTIFACTS_DIR'],
+  );
 }
 
 export function runsRoot(): string {

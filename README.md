@@ -50,10 +50,45 @@ The reason it is worth having: **all 1371 of commander's own tests pass while th
 
 ## Setup
 
+Without cloning anything:
+
 ```bash
+npx github:lanss-id/repro-doctor help
+```
+
+That installs the package from git and builds it. It is not on the npm registry:
+the submission terms of the competition this was built for put ownership of it
+in someone else's hands, so publishing a name is not mine to do. Installing from
+git needs no registry entry.
+
+What that gives you is the CLI. Repairing anything also needs Docker running and
+the sandbox image built, and the image has to be built once from the Dockerfile
+in the repository:
+
+```bash
+git clone --depth 1 https://github.com/lanss-id/repro-doctor /tmp/rd \
+  && docker build -f /tmp/rd/Dockerfile -t repro-doctor-runner:1 /tmp/rd
+```
+
+After that the npx form works on your own repository, with your own oracle, from
+anywhere:
+
+```bash
+npx github:lanss-id/repro-doctor diagnose ./my-service \
+  --mode advanced --oracle-dir ./my-oracle
+```
+
+An installed copy writes its runs to `.repro-doctor/` in the directory you ran it
+from, not into the npx cache, so `apply <run-id>` still works afterwards.
+`REPRO_DOCTOR_ARTIFACTS_DIR` overrides that.
+
+Cloning gets you the fixtures, the evidence bundles and the tests:
+
+```bash
+git clone https://github.com/lanss-id/repro-doctor && cd repro-doctor
 npm install
 npm run docker:build     # builds repro-doctor-runner:1, the sandbox image
-npm test                 # 163 tests, no API key needed
+npm test                 # no API key needed
 ```
 
 Check that the benchmark itself is honest before you trust any score from it. This command copies each of the ten fixtures, runs its hidden oracle to confirm it fails, applies the reference repair, and runs the oracle again to confirm it passes:

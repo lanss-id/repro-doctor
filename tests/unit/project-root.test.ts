@@ -3,7 +3,13 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { z } from 'zod';
-import { artifactsRoot, fixturesRoot, projectRoot, runsRoot } from '../../src/infra/project-root.js';
+import {
+  artifactsRoot,
+  fixturesRoot,
+  projectRoot,
+  resolveArtifactsRoot,
+  runsRoot,
+} from '../../src/infra/project-root.js';
 
 const ManifestSchema = z.object({ name: z.string() }).loose();
 
@@ -33,4 +39,31 @@ test('artifact locations hang off the root and honour the override', () => {
       process.env['REPRO_DOCTOR_ARTIFACTS_DIR'] = previous;
     }
   }
+});
+
+test('a checkout writes artifacts beside its own source', () => {
+  assert.equal(
+    resolveArtifactsRoot('/home/dev/repro-doctor', '/anywhere', undefined),
+    path.join('/home/dev/repro-doctor', 'artifacts'),
+  );
+});
+
+test('an installed copy writes beside the repository, not into its own cache', () => {
+  // Through npx the project root is a cache directory that may be cleared
+  // between two commands, which would break `apply <run-id>` the moment
+  // `diagnose` returned.
+  const cached = path.join('/home/dev/.npm/_npx/abc123/node_modules/repro-doctor');
+  assert.equal(
+    resolveArtifactsRoot(cached, '/home/dev/work/service', undefined),
+    path.join('/home/dev/work/service', '.repro-doctor'),
+  );
+});
+
+test('the environment override wins over both, and an empty one does not', () => {
+  assert.equal(resolveArtifactsRoot('/checkout', '/cwd', '/tmp/elsewhere'), '/tmp/elsewhere');
+  assert.equal(
+    resolveArtifactsRoot('/checkout', '/cwd', ''),
+    path.join('/checkout', 'artifacts'),
+    'an empty variable is not a location; treating it as one writes runs to the filesystem root',
+  );
 });
