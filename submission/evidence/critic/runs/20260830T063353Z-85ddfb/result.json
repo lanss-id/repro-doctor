@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T063353Z-85ddfb",
+  "caseId": "chained-two-faults",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T06:33:53.758Z",
+  "finishedAt": "2026-08-30T06:34:24.564Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/chained-two-faults/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/workspace",
+    "treeChecksumBefore": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
+    "treeChecksumAfter": "e2f62acbb8d445bb76219f673f79e53815e929757f426275fff84c12f3ccbdcf",
+    "mutated": false,
+    "fileCount": 8
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 30806,
+    "tokens": {
+      "inputTokens": 18668,
+      "outputTokens": 589,
+      "totalTokens": 19257,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.00841
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3904,
+    "checks": [
+      "FAIL the project compiles: Command failed: tsc -p tsconfig.json",
+      "FAIL fault one: the declared entry point exists after the build: main is \"dist/app.js\", which the build does not produce",
+      "FAIL the entry point exports greet: Cannot find module '/work/dist/app.js' imported from /oracle/oracle.mjs",
+      "FAIL fault two: GREETING is the variable that is read: Cannot read properties of null (reading 'greet')",
+      "FAIL the greeting falls back to \"hello\" when nothing is set: Cannot read properties of null (reading 'greet')",
+      "FAIL the undocumented variable is no longer honoured: Cannot read properties of null (reading 'greet')"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/repair.patch",
+    "sha256": "dd68ef422d5ceac2e8934b20d1032cea1c1a6af74d57026839f8e0aa0e86de7b",
+    "changedFiles": [
+      "src/index.ts"
+    ],
+    "addedLines": 2,
+    "removedLines": 2,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T063353Z-85ddfb/report.html"
+  }
+}

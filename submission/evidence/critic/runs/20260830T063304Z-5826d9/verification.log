@@ -1,0 +1,20 @@
+oracle id: broken-test-discovery/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 180s
+duration: 2811ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 1
+--- stdout ---
+[oracle] FAIL the project compiles: Command failed: tsc -p tsconfig.json
+[oracle] FAIL npm test exits zero: npm test failed: # cancelled 0 # skipped 0 # todo 0 # duration_ms 48.381795 
+[oracle] FAIL npm test runs at least two tests: only 0 test(s) ran; the suite has two
+[oracle] FAIL no test failed: the runner reported 1 failing test(s)
+[oracle] PASS the tests still exercise the library
+[oracle] FAIL sum and mean still behave as documented: Cannot find module '/work/dist/sum' imported from /work/dist/index.js
+[oracle] RESULT FAIL
+
+--- stderr ---
+
+
+no patch attempt followed this run, so it is also the final verification

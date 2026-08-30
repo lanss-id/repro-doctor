@@ -1,0 +1,18 @@
+oracle id: chained-two-faults/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2756ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 1
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] FAIL fault one: the declared entry point exists after the build: main is "dist/app.js", which the build does not produce
+[oracle] FAIL the entry point exports greet: Cannot find module '/work/dist/app.js' imported from /oracle/oracle.mjs
+[oracle] FAIL fault two: GREETING is the variable that is read: Cannot read properties of null (reading 'greet')
+[oracle] FAIL the greeting falls back to "hello" when nothing is set: Cannot read properties of null (reading 'greet')
+[oracle] FAIL the undocumented variable is no longer honoured: Cannot read properties of null (reading 'greet')
+[oracle] RESULT FAIL
+
+--- stderr ---
+

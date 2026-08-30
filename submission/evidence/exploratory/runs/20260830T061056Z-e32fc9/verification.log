@@ -1,0 +1,18 @@
+oracle id: chained-two-faults/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2640ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS fault one: the declared entry point exists after the build
+[oracle] PASS the entry point exports greet
+[oracle] PASS fault two: GREETING is the variable that is read
+[oracle] PASS the greeting falls back to "hello" when nothing is set
+[oracle] PASS the undocumented variable is no longer honoured
+[oracle] RESULT PASS
+
+--- stderr ---
+

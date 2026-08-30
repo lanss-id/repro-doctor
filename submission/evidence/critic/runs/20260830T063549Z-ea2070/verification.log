@@ -1,0 +1,20 @@
+oracle id: chained-two-faults/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2467ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 1
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS fault one: the declared entry point exists after the build
+[oracle] PASS the entry point exports greet
+[oracle] FAIL fault two: GREETING is the variable that is read: expected "hi world", received "hello world"
+[oracle] PASS the greeting falls back to "hello" when nothing is set
+[oracle] FAIL the undocumented variable is no longer honoured: APP_GREETING still changes the greeting: "ignored world"
+[oracle] RESULT FAIL
+
+--- stderr ---
+
+
+no patch attempt followed this run, so it is also the final verification

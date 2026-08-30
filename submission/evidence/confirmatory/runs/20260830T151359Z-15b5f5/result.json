@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T151359Z-15b5f5",
+  "caseId": "tsconfig-include-scope",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T15:13:59.304Z",
+  "finishedAt": "2026-08-30T15:14:39.508Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/tsconfig-include-scope/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/workspace",
+    "treeChecksumBefore": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "treeChecksumAfter": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 6,
+    "patchAttempts": 2,
+    "wallClockMs": 40204,
+    "tokens": {
+      "inputTokens": 9426,
+      "outputTokens": 1560,
+      "totalTokens": 10986,
+      "requests": 5
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.006266
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 3057,
+    "checks": [
+      "PASS the project compiles with both source directories in scope",
+      "PASS package.json declares an entry point that exists",
+      "PASS describeCatalog sums the catalog through the entry point",
+      "PASS the shared library is still a separate module under src/lib"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/repair.patch",
+    "sha256": "7f8bb79430d409007151eea62c37779f6a509cfed3eebdbf955099bcbdf74344",
+    "changedFiles": [
+      "package.json",
+      "src/lib/catalog.d.ts",
+      "src/lib/catalog.js",
+      "tsconfig.json"
+    ],
+    "addedLines": 12,
+    "removedLines": 4,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151359Z-15b5f5/report.html"
+  }
+}

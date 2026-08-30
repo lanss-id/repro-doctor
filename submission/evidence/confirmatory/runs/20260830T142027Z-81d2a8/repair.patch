@@ -1,0 +1,8 @@
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -1,4 +1,4 @@
+-import { formatDate } from './Utils/Format.js';
++import { formatDate } from './utils/format.js';
+ 
+ export function describeDate(value: Date): string {
+   return `day ${formatDate(value)}`;

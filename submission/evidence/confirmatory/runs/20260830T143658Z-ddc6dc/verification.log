@@ -1,0 +1,17 @@
+oracle id: entrypoint-mismatch/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 3111ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS package.json is still valid JSON
+[oracle] PASS the declared entry point exists on disk
+[oracle] PASS greet("world") returns "hello world" through the entry point
+[oracle] PASS the source of greet was not deleted
+[oracle] RESULT PASS
+
+--- stderr ---
+

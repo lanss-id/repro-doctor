@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T141706Z-f1b2a9",
+  "caseId": "broken-test-discovery",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T14:17:06.291Z",
+  "finishedAt": "2026-08-30T14:17:35.175Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/broken-test-discovery/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/workspace",
+    "treeChecksumBefore": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "treeChecksumAfter": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 28885,
+    "tokens": {
+      "inputTokens": 16601,
+      "outputTokens": 729,
+      "totalTokens": 17330,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.007807
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3414,
+    "checks": [
+      "FAIL the project compiles: Command failed: tsc -p tsconfig.json",
+      "FAIL npm test exits zero: npm test failed: # cancelled 0 # skipped 0 # todo 0 # duration_ms 75.85805",
+      "FAIL npm test runs at least two tests: only 0 test(s) ran; the suite has two",
+      "FAIL no test failed: the runner reported 1 failing test(s)",
+      "PASS the tests still exercise the library",
+      "FAIL sum and mean still behave as documented: Cannot find module '/work/dist/sum.ts' imported from /work/dist/index.js"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/repair.patch",
+    "sha256": "c5283eadb34f67994cc167dc70a228aa578813f6004848bc1e0c9be5de56cd23",
+    "changedFiles": [
+      "src/index.ts",
+      "tests/sum.test.mjs"
+    ],
+    "addedLines": 15,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T141706Z-f1b2a9/report.html"
+  }
+}

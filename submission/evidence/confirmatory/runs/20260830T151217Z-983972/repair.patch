@@ -1,0 +1,29 @@
+--- /dev/null
++++ b/src/lib/catalog.d.ts
+@@ -0,0 +1,5 @@
++export interface CatalogEntry {
++    readonly sku: string;
++    readonly priceCents: number;
++}
++export declare function totalCents(entries: readonly CatalogEntry[]): number;
+--- /dev/null
++++ b/src/lib/catalog.js
+@@ -0,0 +1,3 @@
++export function totalCents(entries) {
++    return entries.reduce((sum, entry) => sum + entry.priceCents, 0);
++}
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -3,10 +3,10 @@
+     "target": "ES2022",
+     "module": "NodeNext",
+     "moduleResolution": "NodeNext",
+-    "rootDir": "src/app",
++    "rootDir": "src",
+     "outDir": "dist",
+     "strict": true,
+     "declaration": true
+   },
+-  "include": ["src/app/**/*"]
++  "include": ["src/app/**/*", "src/lib/**/*"]
+ }

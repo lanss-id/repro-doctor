@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T060612Z-83d8b0",
+  "caseId": "broken-test-discovery",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T06:06:12.742Z",
+  "finishedAt": "2026-08-30T06:06:49.312Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/broken-test-discovery/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/workspace",
+    "treeChecksumBefore": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "treeChecksumAfter": "348fa201514ef2501679d5596954cd32d91360bc1919ceb2738b7cc8ef01ff1e",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 2,
+    "wallClockMs": 36570,
+    "tokens": {
+      "inputTokens": 18825,
+      "outputTokens": 668,
+      "totalTokens": 19493,
+      "requests": 11
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.008599
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3825,
+    "checks": [
+      "PASS the project compiles",
+      "PASS npm test exits zero",
+      "FAIL npm test runs at least two tests: only 0 test(s) ran; the suite has two",
+      "PASS no test failed",
+      "PASS the tests still exercise the library",
+      "PASS sum and mean still behave as documented"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/repair.patch",
+    "sha256": "8b7ef1c3c21aae4d255efacba4ccf907b88704409476b634049b34d5f5b94462",
+    "changedFiles": [
+      "package.json"
+    ],
+    "addedLines": 4,
+    "removedLines": 0,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T060612Z-83d8b0/report.html"
+  }
+}

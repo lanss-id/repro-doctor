@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T150748Z-3948e3",
+  "caseId": "monorepo-build-order",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T15:07:48.764Z",
+  "finishedAt": "2026-08-30T15:08:13.318Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/monorepo-build-order/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/workspace",
+    "treeChecksumBefore": "9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211",
+    "treeChecksumAfter": "9fc61965464dc3bdc6455c5928c11372d17bbda636ec11f652237c7bf1390211",
+    "mutated": false,
+    "fileCount": 12
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 24554,
+    "tokens": {
+      "inputTokens": 16775,
+      "outputTokens": 510,
+      "totalTokens": 17285,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.007526
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "unverified-patch",
+    "detail": "the hidden oracle did not pass: failed"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 2653,
+    "checks": [
+      "FAIL a clean build of every package succeeds: Command failed: node scripts/build.mjs",
+      "PASS both packages are still part of the build",
+      "PASS quote(1000) returns \"900 cents\"",
+      "FAIL the app still uses the core package rather than a local copy: packages/app no longer imports packages/core"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/repair.patch",
+    "sha256": "67b84fdb806049403f86f763555244a57116d7b967f6c83e8fbd1bce244bd728",
+    "changedFiles": [
+      "packages/app/src/index.ts",
+      "packages/core/src/index.d.ts",
+      "packages/core/src/index.js"
+    ],
+    "addedLines": 5,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T150748Z-3948e3/report.html"
+  }
+}

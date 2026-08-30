@@ -1,0 +1,19 @@
+--- a/src/app.ts
++++ b/src/app.ts
+@@ -5,12 +5,13 @@
+   readonly body: string;
+ }
+ 
+-export const HEALTH_PATH = '/healthz';
++export const HEALTH_PATH = '/health';
+ 
+ export const DEFAULT_PORT = 3000;
+ 
+-export function resolvePort(_env: Environment): number {
+-  return DEFAULT_PORT;
++export function resolvePort(env: Environment): number {
++  const port = env.PORT ? Number(env.PORT) : DEFAULT_PORT;
++  return Number.isNaN(port) ? DEFAULT_PORT : port;
+ }
+ 
+ export function handle(pathname: string): Response {

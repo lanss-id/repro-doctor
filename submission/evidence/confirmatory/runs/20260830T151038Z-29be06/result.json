@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T151038Z-29be06",
+  "caseId": "tsconfig-include-scope",
+  "mode": "baseline",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T15:10:38.132Z",
+  "finishedAt": "2026-08-30T15:11:21.994Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/tsconfig-include-scope/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/workspace",
+    "treeChecksumBefore": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "treeChecksumAfter": "ee8e3f53290ce5ec3f81eaddde52ab71a2420e3da2061fa8b5fdff45ce1031e5",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 43862,
+    "tokens": null,
+    "cost": {
+      "kind": "unknown",
+      "why": "no-model-call"
+    },
+    "limitHit": "tool-calls"
+  },
+  "outcome": {
+    "status": "budget-exhausted",
+    "limit": "tool-calls",
+    "detail": "the agent hit the maximum number of turns"
+  },
+  "verification": {
+    "kind": "failed",
+    "exitCode": 1,
+    "durationMs": 3687,
+    "checks": [
+      "PASS the project compiles with both source directories in scope",
+      "FAIL package.json declares an entry point that exists: main is \"dist/index.js\", which is not on disk after the build",
+      "FAIL describeCatalog sums the catalog through the entry point: Cannot find module '/work/dist/index.js' imported from /oracle/oracle.mjs",
+      "PASS the shared library is still a separate module under src/lib"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/repair.patch",
+    "sha256": "4cea2212deb16b010bbfdd3129127f0cc99dd6d208b5d8d9401fd109fe64ff6e",
+    "changedFiles": [
+      "src/lib/catalog.d.ts",
+      "src/lib/catalog.js",
+      "tsconfig.json"
+    ],
+    "addedLines": 9,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T151038Z-29be06/report.html"
+  }
+}

@@ -1,0 +1,22 @@
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -1,1 +1,1 @@
+-export { mean, sum } from './sum.js';
++export { mean, sum } from './sum';
+--- /dev/null
++++ b/tests/sum.test.mjs
+@@ -0,0 +1,14 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++const { mean, sum } = await import(new URL('../dist/index.js', import.meta.url).href);
++
++test('sum adds every value', () => {
++  assert.equal(sum([1, 2, 3]), 6);
++  assert.equal(sum([]), 0);
++});
++
++test('mean rejects an empty list', () => {
++  assert.equal(mean([2, 4]), 3);
++  assert.throws(() => mean([]), /empty/u);
++});

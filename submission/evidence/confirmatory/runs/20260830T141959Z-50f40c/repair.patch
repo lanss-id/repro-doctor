@@ -1,0 +1,12 @@
+--- a/package.json
++++ b/package.json
+@@ -6,7 +6,7 @@
+   "main": "dist/index.js",
+   "scripts": {
+     "build": "tsc -p tsconfig.json",
+-    "test": "node --test \"tests/**/*.test.mjs\"",
+-    "check": "tsc -p tsconfig.json && node --test \"tests/**/*.test.mjs\""
++    "test": "node --test \"tests/**/*.spec.mjs\"",
++    "check": "tsc -p tsconfig.json && node --test \"tests/**/*.spec.mjs\""
+   }
+ }

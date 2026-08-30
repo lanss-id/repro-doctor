@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T061710Z-7f2b06",
+  "caseId": "env-contract",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T06:17:10.635Z",
+  "finishedAt": "2026-08-30T06:17:29.124Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/env-contract/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/workspace",
+    "treeChecksumBefore": "0633b9ac6990b4d9cdedcd9918c0b3c53f5d56ba5d02e4b77c2e75c255b0bfde",
+    "treeChecksumAfter": "0633b9ac6990b4d9cdedcd9918c0b3c53f5d56ba5d02e4b77c2e75c255b0bfde",
+    "mutated": false,
+    "fileCount": 8
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 8,
+    "patchAttempts": 1,
+    "wallClockMs": 18489,
+    "tokens": {
+      "inputTokens": 8739,
+      "outputTokens": 474,
+      "totalTokens": 9213,
+      "requests": 6
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.004254
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 2536,
+    "checks": [
+      "PASS the project compiles",
+      "PASS the entry point exports loadConfig",
+      "PASS PORT is read from the documented variable",
+      "PASS REPORT_PREFIX defaults to \"report\" and is honoured when set",
+      "PASS a missing PORT is rejected with an error naming the variable",
+      "PASS a non-numeric PORT is rejected"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/repair.patch",
+    "sha256": "9f9bf032df71f2c3decdc8796c15ea802cb6b5265ccb6371e168831318b3d247",
+    "changedFiles": [
+      "src/config.ts"
+    ],
+    "addedLines": 4,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T061710Z-7f2b06/report.html"
+  }
+}

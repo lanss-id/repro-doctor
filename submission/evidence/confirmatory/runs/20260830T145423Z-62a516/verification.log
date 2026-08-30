@@ -1,0 +1,16 @@
+oracle id: health-route-port/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 180s
+duration: 4471ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS the service listens on the port given in PORT
+[oracle] PASS GET /health returns 200 with {"status":"ok"}
+[oracle] PASS an unknown path returns 404
+[oracle] RESULT PASS
+
+--- stderr ---
+

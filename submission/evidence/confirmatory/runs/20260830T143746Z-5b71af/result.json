@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T143746Z-5b71af",
+  "caseId": "entrypoint-mismatch",
+  "mode": "advanced",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T14:37:46.117Z",
+  "finishedAt": "2026-08-30T14:38:20.000Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/entrypoint-mismatch/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/workspace",
+    "treeChecksumBefore": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "treeChecksumAfter": "bbb1b58cddcdd5ba16384a96d26b201a4e06348729d9f23b4b5b42a9798832e6",
+    "mutated": false,
+    "fileCount": 6
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 12,
+    "patchAttempts": 1,
+    "wallClockMs": 33883,
+    "tokens": {
+      "inputTokens": 19347,
+      "outputTokens": 660,
+      "totalTokens": 20007,
+      "requests": 10
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.008795
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 3238,
+    "checks": [
+      "PASS the project compiles",
+      "PASS package.json is still valid JSON",
+      "PASS the declared entry point exists on disk",
+      "PASS greet(\"world\") returns \"hello world\" through the entry point",
+      "PASS the source of greet was not deleted"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/repair.patch",
+    "sha256": "8bffef44bf33d592e884b1e3939cf15a4bcafab31ff05bb1f828d160ac19f2b8",
+    "changedFiles": [
+      "package.json"
+    ],
+    "addedLines": 1,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T143746Z-5b71af/report.html"
+  }
+}

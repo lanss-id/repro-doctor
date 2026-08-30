@@ -1,0 +1,18 @@
+oracle id: env-contract/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 3660ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS the entry point exports loadConfig
+[oracle] PASS PORT is read from the documented variable
+[oracle] PASS REPORT_PREFIX defaults to "report" and is honoured when set
+[oracle] PASS a missing PORT is rejected with an error naming the variable
+[oracle] PASS a non-numeric PORT is rejected
+[oracle] RESULT PASS
+
+--- stderr ---
+

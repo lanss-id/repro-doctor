@@ -1,0 +1,19 @@
+oracle id: esm-cjs-mismatch/oracle
+oracle entry: oracle.mjs
+executor: docker
+timeout: 120s
+duration: 2568ms
+note: the oracle directory is never mounted while the repair agent is running
+exit code: 0
+--- stdout ---
+[oracle] PASS the project compiles
+[oracle] PASS the package is still declared as ESM
+[oracle] PASS the build output loads as an ES module
+[oracle] PASS describeTotal(12.5) returns "total $12.50"
+[oracle] PASS the helper module is still a separate module
+[oracle] RESULT PASS
+
+--- stderr ---
+
+
+no patch attempt followed this run, so it is also the final verification

@@ -1,0 +1,10 @@
+--- a/package.json
++++ b/package.json
+@@ -5,6 +5,7 @@
+   "type": "module",
+   "main": "dist/index.js",
+   "scripts": {
++    "prepare": "npm install --offline",
+     "build": "tsc -p tsconfig.json",
+     "check": "npm ci --offline --no-audit --no-fund && tsc -p tsconfig.json && node scripts/smoke.mjs"
+   },

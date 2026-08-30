@@ -1,0 +1,14 @@
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -6,7 +6,10 @@
+ export type Environment = Readonly<Record<string, string | undefined>>;
+ 
+ export function loadConfig(env: Environment): ServiceConfig {
+-  const port = Number(env['SERVICE_PORT']);
++  const port = Number(env['PORT']);
++  if (isNaN(port) || port <= 0) {
++    throw new Error('PORT environment variable must be a positive integer');
++  }
+   return {
+     port,
+     prefix: env['REPORT_PREFIX'] ?? 'report',

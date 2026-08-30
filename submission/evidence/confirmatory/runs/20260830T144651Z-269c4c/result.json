@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 2,
+  "runId": "20260830T144651Z-269c4c",
+  "caseId": "esm-cjs-mismatch",
+  "mode": "baseline",
+  "model": "openai/gpt-4.1-mini",
+  "modelSettingsFingerprint": "893de0c3c381b107",
+  "startedAt": "2026-08-30T14:46:51.488Z",
+  "finishedAt": "2026-08-30T14:47:17.801Z",
+  "sandbox": {
+    "executor": "docker",
+    "image": "repro-doctor-runner:1",
+    "network": "none",
+    "readOnlyRootFilesystem": true,
+    "noNewPrivileges": false,
+    "dockerSocketMounted": false,
+    "oracleMountedDuringRepair": false,
+    "secretsMounted": false,
+    "cpuLimit": "1",
+    "memoryLimit": "1g",
+    "commandTimeoutSeconds": 60,
+    "productionSafe": true
+  },
+  "repo": {
+    "inputPath": "/home/lanss/experimence/hackathon-micro1/fixtures/esm-cjs-mismatch/repo",
+    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/workspace",
+    "treeChecksumBefore": "335d947837e919aab6fabb4bec01e6e5a3ce06418ca04e56055abad09fd4c850",
+    "treeChecksumAfter": "335d947837e919aab6fabb4bec01e6e5a3ce06418ca04e56055abad09fd4c850",
+    "mutated": false,
+    "fileCount": 7
+  },
+  "budget": {
+    "maxToolCalls": 12,
+    "maxPatchAttempts": 2,
+    "maxWallClockSeconds": 360,
+    "maxCostUsd": 0.3,
+    "commandTimeoutSeconds": 60
+  },
+  "usage": {
+    "toolCalls": 10,
+    "patchAttempts": 1,
+    "wallClockMs": 26314,
+    "tokens": {
+      "inputTokens": 12139,
+      "outputTokens": 504,
+      "totalTokens": 12643,
+      "requests": 11
+    },
+    "cost": {
+      "kind": "measured",
+      "usd": 0.005662
+    },
+    "limitHit": null
+  },
+  "outcome": {
+    "status": "repaired"
+  },
+  "verification": {
+    "kind": "passed",
+    "exitCode": 0,
+    "durationMs": 4084,
+    "checks": [
+      "PASS the project compiles",
+      "PASS the package is still declared as ESM",
+      "PASS the build output loads as an ES module",
+      "PASS describeTotal(12.5) returns \"total $12.50\"",
+      "PASS the helper module is still a separate module"
+    ]
+  },
+  "patch": {
+    "kind": "present",
+    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/repair.patch",
+    "sha256": "21d862dbe7d4c97dc3fec48ad1917b25bfbfd5358dff4037d831a92892567bd7",
+    "changedFiles": [
+      "tsconfig.json"
+    ],
+    "addedLines": 1,
+    "removedLines": 1,
+    "sensitive": true
+  },
+  "artifacts": {
+    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c",
+    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/result.json",
+    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/trajectory.jsonl",
+    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/repair.patch",
+    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/verification.log",
+    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T144651Z-269c4c/report.html"
+  }
+}

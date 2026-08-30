@@ -1,0 +1,9 @@
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -3,5 +3,5 @@
+ export const DEFAULT_GREETING = 'hello';
+ 
+ export function loadGreeting(env: Environment): string {
+-  return env['APP_GREETING'] ?? DEFAULT_GREETING;
++  return env['GREETING'] ?? DEFAULT_GREETING;
+ }
