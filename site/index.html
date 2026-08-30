@@ -148,6 +148,7 @@ footer a { color: var(--ink-2); }
     <a href="#problem" class="hide-sm">Problem</a>
     <a href="#how" class="hide-sm">How it works</a>
     <a href="#result">Result</a>
+    <a href="#noise" class="hide-sm">Noise</a>
     <a href="https://github.com/lanss-id/repro-doctor">GitHub</a>
   </div>
 </nav>
@@ -227,11 +228,11 @@ duration_ms 8.291896
 
 <section id="result" class="pad">
   <div class="wrap">
-    <h2>Sixty runs, and the honest reading of them.</h2>
-    <p class="lede">Ten broken repositories, both modes, three repeats each, on <code>gpt-4.1-mini</code>. Baseline is a generic instruction and an unstructured loop. Advanced adds a deterministic preflight, a hypothesis ledger, and one retry driven by evidence the harness collected rather than by the agent's opinion. Same model, tools, budget and scorer.</p>
+    <h2>A hundred and forty runs, and the result we did not want.</h2>
+    <p class="lede">Ten broken repositories, both modes, seven repeats each, on <code>gpt-4.1-mini</code>. Baseline is a generic instruction and an unstructured loop. Advanced adds a deterministic preflight, a hypothesis ledger, and one retry driven by evidence the harness collected rather than by the agent's opinion. Same model, tools, budget and scorer. The sample size and the decision rule were written down and committed before the first run started.</p>
 
     <figure class="figure">
-      <svg viewBox="0 0 720 200" width="100%" height="200" role="img" aria-label="Verified repair rate. Baseline 46.7 percent, 95 percent interval 30.2 to 63.9. Advanced 70.0 percent, 95 percent interval 52.1 to 83.3.">
+      <svg viewBox="0 0 720 200" width="100%" height="200" role="img" aria-label="Verified repair rate. Baseline 60.0 percent, 95 percent interval 48.3 to 70.7. Advanced 72.9 percent, 95 percent interval 61.5 to 81.9.">
         <g font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.55">
           <text x="126" y="184" text-anchor="middle">0%</text>
           <text x="264" y="184" text-anchor="middle">25%</text>
@@ -247,31 +248,31 @@ duration_ms 8.291896
           <line x1="678" y1="28" x2="678" y2="168"></line>
         </g>
         <g>
-          <title>Baseline: 14 of 30 verified, 46.7 percent, 95% CI 30.2 to 63.9</title>
+          <title>Baseline: 42 of 70 verified, 60.0 percent, 95% CI 48.3 to 70.7</title>
           <text x="0" y="70" font-size="14" fill="currentColor">Baseline</text>
-          <text x="0" y="88" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">14 / 30</text>
-          <line x1="293" y1="72" x2="479" y2="72" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
-          <line x1="293" y1="65" x2="293" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
-          <line x1="479" y1="65" x2="479" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
-          <circle cx="384" cy="72" r="6" fill="currentColor"></circle>
-          <text x="384" y="52" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="currentColor">46.7%</text>
+          <text x="0" y="88" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">42 / 70</text>
+          <line x1="393" y1="72" x2="516" y2="72" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="393" y1="65" x2="393" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="516" y1="65" x2="516" y2="79" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <circle cx="457" cy="72" r="6" fill="currentColor"></circle>
+          <text x="457" y="52" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="currentColor">60.0%</text>
         </g>
         <g>
-          <title>Advanced: 21 of 30 verified, 70.0 percent, 95% CI 52.1 to 83.3</title>
+          <title>Advanced: 51 of 70 verified, 72.9 percent, 95% CI 61.5 to 81.9</title>
           <text x="0" y="134" font-size="14" fill="currentColor">Advanced</text>
-          <text x="0" y="152" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">21 / 30</text>
-          <line x1="414" y1="136" x2="586" y2="136" stroke="var(--accent)" stroke-width="2"></line>
-          <line x1="414" y1="129" x2="414" y2="143" stroke="var(--accent)" stroke-width="2"></line>
-          <line x1="586" y1="129" x2="586" y2="143" stroke="var(--accent)" stroke-width="2"></line>
-          <circle cx="512" cy="136" r="6" fill="var(--accent)"></circle>
-          <text x="512" y="116" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">70.0%</text>
+          <text x="0" y="152" font-size="12" fill="currentColor" opacity="0.6" font-family="ui-monospace, monospace">51 / 70</text>
+          <line x1="465" y1="136" x2="578" y2="136" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="465" y1="129" x2="465" y2="143" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="578" y1="129" x2="578" y2="143" stroke="var(--accent)" stroke-width="2"></line>
+          <circle cx="528" cy="136" r="6" fill="var(--accent)"></circle>
+          <text x="528" y="116" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">72.9%</text>
         </g>
       </svg>
-      <figcaption>Verified repair rate with 95 percent Wilson intervals, 30 runs per mode. A run counts only when the hidden oracle exits zero and every safety check passes.</figcaption>
+      <figcaption>Verified repair rate with 95 percent Wilson intervals, 70 runs per mode. A run counts only when the hidden oracle exits zero and every safety check passes.</figcaption>
     </figure>
 
     <figure class="figure">
-      <svg viewBox="0 0 720 118" width="100%" height="118" role="img" aria-label="Difference, advanced minus baseline: plus 23.3 points, 95 percent interval minus 1.5 to plus 44.5, which crosses zero.">
+      <svg viewBox="0 0 720 118" width="100%" height="118" role="img" aria-label="Difference, advanced minus baseline: plus 12.9 points, 95 percent interval minus 2.8 to plus 27.6, which crosses zero.">
         <g font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.55">
           <text x="103" y="104" text-anchor="middle">-20</text>
           <text x="245" y="104" text-anchor="middle">0</text>
@@ -282,28 +283,88 @@ duration_ms 8.291896
         <line x1="245" y1="18" x2="245" y2="88" stroke="currentColor" stroke-width="1" opacity="0.5" stroke-dasharray="3 3"></line>
         <text x="245" y="14" text-anchor="middle" font-size="11" font-family="ui-monospace, monospace" fill="currentColor" opacity="0.6">no difference</text>
         <g>
-          <title>Advanced minus baseline: +23.3 points, 95% CI -1.5 to +44.5</title>
-          <line x1="235" y1="56" x2="560" y2="56" stroke="var(--accent)" stroke-width="2"></line>
-          <line x1="235" y1="49" x2="235" y2="63" stroke="var(--accent)" stroke-width="2"></line>
-          <line x1="560" y1="49" x2="560" y2="63" stroke="var(--accent)" stroke-width="2"></line>
-          <circle cx="408" cy="56" r="6" fill="var(--accent)"></circle>
-          <text x="408" y="38" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">+23.3 points</text>
+          <title>Advanced minus baseline: +12.9 points, 95% CI -2.8 to +27.6</title>
+          <line x1="225" y1="56" x2="441" y2="56" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="225" y1="49" x2="225" y2="63" stroke="var(--accent)" stroke-width="2"></line>
+          <line x1="441" y1="49" x2="441" y2="63" stroke="var(--accent)" stroke-width="2"></line>
+          <circle cx="337" cy="56" r="6" fill="var(--accent)"></circle>
+          <text x="337" y="38" text-anchor="middle" font-size="13" font-family="ui-monospace, monospace" fill="var(--accent)">+12.9 points</text>
         </g>
       </svg>
-      <figcaption>The same comparison as a difference, with its own Newcombe interval. The interval crosses zero, so sixty runs show a direction and not a size.</figcaption>
+      <figcaption>The same comparison as a difference, with its own Newcombe interval. It crosses zero. By the rule fixed before the batch ran, that is a null result: 70 runs per mode do not establish that the difference is real.</figcaption>
     </figure>
 
     <table>
-      <tr><th>Measured over 60 runs</th><th class="num">Baseline</th><th class="num">Advanced</th></tr>
-      <tr><td>Verified repair rate</td><td class="num">46.7%</td><td class="num">70.0%</td></tr>
-      <tr><td>95 percent interval</td><td class="num">30.2 to 63.9</td><td class="num">52.1 to 83.3</td></tr>
-      <tr><td>Median cost per run</td><td class="num">$0.0074</td><td class="num">$0.0072</td></tr>
-      <tr><td>Median wall clock</td><td class="num">24.3s</td><td class="num">25.7s</td></tr>
-      <tr><td>Runs with no patch at all</td><td class="num">9</td><td class="num">4</td></tr>
+      <tr><th>Measured over 140 runs</th><th class="num">Baseline</th><th class="num">Advanced</th></tr>
+      <tr><td>Verified repair rate</td><td class="num">42/70, 60.0%</td><td class="num">51/70, 72.9%</td></tr>
+      <tr><td>95 percent interval</td><td class="num">48.3 to 70.7</td><td class="num">61.5 to 81.9</td></tr>
+      <tr><td>Median wall clock</td><td class="num">25.4s</td><td class="num">28.9s</td></tr>
+      <tr><td>Runs with no patch at all</td><td class="num">11</td><td class="num">6</td></tr>
       <tr><td>Unsafe mutations, budget violations, oracle access</td><td class="num">0</td><td class="num">0</td></tr>
     </table>
 
-    <p class="note">The interval on the difference includes zero, so this is not a claim that the structure is worth 23 points. Two things it does settle: the structure is not paid for in money, because the advanced median run came out slightly cheaper, and it changes which failures happen. There is a sharper measurement of the noise underneath it. The baseline arm was byte-identical across two consecutive batches and scored 16 of 30, then 14 of 30. Same code, same prompt, temperature zero, 6.7 points apart. That is why every rate here carries an interval.</p>
+    <p class="note">This is not a finding that the two modes are the same. The data are consistent with anything from a small harm to a substantial benefit, and advanced has scored higher in all three batches run so far. What cannot be said is that the improvement is established, and a project whose entire argument is about not overclaiming would be worth nothing if it said it anyway.</p>
+  </div>
+</section>
+
+<section id="noise" class="pad">
+  <div class="wrap">
+    <h2>The noise is bigger than the signal.</h2>
+    <p class="lede">The baseline arm has not changed by a single character across three batches. Only the advanced instructions did. Here is what it scored, at temperature zero, on the same ten repositories.</p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 720 210" width="100%" height="210" role="img" aria-label="The identical baseline arm measured three times: 53.3 percent, 46.7 percent, and 60.0 percent. A spread of 13.3 points from re-running the same thing.">
+        <g font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.55">
+          <text x="126" y="196" text-anchor="middle">0%</text>
+          <text x="264" y="196" text-anchor="middle">25%</text>
+          <text x="402" y="196" text-anchor="middle">50%</text>
+          <text x="540" y="196" text-anchor="middle">75%</text>
+          <text x="678" y="196" text-anchor="middle">100%</text>
+        </g>
+        <g stroke="currentColor" opacity="0.16">
+          <line x1="126" y1="34" x2="126" y2="180"></line>
+          <line x1="264" y1="34" x2="264" y2="180"></line>
+          <line x1="402" y1="34" x2="402" y2="180"></line>
+          <line x1="540" y1="34" x2="540" y2="180"></line>
+          <line x1="678" y1="34" x2="678" y2="180"></line>
+        </g>
+        <g stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3" opacity="0.7">
+          <line x1="384" y1="40" x2="384" y2="180"></line>
+          <line x1="457" y1="40" x2="457" y2="180"></line>
+        </g>
+        <text x="420" y="26" text-anchor="middle" font-size="12" font-family="ui-monospace, monospace" fill="var(--accent)">13.3 points apart</text>
+        <g>
+          <title>Development batch, 29 August: 16 of 30, 53.3 percent, 95% CI 36.1 to 69.8</title>
+          <text x="0" y="58" font-size="13" fill="currentColor">Development</text>
+          <text x="0" y="75" font-size="11" font-family="ui-monospace, monospace" fill="currentColor" opacity="0.6">16/30, 53.3%</text>
+          <line x1="325" y1="60" x2="511" y2="60" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="325" y1="54" x2="325" y2="66" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="511" y1="54" x2="511" y2="66" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <circle cx="420" cy="60" r="5" fill="currentColor"></circle>
+        </g>
+        <g>
+          <title>Exploratory batch, 30 August: 14 of 30, 46.7 percent, 95% CI 30.2 to 63.9</title>
+          <text x="0" y="108" font-size="13" fill="currentColor">Exploratory</text>
+          <text x="0" y="125" font-size="11" font-family="ui-monospace, monospace" fill="currentColor" opacity="0.6">14/30, 46.7%</text>
+          <line x1="293" y1="110" x2="479" y2="110" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="293" y1="104" x2="293" y2="116" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="479" y1="104" x2="479" y2="116" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <circle cx="384" cy="110" r="5" fill="currentColor"></circle>
+        </g>
+        <g>
+          <title>Confirmatory batch, 30 August: 42 of 70, 60.0 percent, 95% CI 48.3 to 70.7</title>
+          <text x="0" y="158" font-size="13" fill="currentColor">Confirmatory</text>
+          <text x="0" y="175" font-size="11" font-family="ui-monospace, monospace" fill="currentColor" opacity="0.6">42/70, 60.0%</text>
+          <line x1="393" y1="160" x2="516" y2="160" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="393" y1="154" x2="393" y2="166" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <line x1="516" y1="154" x2="516" y2="166" stroke="currentColor" stroke-width="2" opacity="0.45"></line>
+          <circle cx="457" cy="160" r="5" fill="currentColor"></circle>
+        </g>
+      </svg>
+      <figcaption>The same arm, the same prompt, the same fixtures, the same model at temperature zero and top-p one. The spread comes from nothing but running it again.</figcaption>
+    </figure>
+
+    <p class="note">The effect this benchmark is trying to detect is 12.9 points. The noise in one unchanged arm is 13.3. That means any comparison whose two arms were not run inside the same batch is measuring the weather, and a repair rate quoted from somebody else's run last week is worth nothing at all. It is the most useful thing this project measured, and it is why every number on this page carries an interval.</p>
   </div>
 </section>
 
@@ -335,11 +396,15 @@ duration_ms 8.291896
 <section class="pad">
   <div class="wrap">
     <h2>Nothing here asks to be believed.</h2>
-    <p class="lede">Every number on this page traces to a file you can open, and the whole evaluation reruns from a clean clone for well under a dollar.</p>
-    <pre class="term" style="margin-top:32px"><b>$ npm run docker:build</b>
-<b>$ npm run doctor -- fixtures verify</b>     <span style="opacity:.6"># the benchmark checks itself first</span>
-<b>$ npm run eval -- --repeats 3</b>           <span style="opacity:.6"># 60 runs, both modes, about $0.43</span>
-<b>$ npm run report</b></pre>
+    <p class="lede">Every number on this page recomputes from committed files in about ten seconds, with no API key, no model call and no money.</p>
+    <pre class="term" style="margin-top:32px"><b>$ npm run doctor -- replay submission/evidence/confirmatory</b>
+  baseline                    42/70 verified, rate 60.0% (95% CI 48.3-70.7%)
+  advanced                    51/70 verified, rate 72.9% (95% CI 61.5-81.9%)
+  advanced - baseline         +12.9 points (95% CI -2.8 to +27.6)
+
+<span class="pass">Every re-scored run agrees with the published report on status,
+on all seven checks and on the verified verdict.</span></pre>
+    <p class="cap">All 140 committed runs back through the same scoring code that produced the report. Re-measuring instead needs a key: <code>npm run eval -- --repeats 7</code>, 64.5 minutes and $0.97.</p>
     <div class="links">
       <a href="https://github.com/lanss-id/repro-doctor/tree/main/submission/examples">
         <div class="t">A trajectory for every agent</div>
@@ -351,11 +416,11 @@ duration_ms 8.291896
       </a>
       <a href="https://github.com/lanss-id/repro-doctor/blob/main/docs/IMPROVEMENT_CHANGELOG.md">
         <div class="t">Every iteration, including the failures</div>
-        <div class="d">Four bugs found in live runs, a critic experiment discarded by its own rule, and two 60 run batches measured and thrown away.</div>
+        <div class="d">A pre-registered hypothesis that was not confirmed, a subgroup effect that evaporated, a critic discarded by its own rule, and two batches measured and thrown away.</div>
       </a>
-      <a href="https://github.com/lanss-id/repro-doctor/tree/main/examples/bring-your-own-oracle">
-        <div class="t">Write an oracle for your own repository</div>
-        <div class="d">The contract, a worked example, and the two runs that were done against it, one of which failed.</div>
+      <a href="https://github.com/lanss-id/repro-doctor/tree/main/examples/real-world-commander">
+        <div class="t">A real repository, a real bug</div>
+        <div class="d">commander at a pinned commit, the fault restored from its own pre-fix code, the oracle lifted from its own regression test. Its whole suite passes while the bug is present.</div>
       </a>
     </div>
   </div>
