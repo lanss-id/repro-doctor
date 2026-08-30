@@ -13,7 +13,8 @@
     "studio": "remotion studio remotion/index.ts",
     "still": "remotion still remotion/index.ts submission out/frame.png",
     "render": "remotion render remotion/index.ts submission out/submission.mp4 --log=info",
-    "video": "npm run evidence && npm run narrate && npm run timeline && npm run typecheck && npm run render"
+    "video": "npm run evidence && npm run narrate && npm run timeline && npm run captions && npm run typecheck && npm run render",
+    "captions": "node pipeline/captions.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.400",

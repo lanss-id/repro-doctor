@@ -1,0 +1,281 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.598
+This repository's check passes.
+
+2
+00:00:01.598 --> 00:00:10.390
+It also runs zero tests, because the glob says dot test dot mjs and the files are named dot spec dot mjs.
+
+3
+00:00:10.390 --> 00:00:13.187
+The exit code says everything is fine.
+
+4
+00:00:13.187 --> 00:00:17.183
+Hand that to a repair agent and it reports success.
+
+5
+00:00:17.183 --> 00:00:18.781
+The transcript looks perfect.
+
+6
+00:00:18.782 --> 00:00:23.178
+That is the baseline, and it is not a straw man.
+
+7
+00:00:23.178 --> 00:00:27.174
+Same model, same four tools, same budget as everything below.
+
+8
+00:00:27.174 --> 00:00:33.168
+The only thing it lacks is any way to find out whether it was right.
+
+9
+00:00:33.168 --> 00:00:36.053
+Only repo is copied into the sandbox.
+
+10
+00:00:36.053 --> 00:00:40.586
+The oracle sits beside it and the agent never sees it.
+
+11
+00:00:40.586 --> 00:00:50.889
+It runs afterwards, in a different container, read-only, against a fresh copy of the repaired tree, and it does not ask for an exit code.
+
+12
+00:00:50.889 --> 00:00:53.774
+It counts how many tests actually ran.
+
+13
+00:00:53.774 --> 00:00:58.719
+An agent that can see the test can make the test pass.
+
+14
+00:00:58.719 --> 00:01:02.016
+This is the cheapest way to stop that.
+
+15
+00:01:02.016 --> 00:01:05.381
+The repository is copied and checksummed first.
+
+16
+00:01:05.381 --> 00:01:14.515
+Everything after runs with no network, no capabilities, a read-only root, and the workspace copy as its only mount.
+
+17
+00:01:14.515 --> 00:01:15.957
+One file changed.
+
+18
+00:01:15.958 --> 00:01:19.804
+main pointed at dist/main.js; the build emits dist/index.js.
+
+19
+00:01:19.804 --> 00:01:22.208
+Then the part that counts.
+
+20
+00:01:22.208 --> 00:01:31.342
+The oracle imported the package through whatever entry point the manifest now declares, called the function, checked the string.
+
+21
+00:01:31.342 --> 00:01:32.304
+Exit zero.
+
+22
+00:01:32.303 --> 00:01:36.630
+These two checksums are the repository before and after.
+
+23
+00:01:36.630 --> 00:01:40.957
+They match, so nothing was written to your code.
+
+24
+00:01:40.957 --> 00:01:44.803
+And applying prints the whole diff and waits.
+
+25
+00:01:44.803 --> 00:01:48.168
+Type anything but apply and nothing happens.
+
+26
+00:01:48.168 --> 00:01:50.393
+A hundred and forty runs.
+
+27
+00:01:50.393 --> 00:01:53.508
+Ten broken repositories, both modes, seven repeats.
+
+28
+00:01:53.508 --> 00:01:57.513
+Baseline verified forty-two of seventy, advanced fifty-one of seventy.
+
+29
+00:01:57.514 --> 00:02:06.415
+A difference of twelve point nine points, ninety-five per cent interval minus two point eight to plus twenty-seven point six.
+
+30
+00:02:06.414 --> 00:02:07.749
+It includes zero.
+
+31
+00:02:07.749 --> 00:02:18.875
+I wrote the sample size and the rule down before the batch and pushed them first, and by that rule this is a null result.
+
+32
+00:02:18.875 --> 00:02:25.550
+Seventy runs per mode do not establish that the structure is what produced the gap.
+
+33
+00:02:25.550 --> 00:02:30.000
+That is not a finding that they are the same.
+
+34
+00:02:30.001 --> 00:02:34.896
+What I cannot tell you is that the improvement is real.
+
+35
+00:02:34.896 --> 00:02:38.015
+Seven iterations, each with the run that caused it.
+
+36
+00:02:38.015 --> 00:02:43.907
+An agent that went blind to its budget and had a correct patch refused on call thirteen.
+
+37
+00:02:43.908 --> 00:02:49.454
+A file reader that showed it four per cent of the file the fault was in.
+
+38
+00:02:49.454 --> 00:02:50.147
+Then this.
+
+39
+00:02:50.147 --> 00:02:54.306
+The baseline arm has not changed by a character across three batches.
+
+40
+00:02:54.306 --> 00:02:58.119
+Fifty-three point three per cent, then forty-six point seven, then sixty.
+
+41
+00:02:58.119 --> 00:03:02.278
+A spread of thirteen point three points, at temperature zero, from nothing.
+
+42
+00:03:02.278 --> 00:03:05.397
+The effect I was measuring is twelve point nine.
+
+43
+00:03:05.398 --> 00:03:07.824
+The noise is bigger than the signal.
+
+44
+00:03:07.824 --> 00:03:10.847
+So I removed one ingredient and measured what broke.
+
+45
+00:03:10.847 --> 00:03:19.579
+The bounded retry: when the harness's own check or the hidden oracle rejects the first patch, the agent gets one more turn, with the evidence attached.
+
+46
+00:03:19.578 --> 00:03:23.608
+Without it, advanced goes from thirteen of thirty-five to one of thirty-five.
+
+47
+00:03:23.608 --> 00:03:26.631
+Thirty-four point three points, plus sixteen to plus fifty-one.
+
+48
+00:03:26.631 --> 00:03:27.639
+Clear of zero.
+
+49
+00:03:27.638 --> 00:03:30.325
+But the mechanism was not what I predicted.
+
+50
+00:03:30.325 --> 00:03:35.027
+Eighteen of those runs had a patch refused for running out of tool calls.
+
+51
+00:03:35.027 --> 00:03:38.385
+The reserved call was also making the agent patch earlier.
+
+52
+00:03:38.385 --> 00:03:40.736
+Two jobs, and I knew about one.
+
+53
+00:03:40.736 --> 00:03:45.438
+So I ran it again, holding the reservation still and removing only the turn.
+
+54
+00:03:45.438 --> 00:03:48.461
+Twenty-five point seven points, plus three to plus forty-five.
+
+55
+00:03:48.461 --> 00:03:49.804
+Still clear of zero.
+
+56
+00:03:49.804 --> 00:03:57.864
+The second attempt earns its place on its own, and it exists only because something outside the agent said the first one was wrong.
+
+57
+00:03:57.864 --> 00:04:01.473
+A critic that reviews the patch before the retry decision.
+
+58
+00:04:01.473 --> 00:04:04.360
+I wrote the keep rule before running it.
+
+59
+00:04:04.360 --> 00:04:09.774
+It scored one of nine against four of nine, twice, and the rule discarded it.
+
+60
+00:04:09.774 --> 00:04:11.939
+And one I nearly got wrong.
+
+61
+00:04:11.939 --> 00:04:20.962
+In the first batch, five repositories looked like the whole story: baseline zero out of fifteen, advanced six, a forty point gap clear of zero.
+
+62
+00:04:20.962 --> 00:04:29.263
+I found that after seeing the results, so I froze those cases and made it the next batch's hypothesis instead of publishing it.
+
+63
+00:04:29.263 --> 00:04:34.316
+In that batch baseline scored eleven out of thirty-five on the same five cases.
+
+64
+00:04:34.315 --> 00:04:36.120
+The forty points was noise.
+
+65
+00:04:36.120 --> 00:04:39.838
+Every run behind every number I just said is committed.
+
+66
+00:04:39.838 --> 00:04:47.645
+This puts all of them back through the same scoring code, recomputes every check, and reports anything that comes out differently.
+
+67
+00:04:47.645 --> 00:04:49.876
+No key, no model, no network.
+
+68
+00:04:49.875 --> 00:04:50.990
+Ten seconds, nothing.
+
+69
+00:04:50.991 --> 00:04:53.593
+You do not have to believe me.
+
+70
+00:04:53.593 --> 00:04:55.080
+That was the point.

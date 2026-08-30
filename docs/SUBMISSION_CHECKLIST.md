@@ -104,6 +104,7 @@ Everything in this section has been run in this repository.
 - [x] Coding-agent use disclosed, with what pre-existed the competition stated explicitly, in [AGENT_USE.md](AGENT_USE.md)
 - [x] A worked example of pointing the tool at a repository outside the benchmark with a user-written oracle
 - [x] A worked example on a real third-party repository where neither the fault nor the oracle was written by the author: [`examples/real-world-commander/`](../examples/real-world-commander)
+- [x] The video, 4:55 against a five minute limit, built by [`video/`](../video) rather than filmed: the terminal is a real pty capture, every figure is recomputed from the committed runs by the project's own scoring code, and the build refuses a highlight around text the recording never printed or a timeline over the limit. Two things in it are synthetic and both are declared on screen and in [`video/README.md`](../video/README.md): the keystroke timing at the prompt, and the removal of idle waits, which the terminal's title bar reports in seconds. The voice is generated, reading the script word for word, and both takes of every section are committed with the one that was kept
 
 ## Not done, and honestly so
 
@@ -114,19 +115,18 @@ Everything in this section has been run in this repository.
 - [ ] **More than one repository outside the benchmark.** There are two worked examples, one synthetic and one real, and neither is a rate.
 - [ ] **More than one model, one provider, one machine.**
 - [ ] **The cost-accounting defect on the `budget-exhausted` path.** Found by the confirmatory batch, deliberately not fixed while the batches being compared were still running, because the pre-registration forbids it and two batches have already been discarded for breaking that rule.
-- [ ] **Video.** Script written, not recorded.
 
 ## Before 15:00 UTC on 31 August
 
 The evaluation work in this list is done. What is left:
 
+- [x] `npm run typecheck && npm run lint && npm test` in the working tree: clean, 201 tests, 0 failures
+- [x] No real credential in any tracked file. The only secret-shaped strings are the synthetic fixtures the redaction tests are built from
+- [x] Every relative link in every tracked markdown file resolves, and every asset and anchor the landing page references exists
+- [x] `npm run doctor -- replay submission/evidence/confirmatory` exits zero, and CI re-runs it on every push
+- [x] `git status --porcelain` clean, with `artifacts/` gitignored and the run behind the video published under `submission/examples/` instead
 - [ ] `npm ci && npm run typecheck && npm run lint && npm test` on a clean clone
 - [ ] Walk `docs/REPRODUCTION.md` on a machine that has never run this, following it literally
-- [ ] `git status --porcelain` clean, and no `artifacts/` in the tree
-- [ ] `grep -ri "sk-" --include="*.json" --include="*.md" .` finds nothing real
-- [ ] Every internal link in the docs resolves
-- [ ] `npm run doctor -- replay submission/evidence/confirmatory` on the clean clone, exit code 0
-- [ ] Record the video against the script, which now has to open on a null result and say so
 - [ ] Read `README.md` top to bottom as someone who has never seen the project
 
 ## The rule for the last hour

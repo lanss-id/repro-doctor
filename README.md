@@ -2,6 +2,10 @@
 
 **[lanss-id.github.io/repro-doctor](https://lanss-id.github.io/repro-doctor/)** is the one page version: the problem, how the verdict is produced, and the measured result.
 
+[![140 runs. Advanced minus baseline is +12.9 points, 95% CI -2.8 to +27.6, an interval that includes zero.](site/submission-poster.jpg)](https://lanss-id.github.io/repro-doctor/#video)
+
+**[Watch it](https://lanss-id.github.io/repro-doctor/#video)**, four minutes fifty-five, or [download the file](https://github.com/lanss-id/repro-doctor/raw/main/site/submission.mp4). It is built rather than filmed: the terminal is a real session captured from a pty, and every figure on screen is recomputed from the committed runs by the same scoring code that produced the report. [How it is built](video/README.md), and [what in it is synthetic](video/README.md#what-is-real-and-what-is-not).
+
 Repro Doctor takes a TypeScript repository that does not work, copies it into a sandbox, lets a model try to repair the copy, and then checks the result with an oracle the model never saw. What you get back is a patch with evidence attached: a trajectory of every command, the oracle's exit status, and a checksum proving the original repository was not touched.
 
 The reason for the hidden oracle is simple. An agent that can see the test can make the test pass. Most "the agent fixed it" claims are really "the agent convinced itself it fixed it", and the two look identical in a transcript. Here the pass or fail signal comes from a program stored outside the workspace, mounted read-only, and run after the agent's session has ended.
@@ -378,7 +382,7 @@ video           The submission video, built from recorded terminal sessions and 
 
 ## The video
 
-[video/](video) builds the five minute submission video with one command. It is not a screen recording. Each terminal scene is an [asciinema](https://asciinema.org) capture of a real command against a real pty, and every rate, difference and interval on screen is recomputed from `submission/evidence/` by the same `src/eval/scoring.ts` that produced the report, so a re-run that changes the result changes the video without anyone editing a slide. The build refuses to draw a highlight around text the terminal did not print, and refuses a timeline over five minutes. What is synthetic is listed in [video/README.md](video/README.md), and it is two things: the keystroke timing at the prompt, and the removal of whole idle stretches, which the window's title bar declares.
+[video/](video) builds the video at the top of this page with one command. It is not a screen recording. Each terminal scene is an [asciinema](https://asciinema.org) capture of a real command against a real pty, and every rate, difference and interval on screen is recomputed from `submission/evidence/` by the same `src/eval/scoring.ts` that produced the report, so a re-run that changes the result changes the video without anyone editing a slide. The build refuses to draw a highlight around text the terminal did not print, and refuses a timeline over five minutes. What is synthetic is listed in [video/README.md](video/README.md), and it is two things: the keystroke timing at the prompt, and the removal of whole idle stretches, which the window's title bar declares.
 
 ## Documentation
 

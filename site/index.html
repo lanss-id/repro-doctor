@@ -134,6 +134,18 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 footer { padding: 48px 0 72px; color: var(--ink-3); font-size: 14px; }
 footer a { color: var(--ink-2); }
 
+/* Video: one media block on the same hairline as everything else. preload="none"
+   keeps the page's nothing-fetched-on-load property: the file is requested when
+   a visitor presses play, not before. */
+.player { margin-top: 44px; border: 1px solid var(--line); background: var(--surface); }
+.player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0a0c10; }
+.meta {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 28px; margin-top: 18px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px; color: var(--ink-3);
+}
+.meta a { color: var(--accent); }
+
 /* Motion: opacity and transform only, off entirely under reduced motion. */
 .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
 .reveal.in { opacity: 1; transform: none; }
@@ -145,6 +157,7 @@ footer a { color: var(--ink-2); }
 <nav>
   <div class="wrap">
     <div class="brand">Repro Doctor <span>/ verified repair</span></div>
+    <a href="#video" class="hide-sm">Video</a>
     <a href="#problem" class="hide-sm">Problem</a>
     <a href="#how" class="hide-sm">How it works</a>
     <a href="#result">Result</a>
@@ -162,6 +175,31 @@ footer a { color: var(--ink-2); }
       <a class="btn" href="#result">See the numbers</a>
       <a class="btn ghost" href="#use">Use it on your repo</a>
     </div>
+  </div>
+</section>
+
+<section id="video" class="pad">
+  <div class="wrap">
+    <h2>Everything in the video recomputes from the same runs.</h2>
+    <p class="lede">The terminal is a real session captured from a pty, not a screen recording and not a mock-up. Every rate, difference and interval on screen is computed from the committed runs by the same scoring code that produced this page, so a re-run that lands somewhere else changes the video with it.</p>
+
+    <div class="player">
+      <video controls preload="none" playsinline poster="submission-poster.jpg" width="1920" height="1080">
+        <source src="submission.mp4" type="video/mp4">
+        <track kind="captions" src="submission.vtt" srclang="en" label="English" default>
+        This browser cannot play the file. <a href="submission.mp4">Download it instead.</a>
+      </video>
+    </div>
+
+    <div class="meta">
+      <span>4:55</span>
+      <span>1920x1080</span>
+      <span>19 MB</span>
+      <a href="submission.mp4" download>Download</a>
+      <a href="https://github.com/lanss-id/repro-doctor/tree/main/video">How it was built</a>
+    </div>
+
+    <p class="cap">Two things in it are synthetic and both say so on screen: the keystroke timing at the prompt, and the removal of idle waits, which the terminal's title bar reports in seconds. Nothing is sped up. The voice is generated, reading the script in <code>docs/VIDEO_SCRIPT.md</code> word for word.</p>
   </div>
 </section>
 
