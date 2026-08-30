@@ -1,6 +1,6 @@
 # Video script
 
-Four and a half minutes against a five minute limit. One terminal, one browser tab, no slides. Everything on screen is a real command with real output, and every number is said with its interval.
+Four minutes fifty-six against a five minute limit. One terminal, and charts drawn from the evidence bundle rather than a slide deck. Everything in the terminal is a real command with real output, every figure in a chart is recomputed from a committed run, and every number is said with its interval.
 
 The brief asks for six things: the problem and the simple baseline, one realistic execution end to end, the final comparison, the changelog, the change that contributed most, and one discarded experiment. They are the six sections below, in that order.
 
@@ -98,7 +98,13 @@ Spoken word count is 755, which is four minutes thirty-five at a normal pace, an
 
 ## Notes for recording
 
-- Trim the wait during `diagnose`. Cut, do not speed up: sped-up terminal output looks like a trick.
+Two of these are now enforced by [../video/](../video), and stay here as the statement of the rule rather than as a reminder:
+
+- Trim the wait during `diagnose`. Cut, do not speed up: sped-up terminal output looks like a trick. `pipeline/trim.mjs` deletes whole idle stretches and the terminal's title bar reports how many seconds went.
+- Keep it under five minutes. `pipeline/build.mjs` exits non-zero if the assembled timeline runs past the limit.
+
+The rest are down to whoever says the words:
+
 - Say every interval out loud. This script is built so a viewer never hears a point estimate alone.
 - Do not soften the null result with a "but". What follows it is stronger than the result would have been, and it only lands if the null is stated flat.
 - Resist the urge to add music.
