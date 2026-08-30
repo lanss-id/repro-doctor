@@ -6,6 +6,8 @@ The brief asks for six things: the problem and the simple baseline, one realisti
 
 Record at 1920x1080, terminal font large enough to read at half size. Build the Docker image beforehand so nothing waits on a pull.
 
+This script is also the input to [../video/](../video), which builds the recording rather than films it: the section headings below set the timing, the blockquotes are the narration, and the `On screen` lines are what has to be up while each one is said. Editing a heading or a blockquote changes the video. See [../video/README.md](../video/README.md) for what in it is synthetic.
+
 **The hard part of this recording is tonal.** The headline is a result that did not go my way. Say it plainly and early, without apology and without burying it, then let what came out of it do the work. A viewer who senses the null result being managed will stop trusting the rest of the video, which would be the correct response.
 
 Spoken word count is 755, which is four minutes thirty-five at a normal pace, and each section below is timed to its own word count. That leaves about twenty seconds of pause across eight sections. It does not fit a five minute limit with anything added to it.
