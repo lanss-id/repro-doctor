@@ -183,7 +183,9 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
     tracker.markLimit('wall-clock');
     deadline.abort(new Error(`run deadline of ${budget.maxWallClockSeconds}s expired`));
   }, budget.maxWallClockSeconds * 1000);
-  deadlineTimer.unref();
+  // Keep this timer referenced while the run is active. A blocked provider
+  // call may be the only other pending work, so unref() would let Node exit
+  // before the deadline can abort it.
 
   const driverOptions: DriverOptions = {
     apiKey: config.apiKey ?? 'scripted-driver-no-key',
