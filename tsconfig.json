@@ -23,5 +23,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["node_modules", "dist", "fixtures", "artifacts"]
+  "exclude": ["node_modules", "dist", "fixtures", "examples", "artifacts"]
 }

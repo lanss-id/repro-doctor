@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'artifacts/**', 'fixtures/**', 'node_modules/**', 'submission/**'],
+    ignores: ['dist/**', 'artifacts/**', 'examples/**', 'fixtures/**', 'node_modules/**', 'submission/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
