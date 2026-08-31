@@ -17,7 +17,7 @@
     "captions": "node pipeline/captions.mjs"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.400",
+    "@remotion/cli": "4.0.518",
     "@remotion/google-fonts": "^4.0.400",
     "@remotion/media-utils": "4.0.400",
     "react": "19.2.0",
