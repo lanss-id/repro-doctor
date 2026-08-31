@@ -139,6 +139,17 @@ footer a { color: var(--ink-2); }
    a visitor presses play, not before. */
 .player { margin-top: 44px; border: 1px solid var(--line); background: var(--surface); }
 .player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0a0c10; }
+/* The browser draws WebVTT at a size derived from the video height, which lands
+   on the terminal's last rows. Smaller type and a scrim put the caption under
+   the output instead of over it. A viewer's own OS caption settings still
+   override this, which is correct: that preference exists for a reason. */
+.player video::cue {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 48%;
+  line-height: 1.45;
+  color: #edeef1;
+  background: rgba(9, 11, 15, 0.86);
+}
 .meta {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 28px; margin-top: 18px;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
