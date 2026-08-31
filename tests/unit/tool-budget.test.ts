@@ -47,19 +47,19 @@ test('every tool result tells the model how much budget is left', async () => {
   const first = await callTool(session, 'list_files', { directory: '.' });
   assert.match(first, /\[budget\] tool calls left: 11, patch attempts left: 2$/);
 
-  const second = await callTool(session, 'read_file', { path: 'package.json' });
+  const second = await callTool(session, 'read_file', { path: 'package.json', start_line: null, max_lines: null });
   assert.match(second, /\[budget\] tool calls left: 10, patch attempts left: 2$/);
 
   const third = await callTool(session, 'propose_patch', {
     rationale: 'name the package',
-    files: [{ path: 'package.json', content: '{"name":"y"}\n' }],
+    files: [{ path: 'package.json', how: 'whole', content: '{"name":"y"}\n', find: '', replacement: '' }],
   });
   assert.match(third, /\[budget\] tool calls left: 9, patch attempts left: 1$/);
 });
 
 test('a failed tool call still reports the budget it consumed', async () => {
   const session = newSession();
-  const missing = await callTool(session, 'read_file', { path: 'does-not-exist.ts' });
+  const missing = await callTool(session, 'read_file', { path: 'does-not-exist.ts', start_line: null, max_lines: null });
   assert.match(missing, /^error: /);
   assert.match(missing, /\[budget\] tool calls left: 11, patch attempts left: 2$/);
 });

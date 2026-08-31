@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readlink, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { ReproDoctorError } from '../../src/domain/failure.js';
@@ -11,22 +11,33 @@ async function buildRepository(root: string): Promise<string> {
   const repo = path.join(root, 'repo');
   await mkdir(path.join(repo, 'src'), { recursive: true });
   await mkdir(path.join(repo, 'node_modules', 'left-pad'), { recursive: true });
+  await mkdir(path.join(repo, '.git'), { recursive: true });
+  await writeFile(path.join(repo, '.git', 'HEAD'), 'ref: refs/heads/main\n', 'utf8');
   await writeFile(path.join(repo, 'package.json'), '{"name":"x"}\n', 'utf8');
   await writeFile(path.join(repo, 'src', 'index.ts'), 'export const a = 1;\n', 'utf8');
   await writeFile(path.join(repo, 'node_modules', 'left-pad', 'index.js'), 'module.exports = 1;\n', 'utf8');
   return repo;
 }
 
-test('copying produces an independent workspace and skips node_modules', async () => {
+// The dependencies used to be dropped here. In a sandbox with no network that
+// leaves a repository that cannot run its own check, and the agent spends its
+// budget on installs that can never succeed: three live runs against commander
+// went that way before this changed. `.git` stays out, because the repository's
+// history is not needed to run it and is a way to read the fix.
+test('copying produces an independent workspace, dependencies included', async () => {
   const root = await temporaryDirectory('copy');
   try {
     const repo = await buildRepository(root);
     const workspace = path.join(root, 'workspace');
     const report = await copyRepositoryToWorkspace(repo, workspace);
 
-    assert.equal(report.fileCount, 2);
+    assert.equal(report.fileCount, 3);
     assert.equal(await readFile(path.join(workspace, 'src/index.ts'), 'utf8'), 'export const a = 1;\n');
-    await assert.rejects(() => readFile(path.join(workspace, 'node_modules/left-pad/index.js'), 'utf8'));
+    assert.ok(
+      await readFile(path.join(workspace, 'node_modules/left-pad/index.js'), 'utf8'),
+      'the sandbox has no network, so the dependencies have to arrive with the copy',
+    );
+    await assert.rejects(() => readFile(path.join(workspace, '.git/HEAD'), 'utf8'));
 
     await writeFile(path.join(workspace, 'src/index.ts'), 'export const a = 2;\n', 'utf8');
     assert.equal(
@@ -63,6 +74,31 @@ test('a symlink inside the repository is reported and not copied', async () => {
     const report = await copyRepositoryToWorkspace(repo, workspace);
     assert.deepEqual(report.skippedSymlinks, ['manifest-link.json']);
     await assert.rejects(() => readFile(path.join(workspace, 'manifest-link.json'), 'utf8'));
+  } finally {
+    await removeDirectory(root);
+  }
+});
+
+// commander has two tests that resolve an executable subcommand through a
+// relative symlink. Dropping those links made its own suite fail inside the
+// sandbox, so the agent saw a red baseline caused by the harness rather than by
+// the repository, and spent its budget there.
+test('a relative symlink that stays inside the repository is preserved', async () => {
+  const root = await temporaryDirectory('copy-relative-link');
+  try {
+    const repo = await buildRepository(root);
+    await symlink('package.json', path.join(repo, 'manifest-link.json'));
+    const workspace = path.join(root, 'workspace');
+
+    const report = await copyRepositoryToWorkspace(repo, workspace);
+
+    assert.deepEqual(report.skippedSymlinks, []);
+    assert.equal(await readFile(path.join(workspace, 'manifest-link.json'), 'utf8'), '{"name":"x"}\n');
+    assert.equal(
+      await readlink(path.join(workspace, 'manifest-link.json')),
+      'package.json',
+      'the link must point inside the workspace, never back at the source',
+    );
   } finally {
     await removeDirectory(root);
   }
