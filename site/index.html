@@ -138,7 +138,13 @@ footer a { color: var(--ink-2); }
    keeps the page's nothing-fetched-on-load property: the file is requested when
    a visitor presses play, not before. */
 .player { margin-top: 44px; border: 1px solid var(--line); background: var(--surface); }
-.player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0a0c10; }
+/* height:auto is load-bearing. The width and height attributes on the element
+   map to presentational hints, and aspect-ratio only applies when one axis is
+   auto, so without this the box is 1080px tall and the ratio rule is ignored. */
+.player video {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 16 / 9; object-fit: contain; background: #0a0c10;
+}
 /* The browser draws WebVTT at a size derived from the video height, which lands
    on the terminal's last rows. Smaller type and a scrim put the caption under
    the output instead of over it. A viewer's own OS caption settings still
