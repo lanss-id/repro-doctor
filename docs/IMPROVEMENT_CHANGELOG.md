@@ -15,7 +15,8 @@ Nothing moves from the second section to the third without artifacts.
 | Iteration 4 | Say that a check exiting zero is not evidence the repository works | On a repository outside the benchmark: 4 calls and no patch became 11 calls and a patch passing 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the first, null result reported on the second |
 | Discarded | A critic agent reviewing the patch before the retry decision | 1/9 against 4/9, negative in both runs of the experiment | Discarded by the rule written before it ran |
 | Iteration 7 | Ablate the bounded retry, twice, to find which of advanced mode's five changes carries it | Removing the retry design costs +34.3 points (95% CI +16.1 to +51.0); removing only its second turn costs +25.7 (95% CI +3.3 to +44.9). Both exclude zero | Kept, and for the first time on a measurement rather than an argument |
-| Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down with the run that proves it |
+| Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down. Iteration 8 fixed it and found four more behind it |
+| Iteration 8 | Fix the read tool the commander run asked for, and whatever that turns out to be standing in front of | Ten runs. Six harness defects fixed; commander's own suite green inside the sandbox for the first time, 1371 passing. Four runs from that state each stopped after three tool calls without attempting a patch | Kept on a branch, unmeasured. The agent instructions moved, so nothing here is comparable with the published batches |
 | Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
 | Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system |
 
@@ -105,7 +106,7 @@ The rule is implemented as `decideExperiment` in `src/eval/scoring.ts`. It refus
 
 **Decision rule.** Keep if verified repair rate does not drop and median cost falls by at least 15 percent. A tool that is cheaper and worse is not an improvement.
 
-**Status.** Not run.
+**Status.** Built, for a different reason, and still not run against this rule. The anchored edit shipped in iteration 8 because a whole-file write is capped at 65,536 bytes, which left every fault in a larger file visible and unfixable. That is a reachability argument, not the token argument above. The measure and the decision rule here are untouched: nobody has counted output tokens per patch attempt, and no batch has been run with the tool in place.
 
 ### E3: incremental evidence gate
 
@@ -375,6 +376,83 @@ repositories of six to twelve files never stress a single one of those paths.
 
 The general form: **a benchmark you built cannot tell you what your harness
 assumes.** It was built under the same assumptions.
+
+### Fixing one defect and finding five, 31 August 2026
+
+**What was tried, and why.** Iteration 6 left one defect unfixed and named it:
+`read_file` returned the first four per cent of an 87,607 byte file, so the
+agent could not see the fault it had been asked to repair. This was an attempt
+to fix that one thing.
+
+It took one run. The other nine were spent on the defects standing behind it,
+each of which only became visible once the one in front of it was gone. The full
+account, with trajectories, is in
+[`examples/real-world-commander/RESULT.md`](../examples/real-world-commander/RESULT.md).
+
+**Evidence.** Ten runs, advanced, 20 tool calls each, $0.2728 in total.
+
+| Run | Outcome | What it exposed |
+| --- | --- | --- |
+| `20260831T085251Z-40a59e` | no-patch, 20/20 | The window works and the agent used it unprompted. Both patch attempts died on my own validation: a strict tool schema makes every field required, so the model filled in both patch shapes and the harness called that ambiguous |
+| `20260831T090213Z-f41313` | no-patch, 20/20 | Letting the model name its shape is not enough while a field it needs is nullable. It asked for a replacement and set `replacement` to `null`, because the schema said it could |
+| `20260831T090626Z-18716b` | unverified-patch, 19/20 | The first patch this example has produced. The oracle refused it, which is the system working. Still the wrong file |
+| `20260831T091410Z-f78b4d` | unverified-patch, 5/20 | The dependencies were never actually restored after iteration 6 recorded them as fixed. `node_modules` was in the ignore list the copy shared with the checksum |
+| `20260831T091605Z-dda497` | no-patch, 20/20 | With dependencies present the suite still failed inside the sandbox, and the tool output would not say why |
+| `20260831T092220Z-3c931a` | no-patch, 20/20 | Captured output stopped accumulating at 256KB. commander prints 262KB of TAP and names its failures in the last lines, so the verdict was never collected |
+| `20260831T093208Z-9ed571` | no-patch, 3/20 | The copy dropped internal symlinks, and two of commander's tests resolve a subcommand through one. With them kept, `node --test` exits 0 in the sandbox for the first time. The agent then stopped |
+| `20260831T093306Z-480748` | no-patch, 3/20 | The same, again |
+| `20260831T093338Z-5759ac` | no-patch, 3/20 | The same, again |
+| `20260831T093429Z-852119` | no-patch, 3/20 | The same, again |
+
+**Decision.** Six fixes, kept on a branch and not merged.
+
+Fixed: `read_file` returns a window of lines and says which lines and how many
+remain; `propose_patch` can replace one exact block, refused unless the anchor
+occurs once, so a fault in a file larger than the 65,536 byte write cap is
+reachable; a patch entry names its shape and its fields are plain strings, so a
+required schema cannot trick the model into an invalid combination; the copy
+keeps `node_modules`, with its own ignore list so the checksum still excludes a
+dependency tree from what a repair may claim to have changed; captured output
+keeps a fixed head and a rolling tail; and a relative symlink that stays inside
+the tree is recreated, while an absolute one is still dropped and anything
+resolving outside the root still aborts the copy.
+
+Not merged. The agent instructions gained two lines describing the new tool
+behaviour, identically in both modes, so
+`tests/unit/instructions-pinned.test.ts` carries a new digest. **The five
+published batches in `submission/evidence/` were measured against the previous
+wording and have not been re-run.** By this project's own rule that makes
+anything measured after this point incomparable with them, and re-measuring is a
+batch, not an afternoon. The submitted system is the one that was measured.
+
+**Learning.** Two, and the second is the useful one.
+
+The first is that defects in a harness queue. Five of these six were invisible
+until the one in front was fixed. Five of the six are also in the class every
+earlier one belonged to, the harness taking something away without telling the
+agent: the middle of a file, its dependencies, the end of a command's output,
+the symlinks its tests resolve through. That is now twelve in that class and
+zero in the other one. The sixth is different and worth separating: the
+whole-file write cap announced itself honestly every time, and was still a wall
+with no way through until the anchored edit existed. A tool set that ten
+dependency-free repositories of six to twelve files never stressed does not
+survive one real library.
+
+The second is where the failure went. It used to be that the agent could not see
+the file. Now it can, the repository's own suite is green in the sandbox, and
+the agent reads the manifest, runs the suite, sees 1371 tests pass and concludes
+there is nothing to fix. Four runs, three tool calls each, not one patch attempt
+spent. Advanced mode's second instruction was written for exactly this case:
+
+> A check that exits zero is not evidence that the repository works.
+
+On the ten fixtures that sentence measurably works. On a 216-file library with a
+1,172-line README it does not. The instruction asks the agent to invent a
+contract test for an unfamiliar library out of its documentation, which is a
+harder task than any fixture poses, and nothing in the harness checks that it
+tried. That is a question about the method rather than about a tool, and it is
+the first one this project has reached that cannot be fixed by making the
+harness stop lying.
 
 ### What these numbers are not
 
