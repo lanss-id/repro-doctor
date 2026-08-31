@@ -20,8 +20,8 @@ export interface SpawnRequest {
 export async function spawnCaptured(request: SpawnRequest): Promise<ExecOutcome> {
   const startedAt = Date.now();
   return await new Promise<ExecOutcome>((resolve) => {
-    let stdout = '';
-    let stderr = '';
+    const stdout = new OutputCapture();
+    const stderr = new OutputCapture();
     let settled = false;
     let timedOut = false;
 
@@ -46,14 +46,10 @@ export async function spawnCaptured(request: SpawnRequest): Promise<ExecOutcome>
     };
 
     child.stdout?.on('data', (chunk: Buffer) => {
-      if (stdout.length < MAX_CAPTURED_BYTES) {
-        stdout += chunk.toString('utf8');
-      }
+      stdout.add(chunk.toString('utf8'));
     });
     child.stderr?.on('data', (chunk: Buffer) => {
-      if (stderr.length < MAX_CAPTURED_BYTES) {
-        stderr += chunk.toString('utf8');
-      }
+      stderr.add(chunk.toString('utf8'));
     });
     child.on('error', (error: Error) => {
       settle({ kind: 'spawn-failed', message: error.message });
@@ -63,25 +59,65 @@ export async function spawnCaptured(request: SpawnRequest): Promise<ExecOutcome>
         settle({
           kind: 'timed-out',
           timeoutMs: request.timeoutMs,
-          stdout: truncate(stdout),
-          stderr: truncate(stderr),
+          stdout: stdout.toString(),
+          stderr: stderr.toString(),
         });
         return;
       }
       settle({
         kind: 'exited',
         exitCode: code ?? (signal === null ? 1 : 128),
-        stdout: truncate(stdout),
-        stderr: truncate(stderr),
+        stdout: stdout.toString(),
+        stderr: stderr.toString(),
         durationMs: Date.now() - startedAt,
       });
     });
   });
 }
 
-function truncate(text: string): string {
-  if (text.length <= MAX_CAPTURED_BYTES) {
-    return text;
+/**
+ * Collects a stream's output while keeping both of its ends.
+ *
+ * The earlier version stopped appending once it had 256KB, so for anything
+ * verbose the end was never collected at all. For a test runner the end is the
+ * only part that matters: commander's suite prints 262KB of TAP and names its
+ * two failures in the last few lines, so the agent was handed a quarter
+ * megabyte of passing tests and no verdict. A compiler puts its first error at
+ * the top, so the head has to survive as well, which is why this keeps a fixed
+ * head and a rolling tail rather than one or the other.
+ */
+export class OutputCapture {
+  private head = '';
+  private tail = '';
+  private omitted = 0;
+
+  constructor(
+    private readonly headBytes = Math.floor(MAX_CAPTURED_BYTES * 0.55),
+    private readonly tailBytes = MAX_CAPTURED_BYTES - Math.floor(MAX_CAPTURED_BYTES * 0.55),
+  ) {}
+
+  add(chunk: string): void {
+    let rest = chunk;
+    if (this.head.length < this.headBytes) {
+      const room = this.headBytes - this.head.length;
+      this.head += rest.slice(0, room);
+      rest = rest.slice(room);
+    }
+    if (rest.length === 0) {
+      return;
+    }
+    this.tail += rest;
+    if (this.tail.length > this.tailBytes) {
+      const dropped = this.tail.length - this.tailBytes;
+      this.tail = this.tail.slice(dropped);
+      this.omitted += dropped;
+    }
   }
-  return `${text.slice(0, MAX_CAPTURED_BYTES)}\n[output truncated at ${MAX_CAPTURED_BYTES} bytes]`;
+
+  toString(): string {
+    if (this.omitted === 0) {
+      return this.head + this.tail;
+    }
+    return `${this.head}\n[${this.omitted} bytes of output omitted here; the start and the end are kept]\n${this.tail}`;
+  }
 }

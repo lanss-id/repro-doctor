@@ -1,7 +1,6 @@
-import { copyFile, lstat, mkdir, readdir, readlink, stat } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, readdir, readlink, realpath, stat, symlink } from 'node:fs/promises';
 import path from 'node:path';
 import { ReproDoctorError } from '../../domain/failure.js';
-import { DEFAULT_IGNORED_DIRECTORIES } from './checksum.js';
 import { PathSafetyError, isInside, toPosixRelative } from './paths.js';
 
 export interface CopyOptions {
@@ -11,6 +10,8 @@ export interface CopyOptions {
   readonly maxFileBytes?: number;
   /** Refuse the copy when the tree has more files than this. */
   readonly maxFiles?: number;
+  /** Refuse the copy when the tree is larger than this in total. */
+  readonly maxTotalBytes?: number;
 }
 
 export interface CopyReport {
@@ -19,8 +20,23 @@ export interface CopyReport {
   readonly skippedSymlinks: readonly string[];
 }
 
-const DEFAULT_MAX_FILE_BYTES = 2 * 1024 * 1024;
-const DEFAULT_MAX_FILES = 5000;
+/**
+ * What the copy skips, which is deliberately not what the checksum skips.
+ *
+ * `node_modules` is absent from this list on purpose. The sandbox has no
+ * network, so a repository whose dependencies were left behind cannot run its
+ * own check, and the agent spends its budget on failed installs rather than on
+ * the fault. commander's suite passes with its dependencies and fails without
+ * them, which is the whole difference between a repaired run and a confused
+ * one. The checksum still ignores them: a dependency tree is not part of what
+ * a repair may claim to have changed.
+ */
+export const COPY_IGNORED_DIRECTORIES: readonly string[] = ['.git', 'dist', '.cache', 'artifacts'];
+
+const DEFAULT_MAX_FILE_BYTES = 16 * 1024 * 1024;
+const DEFAULT_MAX_FILES = 20000;
+/** A ceiling on the whole tree, which is the resource the per-file cap was standing in for. */
+const DEFAULT_MAX_TOTAL_BYTES = 512 * 1024 * 1024;
 
 /**
  * Copies a repository into an isolated workspace. The source is opened
@@ -33,9 +49,10 @@ export async function copyRepositoryToWorkspace(
   destination: string,
   options: CopyOptions = {},
 ): Promise<CopyReport> {
-  const ignored = options.ignoredDirectories ?? DEFAULT_IGNORED_DIRECTORIES;
+  const ignored = options.ignoredDirectories ?? COPY_IGNORED_DIRECTORIES;
   const maxFileBytes = options.maxFileBytes ?? DEFAULT_MAX_FILE_BYTES;
   const maxFiles = options.maxFiles ?? DEFAULT_MAX_FILES;
+  const maxTotalBytes = options.maxTotalBytes ?? DEFAULT_MAX_TOTAL_BYTES;
 
   const sourceRoot = path.resolve(source);
   const destinationRoot = path.resolve(destination);
@@ -50,6 +67,12 @@ export async function copyRepositoryToWorkspace(
   await mkdir(destinationRoot, { recursive: true });
   const state = { fileCount: 0, byteCount: 0, skippedSymlinks: [] as string[] };
   await copyDirectory(sourceRoot, sourceRoot, destinationRoot, ignored, maxFileBytes, maxFiles, state);
+  if (state.byteCount > maxTotalBytes) {
+    throw new ReproDoctorError(
+      'unsafe-path',
+      `repository is larger than ${maxTotalBytes} bytes: ${sourceRoot}`,
+    );
+  }
   return {
     fileCount: state.fileCount,
     byteCount: state.byteCount,
@@ -76,13 +99,25 @@ async function copyDirectory(
     if (stats.isSymbolicLink()) {
       const target = await readlink(sourcePath);
       const resolved = path.resolve(path.dirname(sourcePath), target);
-      if (!isInside(sourceRoot, resolved)) {
+      // Lexical containment first, then the real one: a chain of links can end
+      // up outside a root that each single hop appears to respect.
+      const real = await realpath(sourcePath).catch(() => null);
+      if (!isInside(sourceRoot, resolved) || (real !== null && !isInside(sourceRoot, real))) {
         throw new PathSafetyError(
           `symlink escapes the repository root: ${toPosixRelative(sourceRoot, sourcePath)}`,
           `target=${target}`,
         );
       }
-      state.skippedSymlinks.push(toPosixRelative(sourceRoot, sourcePath));
+      // A relative link that stays inside the tree is part of the repository:
+      // commander's own suite has two tests that resolve an executable
+      // subcommand through one, and they failed in the sandbox for no reason
+      // but this. An absolute one is still dropped, because recreating it
+      // verbatim would point the workspace back at the source repository.
+      if (path.isAbsolute(target)) {
+        state.skippedSymlinks.push(toPosixRelative(sourceRoot, sourcePath));
+        continue;
+      }
+      await symlink(target, destinationPath);
       continue;
     }
 

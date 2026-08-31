@@ -16,7 +16,11 @@ import { advancedInstructions, baselineInstructions } from '../../src/agent/inst
  * been discarded for exactly this reason. Update the digest deliberately,
  * never to make the suite green.
  */
-const PUBLISHED_DIGEST = '580f40059e45c423659beddafae158895d2c3ade4a60732eb38649d4ab179444';
+// Moved on 31 August 2026 for the windowed read_file and the anchored patch
+// shape. See docs/IMPROVEMENT_CHANGELOG.md: the five published batches were
+// measured against the previous wording and have not been re-run, so nothing
+// measured after this line is comparable with them.
+const PUBLISHED_DIGEST = '906f4189b6c158eca73a512098afd109edd7c1b89c3b440c754754ece4356e33';
 
 test('the published instruction text has not moved under the published results', () => {
   const text = `${baselineInstructions(DEFAULT_BUDGET)}\n=====\n${advancedInstructions(DEFAULT_BUDGET)}`;
