@@ -9,6 +9,10 @@
 //
 // It lives outside repo/, is mounted read-only at /oracle, and runs only after
 // the agent's session has ended, against a fresh copy of the repaired tree.
+//
+// commander is MIT licensed, Copyright (c) 2011 TJ Holowaychuk
+// <tj@vision-media.ca>. The assertions below are used under that licence:
+// https://github.com/tj/commander.js/blob/master/LICENSE
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';

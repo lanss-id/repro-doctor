@@ -70,7 +70,7 @@ Each line names the check that backs it. Every one of these was run in this repo
 
 ### Totals
 
-201 tests, 0 failures, about 70 seconds, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
+202 tests, 0 failures, about 75 seconds, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
 
 ## Planned experiments
 

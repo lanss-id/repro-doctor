@@ -22,8 +22,8 @@
     "productionSafe": true
   },
   "repo": {
-    "inputPath": "/home/lanss/experimence/hackathon-micro1/examples/real-world-commander/repo",
-    "workspacePath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/workspace",
+    "inputPath": "/example/repro-doctor/examples/real-world-commander/repo",
+    "workspacePath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/workspace",
     "treeChecksumBefore": "6f85a443e7da91a291607f0d1e359fefb338c301bfd23c31747081be16b4855c",
     "treeChecksumAfter": "6f85a443e7da91a291607f0d1e359fefb338c301bfd23c31747081be16b4855c",
     "mutated": false,
@@ -62,14 +62,14 @@
   },
   "patch": {
     "kind": "empty",
-    "path": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/repair.patch"
+    "path": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/repair.patch"
   },
   "artifacts": {
-    "runDir": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8",
-    "resultPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/result.json",
-    "trajectoryPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/trajectory.jsonl",
-    "patchPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/repair.patch",
-    "verificationLogPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/verification.log",
-    "reportPath": "/home/lanss/experimence/hackathon-micro1/artifacts/runs/20260830T161557Z-886ac8/report.html"
+    "runDir": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8",
+    "resultPath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/result.json",
+    "trajectoryPath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/trajectory.jsonl",
+    "patchPath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/repair.patch",
+    "verificationLogPath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/verification.log",
+    "reportPath": "/example/repro-doctor/artifacts/runs/20260830T161557Z-886ac8/report.html"
   }
 }

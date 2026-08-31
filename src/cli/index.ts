@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { ZodError, prettifyError } from 'zod';
 import { ReproDoctorError, describeError } from '../domain/failure.js';
 import { createLogger } from '../infra/log.js';
 import { parseArgv } from './args.js';
@@ -73,6 +74,20 @@ if (isEntryPoint) {
           logger.error('command.failed.detail', { detail: error.detail });
         }
         process.exitCode = error.reason === 'internal-error' ? USAGE_EXIT_CODE : 1;
+        return;
+      }
+      // A schema rejecting a flag value is the user mistyping, not the program
+      // falling over. Reporting it as a crash, with a JSON dump of the issue
+      // list, tells someone with a typo to go and read a stack trace.
+      if (error instanceof ZodError) {
+        // `internal-error` is the reason args.ts already uses for a missing or
+        // malformed flag, and the set is closed on purpose. A bad flag value
+        // and a missing one should report the same way.
+        logger.error('command.failed', {
+          reason: 'internal-error',
+          message: prettifyError(error),
+        });
+        process.exitCode = USAGE_EXIT_CODE;
         return;
       }
       logger.error('command.crashed', { message: describeError(error) });

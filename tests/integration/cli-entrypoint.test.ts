@@ -51,3 +51,30 @@ test('importing the module does not run the program', async () => {
 after(async () => {
   await rm(linkRoot, { recursive: true, force: true });
 });
+
+/**
+ * A schema rejecting a flag value used to reach the top-level catch, which
+ * reported it as `command.crashed` with the raw Zod issue list as JSON. A typo
+ * is not a crash, and a stack-trace-shaped answer to one is the difference
+ * between a tool someone keeps and one they close.
+ */
+test('a bad flag value is reported as a usage failure, not as a crash', () => {
+  let stderr = '';
+  let status = 0;
+  try {
+    execFileSync(process.execPath, [entry, 'diagnose', 'fixtures/entrypoint-mismatch/repo', '--mode', 'turbo'], {
+      encoding: 'utf8',
+      stdio: 'pipe',
+    });
+  } catch (error) {
+    const failure = error as { status: number; stderr: string };
+    status = failure.status;
+    stderr = failure.stderr;
+  }
+
+  assert.equal(status, 2, 'a usage error exits 2, the same as a missing flag');
+  assert.match(stderr, /command\.failed/u);
+  assert.doesNotMatch(stderr, /command\.crashed/u);
+  assert.match(stderr, /expected one of "baseline"\|"advanced"/u);
+  assert.doesNotMatch(stderr, /"code":/u, 'the raw Zod issue list must not reach the user');
+});
