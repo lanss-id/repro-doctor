@@ -42,6 +42,12 @@ The ten fixtures are mine, which is a fair objection to the whole benchmark: if 
 
 [examples/real-world-commander/](examples/real-world-commander) removes that objection for one case. The repository is [commander](https://github.com/tj/commander.js), 216 files and 17,700 lines. The fault is the line commander itself had before it fixed the bug in PR #2350. The oracle is commander's own regression test from that same PR. `prepare.sh` prints a full diff of the two edits it makes, so you can check that rather than take it.
 
+[examples/real-world-agentinspect/](examples/real-world-agentinspect) records a
+second real-repository attempt, kept private at runtime: AgentInspect issue
+#312 at the commit before its upstream fix, checked by the regression tests
+from upstream PR #313. It did not produce a verified repair. It did expose four
+reproducible harness defects, all fixed and regression-tested on this branch.
+
 The reason it is worth having: **all 1371 of commander's own tests pass while the bug is present.** The regression test that catches it did not exist until the commit that fixed it, which is the normal condition of every bug that has ever shipped.
 
 **The agent did not repair it.** Three runs exposed three defects in this harness and none in the model: the workspace copy had stripped commander's installed dependencies, the `[budget]` line overstated the ceiling by six calls, and `read_file` returns the first four per cent of the 87,607 byte file the fault is in, so the agent read the same opening three times and then invented a fault inside the part it could see. Two are fixed. The third needs a change to the tool set that every published measurement was taken against, so it is written down rather than done in the last day of a competition. [RESULT.md](examples/real-world-commander/RESULT.md) has all three trajectories and what each one cost.
@@ -396,6 +402,7 @@ video           The submission video, built from recorded terminal sessions and 
 - [docs/AGENT_USE.md](docs/AGENT_USE.md), which agents were used to build this and which run inside it, with a trajectory for each
 - [examples/bring-your-own-oracle/](examples/bring-your-own-oracle), the oracle contract and a worked example on a repository outside the benchmark
 - [examples/real-world-commander/](examples/real-world-commander), a real third-party repository with a fault and an oracle written by its own maintainers, and the three defects the attempt found
+- [examples/real-world-agentinspect/](examples/real-world-agentinspect), a private Docker run against a historical AgentInspect bug, including the failed patch and four harness changes the attempt forced
 - [submission/examples/](submission/examples), committed trajectories for every agent and a transcript of the human checkpoint
 - [video/README.md](video/README.md), how the submission video is built, and exactly which parts of it are synthetic
 - [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md)
