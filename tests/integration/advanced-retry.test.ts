@@ -52,6 +52,45 @@ const baseOptions = {
   modelOverride: 'scripted-test-driver',
 };
 
+test('a diagnosis without a submitted patch gets the bounded retry', async () => {
+  const feedback: string[] = [];
+  const fixed = await patchedManifest();
+
+  const result = await diagnose({
+    ...baseOptions,
+    priceTable: TEST_PRICES,
+    driverFactory: recordingDriver(async (session, turn) => {
+      if (turn === 1) {
+        return {
+          text: 'the test glob is wrong and package.json must be patched',
+          structured: {
+            hypotheses: [
+              {
+                id: 'h1',
+                statement: 'the test glob matches no files',
+                evidence: 'the repository contains spec files but the script searches for test files',
+                status: 'supported',
+              },
+            ],
+            patchSummary: 'change the test glob',
+          },
+        };
+      }
+      await session.proposePatch(
+        [{ path: 'package.json', content: fixed }],
+        'the runner glob never matched the spec files, so zero tests ran',
+      );
+      return { text: 'submitted the diagnosed fix' };
+    }, feedback),
+  });
+
+  assert.equal(result.outcome.status, 'repaired');
+  assert.equal(result.verification.kind, 'passed');
+  assert.equal(result.usage.patchAttempts, 1);
+  assert.equal(feedback.length, 1, 'the missing patch must trigger the one retry');
+  assert.match(feedback[0] ?? '', /No patch was produced/u);
+});
+
 test('the hidden oracle drives the single feedback retry even when the visible check passes', async () => {
   const feedback: string[] = [];
   const fixed = await patchedManifest();

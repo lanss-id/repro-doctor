@@ -32,6 +32,7 @@ const KNOWN_FLAGS = [
   'max-cost-usd',
   'command-timeout',
   'check-command',
+  'task-file',
   'json',
 ];
 
@@ -52,6 +53,7 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
   const oracle = resolveOracle(oracleDir, args, fixture);
   const caseId = stringFlag(args, 'case-id') ?? fixture?.meta.id ?? null;
   const checkFlag = stringFlag(args, 'check-command');
+  const taskFile = stringFlag(args, 'task-file');
   const checkCommand = checkFlag === null ? null : parseCheckCommand(checkFlag);
   if (checkFlag !== null && checkCommand === null) {
     throw new ReproDoctorError('internal-error', '--check-command was empty');
@@ -64,6 +66,9 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
   presenter.keyValue('hidden oracle', oracle === null ? 'none registered' : oracle.id);
   if (checkCommand !== null) {
     presenter.keyValue('check command', `${checkCommand.label} (given, not resolved from the manifest)`);
+  }
+  if (taskFile !== null) {
+    presenter.keyValue('task file', taskFile);
   }
   presenter.keyValue(
     'budget',
@@ -79,6 +84,7 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
     logger: createLogger(),
     ...(executorKind === undefined ? {} : { executorKind }),
     ...(checkCommand === null ? {} : { checkCommand }),
+    ...(taskFile === null ? {} : { taskFile }),
   });
 
   presenter.heading('Result');

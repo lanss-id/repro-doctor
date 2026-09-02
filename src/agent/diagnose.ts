@@ -54,6 +54,7 @@ import { renderLedger } from './ledger.js';
 import { computeCost, hasPrice, loadPriceTable, type PriceTable } from './pricing.js';
 import { runPreflight } from './preflight.js';
 import { clamp, renderExecOutcome, RepairSession } from './session.js';
+import { loadTaskContext } from './task-context.js';
 import { buildTools } from './tools.js';
 
 /** Tool calls advanced mode keeps for the evidence-driven repair turn. */
@@ -105,6 +106,8 @@ export interface DiagnoseOptions {
    * this resolves to, so it can never advantage one arm over the other.
    */
   readonly checkCommand?: CheckCommand | null;
+  /** Optional problem statement copied from a relative file inside the target repository. */
+  readonly taskFile?: string;
   /**
    * Test seam. Integration tests drive the real sandbox, patcher and oracle
    * with a scripted driver instead of a live model. Results produced this way
@@ -173,6 +176,10 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   });
 
   const copyReport = await copyRepositoryToWorkspace(repoPath, paths.workspaceDir);
+  const taskContext =
+    options.taskFile === undefined
+      ? undefined
+      : await loadTaskContext(paths.workspaceDir, options.taskFile);
   const pristine = await readFileMap(paths.workspaceDir);
   await trajectory.append({
     type: 'workspace.prepared',
@@ -283,7 +290,7 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   let retried = false;
 
   try {
-    let task = taskMessage(path.basename(repoPath));
+    let task = taskMessage(path.basename(repoPath), taskContext);
     if (options.mode === 'advanced') {
       const preflight = await runPreflight(session, trajectory, {
         checkCommand: options.checkCommand ?? null,
@@ -318,7 +325,8 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
       // fresh copy. Its result drives the single retry; its code is never
       // visible to the agent.
       const patchedSoFar = createUnifiedDiff(pristine, await readFileMap(paths.workspaceDir));
-      interim = patchedSoFar.trim().length === 0 ? null : await verifyIndependently('interim');
+      const patchProduced = patchedSoFar.trim().length > 0;
+      interim = patchProduced ? await verifyIndependently('interim') : null;
       const oracleSatisfied = interim === null || interim.outcome.kind === 'passed';
 
       let critique: string | null = null;
@@ -344,13 +352,15 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
 
       // The retry's own budget comes back here, and nowhere earlier.
       tracker.clearToolCallReserve();
-      const needsRetry = retryEnabled && (!gate.passed || !oracleSatisfied || critique !== null);
+      const needsRetry =
+        retryEnabled && (!patchProduced || !gate.passed || !oracleSatisfied || critique !== null);
       if (needsRetry && tracker.remainingPatchAttempts > 0 && tracker.remainingToolCalls > 0) {
         const feedback = evidenceFeedback({
           checkPassed: gate.passed,
           checkLabel: gate.label,
           checkExitCode: gate.exitCode,
           checkOutput: gate.detail,
+          patchProduced,
           oracleFindings:
             interim === null ? null : sanitizeFindings(interim.outcome, paths.runDir, options.oracle),
           critique,

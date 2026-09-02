@@ -57,6 +57,8 @@ diagnose options:
   --max-seconds <n>            Default 360.
   --max-cost-usd <n>           Default 0.30.
   --command-timeout <n>        Per-command timeout in seconds. Default 60.
+  --task-file <relative-path>  Repository-local problem statement added to the model task.
+                               Limited to 16 KiB, path-contained and redacted before use.
   --check-command "<argv>"     The command that says whether the repository works, when the one
                                resolved from the manifest asks the wrong question. A project's own
                                check script often runs lint and formatting too, which report on

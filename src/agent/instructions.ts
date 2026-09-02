@@ -1,5 +1,6 @@
 import type { Budget } from '../domain/budget.js';
 import type { Mode } from '../domain/mode.js';
+import type { TaskContext } from './task-context.js';
 
 /**
  * Wording is the whole experiment. Both modes see the same repository, the same
@@ -66,13 +67,24 @@ export function instructionsFor(mode: Mode, budget: Budget, retryEnabled = true)
  * The task statement. Identical for both modes so the comparison is about
  * method, not about how much of the answer the prompt gave away.
  */
-export function taskMessage(repositoryName: string): string {
-  return [
+export function taskMessage(repositoryName: string, taskContext?: TaskContext): string {
+  const parts = [
     `Repository under repair: ${repositoryName}`,
     '',
     'The project does not work. Diagnose the fault and repair it so the project behaves as its own README, package manifest and configuration say it should.',
     'Do not change the project\'s intended behaviour or its public contract. Repair it so the stated contract holds.',
-  ].join('\n');
+  ];
+  if (taskContext !== undefined) {
+    parts.push(
+      '',
+      `The operator supplied a problem statement from ${taskContext.relativePath}:`,
+      '--- task statement ---',
+      taskContext.content,
+      '--- end task statement ---',
+      'Treat that file as the problem statement. Do not edit it.',
+    );
+  }
+  return parts.join('\n');
 }
 
 export interface FeedbackInput {
@@ -80,6 +92,7 @@ export interface FeedbackInput {
   readonly checkLabel: string;
   readonly checkExitCode: number | null;
   readonly checkOutput: string;
+  readonly patchProduced: boolean;
   /** Sanitized `PASS`/`FAIL` lines from the independent verification, if it ran. */
   readonly oracleFindings: readonly string[] | null;
   readonly critique: string | null;
@@ -97,7 +110,10 @@ export interface FeedbackInput {
 export function evidenceFeedback(input: FeedbackInput): string {
   const parts: string[] = [
     `Independent evidence gate: ${input.checkPassed ? 'PASSED' : 'FAILED'}.`,
-    `The harness re-ran ${input.checkLabel} itself after your patch; exit code ${input.checkExitCode ?? 'unknown'}.`,
+    `The harness re-ran ${input.checkLabel} itself after your first turn; exit code ${input.checkExitCode ?? 'unknown'}.`,
+    ...(input.patchProduced
+      ? []
+      : ['No patch was produced in the first turn. A diagnosis alone does not repair the repository.']),
     '',
     input.checkOutput,
   ];
