@@ -17,6 +17,7 @@ Nothing moves from the second section to the third without artifacts.
 | Iteration 7 | Ablate the bounded retry, twice, to find which of advanced mode's five changes carries it | Removing the retry design costs +34.3 points (95% CI +16.1 to +51.0); removing only its second turn costs +25.7 (95% CI +3.3 to +44.9). Both exclude zero | Kept, and for the first time on a measurement rather than an argument |
 | Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down. Iteration 8 fixed it and found four more behind it |
 | Iteration 8 | Fix the read tool the commander run asked for, and whatever that turns out to be standing in front of | Ten runs. Six harness defects fixed; commander's own suite green inside the sandbox for the first time, 1371 passing. Four runs from that state each stopped after three tool calls without attempting a patch | Kept on a branch, unmeasured. The agent instructions moved, so nothing here is comparable with the published batches |
+| Iteration 9 | Run a historical AgentInspect issue in private Docker with its upstream regression tests held out | Six completed runs. One focused but incomplete patch; four harness defects found: nested dependency output stripped, no first-class issue context, no retry after a correct diagnosis with no patch, and a command timeout waiting on inherited pipes | Four fixes kept with regression tests. No verified AgentInspect repair claimed |
 | Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
 | Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system |
 
@@ -71,7 +72,7 @@ Each line names the check that backs it. Every one of these was run in this repo
 
 ### Totals
 
-202 tests, 0 failures, about 75 seconds, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
+228 tests, 0 failures, about 58 seconds in the latest local run, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
 
 ## Planned experiments
 
