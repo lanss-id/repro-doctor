@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test, { after } from 'node:test';
 import { useTemporaryArtifacts, removeDirectory, temporaryDirectory } from '../helpers/workspace.js';
@@ -137,6 +137,41 @@ test('the trajectory never mentions the hidden oracle or the reference repair', 
   await assert.rejects(() => stat(path.join(result.repo.workspacePath, 'oracle')));
   await assert.rejects(() => stat(path.join(result.repo.workspacePath, 'reference')));
   await assert.rejects(() => stat(path.join(result.repo.workspacePath, 'meta.json')));
+});
+
+test('an explicit repository task file is included in the initial agent message', async () => {
+  const target = await temporaryDirectory('task-context');
+  try {
+    const repoPath = path.join(target, 'repo');
+    await copyRepositoryToWorkspace(fixture.repoDir, repoPath);
+    await writeFile(
+      path.join(repoPath, 'REPAIR_TASK.md'),
+      'The command must open the browser with the platform-specific launcher.\n',
+      'utf8',
+    );
+    let receivedTask = '';
+    const answer = async () => ({ text: 'looked around', structured: null, history: [], usage: null });
+
+    await diagnose({
+      ...baseOptions,
+      repoPath,
+      mode: 'baseline',
+      taskFile: 'REPAIR_TASK.md',
+      driverFactory: () => ({
+        start: async (task) => {
+          receivedTask = task;
+          return await answer();
+        },
+        followUp: async () => await answer(),
+      }),
+    });
+
+    assert.match(receivedTask, /problem statement from REPAIR_TASK\.md/u);
+    assert.match(receivedTask, /platform-specific launcher/u);
+    assert.match(receivedTask, /Do not edit it/u);
+  } finally {
+    await removeDirectory(target);
+  }
 });
 
 test('a run that changes nothing is reported as no-patch with verification skipped', async () => {

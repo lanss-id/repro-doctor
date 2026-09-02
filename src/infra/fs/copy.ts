@@ -4,7 +4,7 @@ import { ReproDoctorError } from '../../domain/failure.js';
 import { PathSafetyError, isInside, toPosixRelative } from './paths.js';
 
 export interface CopyOptions {
-  /** Directory names skipped anywhere in the tree. */
+  /** Custom directory names skipped anywhere in the tree. Replaces the default policy. */
   readonly ignoredDirectories?: readonly string[];
   /** Refuse the copy when a file is larger than this. */
   readonly maxFileBytes?: number;
@@ -21,15 +21,18 @@ export interface CopyReport {
 }
 
 /**
- * What the copy skips, which is deliberately not what the checksum skips.
+ * Root directories skipped by the default copy policy, which is deliberately
+ * not what the checksum skips. Nested `.git` directories are also skipped.
  *
  * `node_modules` is absent from this list on purpose. The sandbox has no
  * network, so a repository whose dependencies were left behind cannot run its
  * own check, and the agent spends its budget on failed installs rather than on
  * the fault. commander's suite passes with its dependencies and fails without
  * them, which is the whole difference between a repaired run and a confused
- * one. The checksum still ignores them: a dependency tree is not part of what
- * a repair may claim to have changed.
+ * one. Generated names such as `dist` are skipped only at the repository root:
+ * the same names inside `node_modules` often contain executable package code.
+ * The checksum still ignores dependencies and root generated output: neither
+ * is part of what a repair may claim to have changed.
  */
 export const COPY_IGNORED_DIRECTORIES: readonly string[] = ['.git', 'dist', '.cache', 'artifacts'];
 
@@ -50,6 +53,7 @@ export async function copyRepositoryToWorkspace(
   options: CopyOptions = {},
 ): Promise<CopyReport> {
   const ignored = options.ignoredDirectories ?? COPY_IGNORED_DIRECTORIES;
+  const usesDefaultIgnorePolicy = options.ignoredDirectories === undefined;
   const maxFileBytes = options.maxFileBytes ?? DEFAULT_MAX_FILE_BYTES;
   const maxFiles = options.maxFiles ?? DEFAULT_MAX_FILES;
   const maxTotalBytes = options.maxTotalBytes ?? DEFAULT_MAX_TOTAL_BYTES;
@@ -66,7 +70,16 @@ export async function copyRepositoryToWorkspace(
 
   await mkdir(destinationRoot, { recursive: true });
   const state = { fileCount: 0, byteCount: 0, skippedSymlinks: [] as string[] };
-  await copyDirectory(sourceRoot, sourceRoot, destinationRoot, ignored, maxFileBytes, maxFiles, state);
+  await copyDirectory(
+    sourceRoot,
+    sourceRoot,
+    destinationRoot,
+    ignored,
+    usesDefaultIgnorePolicy,
+    maxFileBytes,
+    maxFiles,
+    state,
+  );
   if (state.byteCount > maxTotalBytes) {
     throw new ReproDoctorError(
       'unsafe-path',
@@ -85,6 +98,7 @@ async function copyDirectory(
   currentSource: string,
   currentDestination: string,
   ignored: readonly string[],
+  usesDefaultIgnorePolicy: boolean,
   maxFileBytes: number,
   maxFiles: number,
   state: { fileCount: number; byteCount: number; skippedSymlinks: string[] },
@@ -122,7 +136,10 @@ async function copyDirectory(
     }
 
     if (stats.isDirectory()) {
-      if (ignored.includes(entry.name)) {
+      const isIgnored = usesDefaultIgnorePolicy
+        ? entry.name === '.git' || (currentSource === sourceRoot && ignored.includes(entry.name))
+        : ignored.includes(entry.name);
+      if (isIgnored) {
         continue;
       }
       await copyDirectory(
@@ -130,6 +147,7 @@ async function copyDirectory(
         sourcePath,
         destinationPath,
         ignored,
+        usesDefaultIgnorePolicy,
         maxFileBytes,
         maxFiles,
         state,

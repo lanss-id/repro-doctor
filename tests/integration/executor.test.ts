@@ -70,6 +70,26 @@ test('output produced before a timeout is still captured', async () => {
   }
 });
 
+test('a timeout resolves even when a descendant keeps the output pipes open', async () => {
+  const { executor, workspace } = await adapter();
+  try {
+    const started = Date.now();
+    const outcome = await executor.run({
+      command: 'node',
+      args: [
+        '-e',
+        'const { spawn } = require("node:child_process"); spawn(process.execPath, ["-e", "setTimeout(() => {}, 3000)"], { stdio: "inherit" }); setTimeout(() => {}, 3000);',
+      ],
+      timeoutMs: 100,
+    });
+    const elapsed = Date.now() - started;
+    assert.equal(outcome.kind, 'timed-out');
+    assert.ok(elapsed < 1500, `open descendant pipes delayed timeout resolution: ${elapsed}ms`);
+  } finally {
+    await removeDirectory(workspace);
+  }
+});
+
 test('commands outside the allowlist are refused', async () => {
   const { executor, workspace } = await adapter();
   try {

@@ -35,6 +35,16 @@ export async function spawnCaptured(request: SpawnRequest): Promise<ExecOutcome>
       timedOut = true;
       request.onTimeout?.();
       child.kill('SIGKILL');
+      // Do not wait for `close`: a descendant can inherit the pipes and keep
+      // them open after the direct child is dead. The timeout is the contract,
+      // so return the output captured at that boundary while cleanup continues
+      // on a best-effort basis.
+      settle({
+        kind: 'timed-out',
+        timeoutMs: request.timeoutMs,
+        stdout: stdout.toString(),
+        stderr: stderr.toString(),
+      });
     }, request.timeoutMs);
     timer.unref();
 

@@ -10,12 +10,20 @@ import { removeDirectory, temporaryDirectory } from '../helpers/workspace.js';
 async function buildRepository(root: string): Promise<string> {
   const repo = path.join(root, 'repo');
   await mkdir(path.join(repo, 'src'), { recursive: true });
+  await mkdir(path.join(repo, 'dist'), { recursive: true });
   await mkdir(path.join(repo, 'node_modules', 'left-pad'), { recursive: true });
+  await mkdir(path.join(repo, 'node_modules', 'left-pad', 'dist'), { recursive: true });
   await mkdir(path.join(repo, '.git'), { recursive: true });
   await writeFile(path.join(repo, '.git', 'HEAD'), 'ref: refs/heads/main\n', 'utf8');
   await writeFile(path.join(repo, 'package.json'), '{"name":"x"}\n', 'utf8');
   await writeFile(path.join(repo, 'src', 'index.ts'), 'export const a = 1;\n', 'utf8');
+  await writeFile(path.join(repo, 'dist', 'index.js'), 'export const generated = true;\n', 'utf8');
   await writeFile(path.join(repo, 'node_modules', 'left-pad', 'index.js'), 'module.exports = 1;\n', 'utf8');
+  await writeFile(
+    path.join(repo, 'node_modules', 'left-pad', 'dist', 'index.js'),
+    'module.exports = 2;\n',
+    'utf8',
+  );
   return repo;
 }
 
@@ -31,12 +39,18 @@ test('copying produces an independent workspace, dependencies included', async (
     const workspace = path.join(root, 'workspace');
     const report = await copyRepositoryToWorkspace(repo, workspace);
 
-    assert.equal(report.fileCount, 3);
+    assert.equal(report.fileCount, 4);
     assert.equal(await readFile(path.join(workspace, 'src/index.ts'), 'utf8'), 'export const a = 1;\n');
     assert.ok(
       await readFile(path.join(workspace, 'node_modules/left-pad/index.js'), 'utf8'),
       'the sandbox has no network, so the dependencies have to arrive with the copy',
     );
+    assert.equal(
+      await readFile(path.join(workspace, 'node_modules/left-pad/dist/index.js'), 'utf8'),
+      'module.exports = 2;\n',
+      'package dist directories contain executable dependency code and must survive the copy',
+    );
+    await assert.rejects(() => readFile(path.join(workspace, 'dist/index.js'), 'utf8'));
     await assert.rejects(() => readFile(path.join(workspace, '.git/HEAD'), 'utf8'));
 
     await writeFile(path.join(workspace, 'src/index.ts'), 'export const a = 2;\n', 'utf8');
