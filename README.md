@@ -431,4 +431,4 @@ video           The submission video, built from recorded terminal sessions and 
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Open source under the MIT License, copyright (c) 2026 [lanss-id](https://github.com/lanss-id). See [LICENSE](LICENSE).
