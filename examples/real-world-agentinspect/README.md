@@ -19,7 +19,7 @@ while keeping the repository and its dependencies inside a private sandbox.
 | Fixed upstream state | AgentInspect commit `2ed2d09e3694dc48f9b923aa85ce9a251421a7b6` |
 | Problem statement | Upstream issue #312, reduced to a repository-local `REPAIR_TASK.md` |
 | Hidden checks | `browser-open.test.ts` and `browser-open-commands.test.ts` from upstream PR [#313](https://github.com/rajudandigam/agent-inspect/pull/313) |
-| Contribution prompted by the exercise | AgentInspect issue [#316](https://github.com/rajudandigam/agent-inspect/issues/316), proposing a deterministic repair-evidence recipe |
+| Contribution prompted by the exercise | AgentInspect issue [#316](https://github.com/rajudandigam/agent-inspect/issues/316), my first recipe draft [#325](https://github.com/rajudandigam/agent-inspect/pull/325), and the maintainer's landed version [#335](https://github.com/rajudandigam/agent-inspect/pull/335) |
 
 The historical checkout, installed dependencies and oracle are intentionally
 not committed here. They were held under a user-private directory with mode

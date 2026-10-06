@@ -92,6 +92,44 @@ tests      228 passed, 0 failed
 The original AgentInspect target stayed unchanged. The generated two-file patch
 was retained as evidence but was not applied because the hidden oracle failed.
 
+## What happened in AgentInspect
+
+The failed repair became an AgentInspect documentation contribution rather than
+a code change. [Issue #316](https://github.com/rajudandigam/agent-inspect/issues/316)
+argued that an Evidence v2 bundle proves the recorded trajectory and the bytes
+packaged with it, but not the repository revision, task, check command,
+toolchain, sandbox or patch outside it. The maintainer offered me the issue, and
+I opened draft [#325](https://github.com/rajudandigam/agent-inspect/pull/325): a
+synthetic recipe that hashes a failed trace, a caller-owned `reproduction.json`,
+the visible check output, the candidate patch, an oracle result and a review
+summary into one manifest, then shows a changed `reproduction.json` failing
+verification with `hash_mismatch`.
+
+It was approved, then re-reviewed against a stricter release checklist with
+eight blocking items. I did not address them. The maintainer landed the recipe
+himself in [#335](https://github.com/rajudandigam/agent-inspect/pull/335) with
+those fixes applied and my authorship kept as `Co-authored-by`, and closed #325
+unmerged. A parallel draft, [#322](https://github.com/rajudandigam/agent-inspect/pull/322),
+was kept as reference only.
+
+Four of the eight fixes were the same kind of gap #316 was about, in my own
+recipe:
+
+- the repair task was referenced by path and digest, without its bytes in the
+  bundle; #335 packages `task.txt` and hashes it
+- the environment allowlist recorded a value, `CI: "true"`; #335 records names
+  only
+- the assessment was a hardcoded `SAFE`; #335 says `SAFE WITH WARNINGS` and
+  asks for human review of caller-owned records
+- the oracle result carried a narrative detail that could leak how the hidden
+  checks work; #335 keeps pass or fail and check ids only
+
+Three more renamed an ambiguous `schemaVersion: 1` to
+`reproductionEnvelopeVersion: "0.1"`, linked the support-reproduction guide, and
+stated that the same run id at a different revision is a different package
+unless the bytes are identical. The eighth was a rebase. No AgentInspect
+runtime, API, schema or Evidence format changed.
+
 ## What this milestone means
 
 It is not the first verified external repair. It is the first time an adjacent

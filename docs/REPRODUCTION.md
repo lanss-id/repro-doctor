@@ -21,7 +21,7 @@ npm run lint
 npm test
 ```
 
-Expected: no output from typecheck or lint, and `pass 201` from the tests. The suite takes about a minute, most of it real subprocesses.
+Expected: no output from typecheck or lint, and `pass 228` from the tests. The suite takes about a minute, most of it real subprocesses.
 
 ```bash
 npm run doctor -- fixtures list
@@ -142,6 +142,14 @@ open artifacts/report/index.html
 140 runs. Measured on the machine that produced the published result: **64.5 minutes of wall clock and $0.9727** of model spend, a median of 29 seconds and $0.007144 per run. The per-run ceiling is 360 seconds, so a pathological batch could take fourteen hours; none has come close.
 
 Expected: `baseline 42/70` and `advanced 51/70` are what this machine measured, and you will not get them. The provider is not deterministic and the same baseline arm has scored 53.3%, 46.7% and 60.0% across three batches. If your numbers land inside those intervals, the run reproduced; if you get one number and treat it as the number, the run did not teach you anything. [EVALUATION.md](EVALUATION.md) explains why at length.
+
+Those numbers were measured against the code tagged `published-results`. `main` has changed the agent instructions since, so a batch meant to land inside the published intervals has to run from that tag:
+
+```bash
+git checkout published-results && npm ci && npm run docker:build
+```
+
+A batch run from `main` measures the current system and is not comparable with the published one.
 
 The smaller batch the first published result used:
 
