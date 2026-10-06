@@ -46,11 +46,11 @@ The ten fixtures are mine, which is a fair objection to the whole benchmark: if 
 second real-repository attempt, kept private at runtime: AgentInspect issue
 #312 at the commit before its upstream fix, checked by the regression tests
 from upstream PR #313. It did not produce a verified repair. It did expose four
-reproducible harness defects, all fixed and regression-tested on this branch.
+reproducible harness defects, all fixed and regression-tested in this tree.
 
 The reason it is worth having: **all 1371 of commander's own tests pass while the bug is present.** The regression test that catches it did not exist until the commit that fixed it, which is the normal condition of every bug that has ever shipped.
 
-**The agent did not repair it.** Three runs exposed three defects in this harness and none in the model: the workspace copy had stripped commander's installed dependencies, the `[budget]` line overstated the ceiling by six calls, and `read_file` returns the first four per cent of the 87,607 byte file the fault is in, so the agent read the same opening three times and then invented a fault inside the part it could see. Two are fixed. The third needs a change to the tool set that every published measurement was taken against, so it is written down rather than done in the last day of a competition. [RESULT.md](examples/real-world-commander/RESULT.md) has all three trajectories and what each one cost.
+**The agent did not repair it.** Three runs exposed three defects in this harness and none in the model: the workspace copy had stripped commander's installed dependencies, the `[budget]` line overstated the ceiling by six calls, and `read_file` returns the first four per cent of the 87,607 byte file the fault is in, so the agent read the same opening three times and then invented a fault inside the part it could see. Two got fixes on the day, and one of those turned out not to have held. The third needed a change to the tool set every published measurement was taken against, so it waited: a second sitting of ten runs gave `read_file` a window of lines, fixed the defects standing behind it, and got commander's own suite passing inside the sandbox. The agent still has not repaired it; from that state it reads the suite, sees it green, and stops. [RESULT.md](examples/real-world-commander/RESULT.md) has every trajectory and what each one cost.
 
 ## Requirements
 
@@ -203,6 +203,13 @@ Docker, 30 August 2026. Sample size, hypotheses and decision rules were fixed in
 [docs/PREREGISTRATION.md](docs/PREREGISTRATION.md) and committed before the first
 run started.
 
+Every number in this section was measured against the code tagged
+[`published-results`](https://github.com/lanss-id/repro-doctor/tree/published-results).
+`main` has moved since: the agent instructions changed for the windowed
+`read_file` and the anchored patch, so a new batch run from `main` is a new
+measurement, not a reproduction of this one. `npm run doctor -- replay` still
+re-scores the committed runs from any checkout.
+
 | | Baseline | Advanced |
 | --- | --- | --- |
 | Verified repair rate | 42/70, 60.0% (95% CI 48.3 to 70.7) | 51/70, 72.9% (95% CI 61.5 to 81.9) |
@@ -328,7 +335,7 @@ The full version with evidence, run ids and the experiments that were thrown awa
 | Iteration 3 | Bill a turn that ends by throwing. A run that hit the SDK turn limit lost the usage of every model call it had made | One run in 60 reported `cost: unknown`, which made its whole mode's median cost unreportable | Kept, and the 60-run batch it spoiled was re-run from scratch. A second path with the same defect survived it and cost the confirmatory batch its median too |
 | Iteration 4 | Tell the agent that a check exiting zero is not evidence the repository works, after it gave up in 4 calls on a repository whose tests passed while its documented behaviour was broken | On that repository, `no-patch` in 4 calls became an engaged patch in 11 that passed 5 of 6 contract checks. On the benchmark: no measurable change | Kept on the strength of the first, with the second reported as a null result |
 | Discarded | A critic agent reviewing the patch against the ledger before the retry decision, scored by a rule written before it ran | 1/9 against the control's 4/9, twice run and negative both times | Discarded by its own rule. Still in the tree behind `--experiment critic`, off by default |
-| Final | Everything above except the critic | 51/70, and zero safety violations in 200 runs across two batches | The submitted system |
+| Final | Everything above except the critic | 51/70, and zero safety violations in 200 runs across two batches | The submitted system, tagged `published-results` |
 
 ## The failure mode this design keeps running into
 
