@@ -253,6 +253,35 @@ test('a patch the oracle rejects is reported as an unverified patch, not a repai
   assert.match(await readFile(result.artifacts.verificationLogPath, 'utf8'), /RESULT FAIL/u);
 });
 
+// One AgentInspect run was stopped with Ctrl-C after 38 tool calls and left a
+// trajectory with no result.json: no cost, no patch, no outcome to report.
+test('an interrupted run stops, keeps its patch unverified, and still writes its result', async () => {
+  const stop = new AbortController();
+  const result = await diagnose({
+    ...baseOptions,
+    mode: 'baseline',
+    signal: stop.signal,
+    driverFactory: (options, session) => {
+      const turn = async (): Promise<never> => {
+        await session.proposePatch([{ path: 'package.json', content: await fixedManifest() }], 'half way');
+        stop.abort();
+        // The SDK rejects with the signal's reason once the run is aborted.
+        throw options.signal?.reason;
+      };
+      return { start: turn, followUp: turn };
+    },
+  });
+
+  assert.equal(result.outcome.status, 'failed');
+  assert.equal(result.outcome.status === 'failed' && result.outcome.reason, 'interrupted');
+  assert.deepEqual(result.verification, { kind: 'skipped', why: 'run-aborted' });
+  assert.equal(result.patch.kind, 'present');
+  RunResultSchema.parse(JSON.parse(await readFile(result.artifacts.resultPath, 'utf8')));
+  const events = parseTrajectory(await readFile(result.artifacts.trajectoryPath, 'utf8'));
+  assert.ok(events.some((event) => event.type === 'error' && event.reason === 'interrupted'));
+  assert.equal(events.at(-1)?.type, 'run.finished');
+});
+
 test('diagnose refuses a repository path that does not exist', async () => {
   await assert.rejects(
     () =>

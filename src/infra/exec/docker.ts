@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { ReproDoctorError } from '../../domain/failure.js';
 import type { SandboxProfile } from '../../domain/result.js';
@@ -205,6 +206,46 @@ export async function probeNoNewPrivileges(image: string): Promise<boolean> {
   const supported = outcome.kind === 'exited' && outcome.exitCode === 0;
   noNewPrivilegesByImage.set(image, supported);
   return supported;
+}
+
+/**
+ * Counts what the container sees at the workspace mount, next to what the host
+ * has there.
+ *
+ * Docker mounts a host path it cannot reach as an empty directory and says
+ * nothing. Snap-installed Docker keeps its own private /tmp, so a run whose
+ * artifacts lived under /tmp got an empty /work: the preflight check failed
+ * with npm's ENOENT, and the agent was handed a repository with no files.
+ */
+export async function probeWorkspaceMount(
+  image: string,
+  workspacePath: string,
+): Promise<{ readonly hostEntries: number; readonly containerEntries: number | null }> {
+  const hostEntries = (await readdir(workspacePath)).length;
+  const outcome = await spawnCaptured({
+    command: 'docker',
+    args: [
+      'run',
+      '--rm',
+      '--network',
+      'none',
+      '--cap-drop',
+      'ALL',
+      '--user',
+      `${process.getuid?.() ?? 1000}:${process.getgid?.() ?? 1000}`,
+      '--volume',
+      `${path.resolve(workspacePath)}:${CONTAINER_WORKDIR}:ro`,
+      image,
+      'node',
+      '-e',
+      `process.stdout.write(String(require('node:fs').readdirSync('${CONTAINER_WORKDIR}').length))`,
+    ],
+    cwd: process.cwd(),
+    env: hostEnvForDockerClient(),
+    timeoutMs: 60_000,
+  });
+  const counted = Number.parseInt(outcome.kind === 'exited' ? outcome.stdout.trim() : '', 10);
+  return { hostEntries, containerEntries: Number.isNaN(counted) ? null : counted };
 }
 
 export interface DockerAvailability {

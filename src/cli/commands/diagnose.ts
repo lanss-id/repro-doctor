@@ -2,7 +2,7 @@ import path from 'node:path';
 import { DEFAULT_BUDGET, BudgetSchema, type Budget } from '../../domain/budget.js';
 import { ReproDoctorError } from '../../domain/failure.js';
 import { ModeSchema } from '../../domain/mode.js';
-import { ExecutorKindSchema } from '../../domain/result.js';
+import { ExecutorKindSchema, type RunResult } from '../../domain/result.js';
 import { describeVerification } from '../../domain/verification.js';
 import { diagnose } from '../../agent/diagnose.js';
 import { parseCheckCommand } from '../../agent/check-command.js';
@@ -75,17 +75,36 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
     `${budget.maxToolCalls} tool calls, ${budget.maxPatchAttempts} patch attempts, ${budget.maxWallClockSeconds}s, $${budget.maxCostUsd}`,
   );
 
-  const result = await diagnose({
-    repoPath,
-    mode,
-    budget,
-    caseId,
-    oracle,
-    logger: createLogger(),
-    ...(executorKind === undefined ? {} : { executorKind }),
-    ...(checkCommand === null ? {} : { checkCommand }),
-    ...(taskFile === null ? {} : { taskFile }),
-  });
+  // The first Ctrl-C asks the run to stop and still write its artifacts; the
+  // second one is for when that is taking too long. Without this the process
+  // died with the trajectory half written and no result.json at all, which is
+  // how one AgentInspect follow-up run was lost after 38 tool calls.
+  const stop = new AbortController();
+  const onSigint = (): void => {
+    if (stop.signal.aborted) {
+      process.exit(130);
+    }
+    presenter.line('Interrupted. Stopping the run and writing its artifacts; press Ctrl-C again to exit now.');
+    stop.abort();
+  };
+  process.on('SIGINT', onSigint);
+  let result: RunResult;
+  try {
+    result = await diagnose({
+      repoPath,
+      mode,
+      budget,
+      caseId,
+      oracle,
+      logger: createLogger(),
+      signal: stop.signal,
+      ...(executorKind === undefined ? {} : { executorKind }),
+      ...(checkCommand === null ? {} : { checkCommand }),
+      ...(taskFile === null ? {} : { taskFile }),
+    });
+  } finally {
+    process.off('SIGINT', onSigint);
+  }
 
   presenter.heading('Result');
   presenter.keyValue('run id', result.runId);
@@ -116,6 +135,9 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
       : `Review and apply with: npm run doctor -- apply ${result.runId} --to ${result.repo.inputPath}`,
   );
 
+  if (result.outcome.status === 'failed' && result.outcome.reason === 'interrupted') {
+    return 130;
+  }
   return result.outcome.status === 'failed' ? 1 : 0;
 }
 

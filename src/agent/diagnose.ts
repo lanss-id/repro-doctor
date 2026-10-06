@@ -115,6 +115,12 @@ export interface DiagnoseOptions {
    */
   readonly driverFactory?: (options: DriverOptions, session: RepairSession) => ModelDriver;
   readonly modelOverride?: string;
+  /**
+   * The caller's stop request, Ctrl-C from the CLI. The run stops the way a
+   * deadline stops it, skips the oracle, and still writes every artifact, so
+   * an interrupted run leaves a result.json saying what it spent and patched.
+   */
+  readonly signal?: AbortSignal;
 }
 
 interface VerificationRun {
@@ -222,6 +228,16 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
   // artifacts. The finally block below always clears it, so a finished run is
   // never held open by it.
 
+  const interrupt = (): void => {
+    deadline.abort(new ReproDoctorError('interrupted', 'the run was interrupted by the caller'));
+  };
+  if (options.signal?.aborted === true) {
+    interrupt();
+  } else {
+    options.signal?.addEventListener('abort', interrupt, { once: true });
+  }
+  const interrupted = (): boolean => options.signal?.aborted === true;
+
   // The critic acts on the run through the retry, so the two are never
   // switched off together. No experiment asks for that combination and the
   // registry in experiments.ts cannot express it.
@@ -256,7 +272,7 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
       return null;
     }
     const remainingSeconds = Math.floor(tracker.remainingWallClockMs / 1000);
-    if (remainingSeconds <= 0) {
+    if (remainingSeconds <= 0 || interrupted()) {
       return {
         outcome: { kind: 'skipped', why: 'run-aborted' },
         log: 'the run deadline expired before verification could start\n',
@@ -389,8 +405,9 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
     }
     outcome = { status: 'no-patch', detail: 'the agent finished without changing any file' };
   } catch (error) {
-    const failure =
-      deadline.signal.aborted && !(error instanceof BudgetExceededError)
+    const failure = interrupted()
+      ? new ReproDoctorError('interrupted', 'the run was interrupted by the caller')
+      : deadline.signal.aborted && !(error instanceof BudgetExceededError)
         ? new BudgetExceededError(
             'wall-clock',
             `the run deadline of ${budget.maxWallClockSeconds}s expired`,
@@ -417,6 +434,7 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
         : { status: 'failed', reason, detail: describeError(failure) };
   } finally {
     clearTimeout(deadlineTimer);
+    options.signal?.removeEventListener('abort', interrupt);
   }
 
   // A run that ran out of budget may still have written a working fix, so the
@@ -453,6 +471,15 @@ export async function diagnose(options: DiagnoseOptions): Promise<RunResult> {
     final.outcome.kind === 'passed'
   ) {
     outcome = { status: 'repaired' };
+  }
+  // An interrupt that landed after the agent phase finished still skipped the
+  // oracle, so whatever the outcome said by then is no longer what happened.
+  if (interrupted() && outcome.status !== 'failed') {
+    outcome = {
+      status: 'failed',
+      reason: 'interrupted',
+      detail: 'the run was interrupted by the caller; any patch was kept but not verified',
+    };
   }
 
   const checksumAfter = await treeChecksum(repoPath);
