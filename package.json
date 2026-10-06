@@ -4,6 +4,11 @@
   "private": true,
   "description": "Sandboxed repair agent for unfamiliar TypeScript repositories, verified by a hidden semantic oracle.",
   "license": "MIT",
+  "author": "lanss-id (https://github.com/lanss-id)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lanss-id/repro-doctor.git"
+  },
   "type": "module",
   "engines": {
     "node": ">=22.6.0"
