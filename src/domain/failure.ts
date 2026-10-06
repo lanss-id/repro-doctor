@@ -20,6 +20,7 @@ export const FailureReasonSchema = z.enum([
   'unsafe-path',
   'source-mutated',
   'internal-error',
+  'interrupted',
 ]);
 export type FailureReason = z.infer<typeof FailureReasonSchema>;
 

@@ -2,7 +2,13 @@ import path from 'node:path';
 import { ReproDoctorError } from '../../domain/failure.js';
 import type { ExecutorKind } from '../../domain/result.js';
 import { projectRoot } from '../project-root.js';
-import { DEFAULT_RUNNER_IMAGE, DockerExecutor, checkDocker, probeNoNewPrivileges } from './docker.js';
+import {
+  DEFAULT_RUNNER_IMAGE,
+  DockerExecutor,
+  checkDocker,
+  probeNoNewPrivileges,
+  probeWorkspaceMount,
+} from './docker.js';
 import { LocalTestAdapter } from './local.js';
 import type { SandboxExecutor } from './types.js';
 
@@ -54,6 +60,14 @@ export async function createExecutor(request: ExecutorRequest): Promise<SandboxE
       'sandbox-unavailable',
       `the sandbox image ${image} is missing`,
       'build it with: npm run docker:build',
+    );
+  }
+  const mount = await probeWorkspaceMount(image, request.workspacePath);
+  if (mount.hostEntries > 0 && mount.containerEntries !== mount.hostEntries) {
+    throw new ReproDoctorError(
+      'sandbox-unavailable',
+      `Docker cannot see the workspace at ${request.workspacePath}: ${mount.hostEntries} entries on the host, ${mount.containerEntries ?? 'unreadable'} inside the container`,
+      'The Docker daemon does not share this host path. Snap-installed Docker keeps its own private /tmp, for one. Keep REPRO_DOCTOR_ARTIFACTS_DIR and any --oracle-dir under your home directory.',
     );
   }
   return new DockerExecutor({

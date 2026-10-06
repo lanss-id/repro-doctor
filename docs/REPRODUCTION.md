@@ -231,6 +231,10 @@ Any OpenAI-compatible provider works the same way. The price for whatever model 
 
 **`Docker is required for diagnose and is not available`.** The Docker daemon is not running, or your user cannot reach it. `diagnose` will not run repair commands on your host instead, by design.
 
+**`Docker cannot see the workspace at ...`.** The Docker daemon cannot reach that host path, so the container would get an empty directory. Snap-installed Docker keeps its own private `/tmp`; keep `REPRO_DOCTOR_ARTIFACTS_DIR` and any `--oracle-dir` under your home directory. The repository itself can live anywhere: it is copied on the host, never mounted.
+
+**Stopping a run.** Ctrl-C once stops it, skips the oracle and still writes `result.json` with reason `interrupted`, exit code 130. Ctrl-C twice exits at once and leaves only what was already written.
+
 **`sandbox.noNewPrivileges: false` in a result.** Your Docker rejects `--security-opt no-new-privileges`, which some installations do. Repro Doctor probes for it, drops the flag, and records that it did. The other protections are unaffected.
 
 **A fixture fails `fixtures verify`.** That is a benchmark bug and the suite treats it as one. The oracle output in the command's `before` and `after` detail says which check failed.

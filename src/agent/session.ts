@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { ReproDoctorError } from '../domain/failure.js';
@@ -85,6 +86,12 @@ type AgentToolState =
   | { readonly kind: 'repairing' }
   | { readonly kind: 'awaiting-evidence' };
 
+/** The line windows read_file has returned for one version of one file. */
+interface ShownFile {
+  readonly digest: string;
+  readonly windows: Array<{ readonly firstLine: number; readonly lastLine: number }>;
+}
+
 /**
  * The four capabilities the repair agent has, in both modes. Every entry point
  * validates paths, charges the budget, and writes a trajectory record, so no
@@ -93,6 +100,8 @@ type AgentToolState =
 export class RepairSession {
   private callCounter = 0;
   private agentToolState: AgentToolState = { kind: 'unrestricted' };
+  /** Keyed by workspace-relative path; reset for a file whenever its bytes change. */
+  private readonly shown = new Map<string, ShownFile>();
 
   constructor(private readonly options: SessionOptions) {}
 
@@ -200,17 +209,51 @@ export class RepairSession {
       // repository as one line longer than any editor says it is.
       const lines = raw === '' ? [] : (raw.endsWith('\n') ? raw.slice(0, -1) : raw).split('\n');
       const window = windowOf(lines, startLine, maxLines);
+      const repeat = this.recordShown(
+        toPosixRelative(this.workspacePath, target),
+        createHash('sha256').update(raw).digest('hex'),
+        window,
+      );
+      const rendered = renderWindow(relativePath, window);
       return await this.finish(
         callId,
         'read_file',
         true,
         null,
         startedAt,
-        renderWindow(relativePath, window),
+        repeat
+          ? `${rendered}\n[seen] lines ${window.firstLine}-${window.lastLine} were all returned by earlier reads and the file has not changed since. That text is still above in this conversation; this read spent a tool call repeating it.`
+          : rendered,
       );
     } catch (error) {
       return await this.fail(callId, 'read_file', startedAt, error);
     }
+  }
+
+  /**
+   * Remembers a window and says whether every line in it had already been
+   * returned for the same file contents.
+   *
+   * The AgentInspect runs spent up to a third of their tool calls on this: an
+   * interrupted follow-up made 12 of its 38 calls re-reading lines it already
+   * had, and a completed run made 13 of 31, with nothing changed in between.
+   * The text was still in the conversation each time. The read is still served
+   * and still charged; the agent is told what it just paid for.
+   */
+  private recordShown(key: string, digest: string, window: FileWindow): boolean {
+    if (window.lastLine < window.firstLine) {
+      return false;
+    }
+    const previous = this.shown.get(key);
+    const entry: ShownFile =
+      previous !== undefined && previous.digest === digest ? previous : { digest, windows: [] };
+    let covered = true;
+    for (let line = window.firstLine; line <= window.lastLine && covered; line += 1) {
+      covered = entry.windows.some((seen) => seen.firstLine <= line && line <= seen.lastLine);
+    }
+    entry.windows.push({ firstLine: window.firstLine, lastLine: window.lastLine });
+    this.shown.set(key, entry);
+    return covered;
   }
 
   async runCommand(command: string, args: readonly string[]): Promise<ToolOutput> {

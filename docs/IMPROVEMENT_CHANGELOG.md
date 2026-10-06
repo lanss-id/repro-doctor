@@ -18,6 +18,7 @@ Nothing moves from the second section to the third without artifacts.
 | Iteration 6 | Point the tool at a real third-party repository for the first time | Three runs, three harness defects: dependencies stripped from the sandbox, a budget line that overstated the ceiling by six calls, and a file reader returning four per cent of the file the fault was in | Two fixed, the third written down. Iteration 8 fixed it and found four more behind it |
 | Iteration 8 | Fix the read tool the commander run asked for, and whatever that turns out to be standing in front of | Ten runs. Six harness defects fixed; commander's own suite green inside the sandbox for the first time, 1371 passing. Four runs from that state each stopped after three tool calls without attempting a patch | Kept, unmeasured. Merged to `main` on 6 October 2026 after the measured system was tagged `published-results`. The agent instructions moved, so nothing here is comparable with the published batches |
 | Iteration 9 | Run a historical AgentInspect issue in private Docker with its upstream regression tests held out | Six completed runs. One focused but incomplete patch; four harness defects found: nested dependency output stripped, no first-class issue context, no retry after a correct diagnosis with no patch, and a command timeout waiting on inherited pipes | Four fixes kept with regression tests. No verified AgentInspect repair claimed |
+| Iteration 10 | Read the committed AgentInspect trajectories for what they spent, not what they found, and run the tool on a snap-installed Docker host | Two runs spent 13 of 31 and 12 of 38 tool calls re-reading lines already returned. One run was lost to Ctrl-C with no result.json. A workspace under `/tmp` reached the sandbox as an empty directory without an error | Three fixes kept with regression tests or a smoke run. No live model call made; whether the repeat-read note changes behaviour is unmeasured |
 | Iteration 5 | Pre-register a confirmatory batch at 70 runs per mode, after the first batch's interval crossed zero and its per-case reading suggested a much larger effect on five cases | Aggregate +12.9 points, 95% CI -2.8 to +27.6. The suggested +40 point subgroup effect vanished: baseline went from 0/15 to 11/35 on the same five cases | Kept as the published result. The hypothesis was not confirmed and that is the headline |
 | Final | Everything except the critic | 51/70, zero safety violations in 200 runs across two batches | The submitted system, tagged `published-results` |
 
@@ -41,6 +42,8 @@ Each line names the check that backs it. Every one of these was run in this repo
 - **`apply` validates every path component before creating anything.** A target containing a symlink out of the repository cannot be used to create a directory or a file outside it. Verified by a test that asserts the outside directory is still empty after the refusal.
 - **The workspace containment check is canonical, not a string prefix.** A sibling directory whose name begins with the workspace path, and a workdir that is a symlink out of it, are both refused. Verified by two tests in `tests/integration/executor.test.ts`.
 - **The run deadline fires even when nothing else is pending.** The timer was unreferenced, so a model call that hangs without holding an open handle left it as the only pending work and Node 22 exited before it could abort: the process died quietly instead of producing a `budget-exhausted` result with its artifacts. Found by CI, which runs Node 22, while the development machine's Node 25 hid it. Reproduced three times out of three inside a `node:22` container, fixed by keeping the timer referenced, and the `finally` block still clears it so a finished run is never held open.
+- **Ctrl-C stops a run without losing it.** The first interrupt aborts the run through the same signal as the deadline, skips the oracle, and still writes `result.json`, the patch and the report with outcome `failed`, reason `interrupted`, exit code 130. A second interrupt exits at once. Verified by `tests/integration/diagnose.test.ts` ("an interrupted run stops, keeps its patch unverified, and still writes its result") and by a CLI smoke run against a model endpoint that never answers.
+- **A workspace Docker cannot see is refused, not handed over empty.** Before any command runs, a probe counts the entries at the workspace mount from inside the container and compares them with the host. Snap-installed Docker keeps its own private `/tmp`, so a workspace there used to arrive as an empty `/work`: the preflight check failed with npm's `ENOENT` and the agent got a repository with no files. Now the run stops with `sandbox-unavailable` and says why. Verified by a smoke run on a snap Docker host, artifacts under `/tmp` refused and under the home directory accepted.
 - **One deadline covers model calls, tools, the retry and verification.** Enforced by an abort signal, classified as `budget-exhausted` with limit `wall-clock`. Verified by `tests/integration/deadline.test.ts`, which blocks the driver until the deadline fires.
 - **Token usage accumulates across every model call in a run.** The first turn, the retry and any critic call sum before the cost is computed and the budget checked. Verified in `tests/unit/budget.test.ts` and end to end in `tests/integration/advanced-retry.test.ts`, which asserts the exact summed cost.
 - **repair.patch is exact, and its checksum matches the stored bytes.** Publishable artifacts use a redacted view. Verified by `tests/integration/patch-artifacts.test.ts`, which puts a credential-shaped string in a patched file and asserts the patch applies, the checksum matches, and the report, the trajectory and `result.json` do not contain it.
@@ -51,6 +54,7 @@ Each line names the check that backs it. Every one of these was run in this repo
 
 - **A patch never lands on shifted context.** Exact matching, no fuzz. Verified by `tests/unit/diff.test.ts` ("applying a patch to the wrong content is refused instead of guessed") plus round-trip tests for creation, deletion, multiple hunks and files with no trailing newline.
 - **Artifacts are schema-checked on the way out and the way in.** An event that does not match `TrajectoryEventSchema` throws instead of being written. Verified by `tests/unit/trajectory.test.ts`.
+- **A read made only of lines already returned says so.** `read_file` remembers the line windows it has served for each version of each file. A window wholly inside earlier ones is still served and still charged, and ends with a `[seen]` line saying the text is already in the conversation. Any change to the file's bytes resets it. Verified by `tests/unit/repeated-read.test.ts`.
 - **Budgets stop a run rather than being reported after the fact.** Verified by `tests/unit/budget.test.ts` (7 tests) and by an integration test that scripts 10 tool calls against a limit of 3 and asserts the run ends as `budget-exhausted` with `limitHit: "tool-calls"`.
 - **The critic experiment cannot overwrite the comparison it is measured against.** `npm run eval` writes the mode comparison to `artifacts/eval/eval.json` and the experiment to `artifacts/eval/eval-critic.json`; the report page reads both. Verified by `tests/integration/eval-gate.test.ts`, which asserts the two paths differ and that the experiment's own file is the one that carries it.
 - **Every repair rate is printed with the interval its sample size supports.** Ten runs per mode cannot support a point estimate, so the CLI summary and the report table print a 95 percent Wilson interval beside the rate. Verified by `tests/unit/scoring.test.ts`, which checks the interval for 7 of 10, pins the boundary cases at zero and one inside [0, 1], and asserts that an unmeasured rate still reads `pending` rather than growing a fake interval.
@@ -72,7 +76,7 @@ Each line names the check that backs it. Every one of these was run in this repo
 
 ### Totals
 
-228 tests, 0 failures, about 58 seconds in the latest local run, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
+232 tests, 0 failures, about 65 seconds in the latest local run, no API key and no network required after dependencies are installed. Typecheck and lint clean under `strict` plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, with `any` banned.
 
 ## Planned experiments
 
@@ -459,6 +463,52 @@ harder task than any fixture poses, and nothing in the harness checks that it
 tried. That is a question about the method rather than about a tool, and it is
 the first one this project has reached that cannot be fixed by making the
 harness stop lying.
+
+### What the AgentInspect runs spent, 6 October 2026
+
+**What was tried, and why.** Iteration 9 read its trajectories for what the
+agent found. This read them for what it paid. No model was called.
+
+**Evidence.** For every `read_file` call in the seventeen real-repository runs,
+whether every line it returned had already been returned for the same file, with
+no patch in between:
+
+| Run | Tool calls | Reads | Wholly repeated reads |
+| --- | ---: | ---: | ---: |
+| `20260902T160510Z-d07779` | 31 | 26 | 13 |
+| `20260902T164510Z-665158`, interrupted | 38 | 35 | 12 |
+| `20260902T155751Z-df5865` | 31 | 26 | 3 |
+| `20260902T160840Z-5cf2ce` | 40 | 35 | 3 |
+| the other three AgentInspect runs | 41 | 32 | 0 |
+| the ten commander runs of 31 August | 117 | 79 | 6 |
+
+The interrupted run read all 64 lines of `serve.ts` in two windows early on,
+then ended by re-reading its last 24 lines four times in windows of ten to
+twenty-four. Nothing in its context had been dropped: the driver carries the
+full history into every turn. The same run was stopped with Ctrl-C after call 38
+and left a trajectory with no `result.json`, so its cost and outcome were never
+recorded.
+
+Smoke-testing that fix on this machine found a third defect. Docker here is the
+snap package, whose `/tmp` is private, and with the artifacts directory under
+`/tmp` the workspace mounted as an empty directory. The preflight's check failed
+with exit 254 and the run carried on.
+
+**Decision.** Three fixes. A wholly repeated read is still served and charged,
+and now ends with a `[seen]` line; reads were not made free, because a free
+tool is one an agent can loop on until the turn limit. Ctrl-C ends a run through
+the deadline's abort path and writes every artifact. The Docker executor counts
+what the container sees at the workspace mount and refuses a mismatch.
+
+None of the three changes the agent instructions, so the pinned digest did not
+move. The `[seen]` line does change what the agent reads mid-run, so anything
+measured from here is a new system, as everything after `published-results`
+already is.
+
+**Learning.** The class from iterations 6 and 8 again: the harness taking
+something away without saying so, this time the whole repository. The repeated
+reads are the other side of it. The harness was not hiding anything, and the
+agent paid for text it already had because nothing told it so.
 
 ### What these numbers are not
 
