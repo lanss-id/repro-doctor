@@ -21,7 +21,7 @@ npm run lint
 npm test
 ```
 
-Expected: no output from typecheck or lint, and `pass 228` from the tests. The suite takes about a minute, most of it real subprocesses.
+Expected: no output from typecheck or lint, and `pass 236` from the tests. The suite takes about a minute, most of it real subprocesses.
 
 ```bash
 npm run doctor -- fixtures list
@@ -128,6 +128,22 @@ npm run doctor -- apply $RUN --to /tmp/demo-repo
 ```
 
 It prints the patch and waits for you to type `apply`. Type anything else and nothing is written. To see the refusal path, change a file in `/tmp/demo-repo` first and run it again: it stops on the checksum mismatch before showing anything.
+
+## Step 4b: judging a patch you did not get from diagnose
+
+Free, no key. The reference repair passes; a plausible edit that leaves the repository's own check green does not:
+
+```bash
+npm run doctor -- verify fixtures/broken-test-discovery/repo \
+  --patch fixtures/broken-test-discovery/reference/reference.patch
+echo $?    # 0, verdict verified
+
+printf -- '--- a/README.md\n+++ b/README.md\n@@ -1,1 +1,1 @@\n-# sum-kit\n+# sum-kit, verified\n' > ~/readme.patch
+npm run doctor -- verify fixtures/broken-test-discovery/repo --patch ~/readme.patch
+echo $?    # 1, verdict rejected, with "visible check: npm run check: passed"
+```
+
+Fixtures bring their own oracle; any other repository needs `--oracle-dir`. The result is under `artifacts/verifications/<id>/`.
 
 ## Step 5: the full evaluation
 

@@ -11,6 +11,7 @@ import { evalCommand } from './commands/eval.js';
 import { fixturesCommand } from './commands/fixtures.js';
 import { replayCommand } from './commands/replay.js';
 import { reportCommand } from './commands/report.js';
+import { verifyCommand } from './commands/verify.js';
 import { HELP_TEXT, createPresenter } from './presenter.js';
 
 const USAGE_EXIT_CODE = 2;
@@ -30,6 +31,8 @@ export async function main(argv: readonly string[]): Promise<number> {
       return await diagnoseCommand(args, presenter);
     case 'apply':
       return await applyCommand(args, presenter);
+    case 'verify':
+      return await verifyCommand(args, presenter);
     case 'eval':
       return await evalCommand(args, presenter);
     case 'report':

@@ -36,6 +36,21 @@ npm run doctor -- diagnose path/to/your/repo \
 
 An oracle is one Node script. It gets a fresh copy of the repaired tree, no network, and `REPO_DIR` pointing at it; exit 0 means the repository keeps its promises. [examples/bring-your-own-oracle/](examples/bring-your-own-oracle) is a worked example with the full contract, a repository whose own tests pass while its documented behaviour is broken, and the two real runs that were done against it, including the one where the agent's patch looked right and the oracle caught the case it missed.
 
+### Judge a patch someone else wrote
+
+The oracle does not care who wrote the patch. `verify` takes a unified diff from anywhere, another coding agent, a colleague, `git diff`, and gives it the same treatment a Repro Doctor repair gets, with no model and no API key:
+
+```bash
+git diff > /tmp/candidate.patch
+npm run doctor -- verify path/to/your/repo \
+  --patch /tmp/candidate.patch \
+  --oracle-dir path/to/your/oracle
+```
+
+The patch is applied exactly, with no fuzz, to a copy of the repository. The repository's own check runs in the sandbox and is reported, then the hidden oracle runs on a fresh copy and decides. The verdict is `verified`, `rejected`, `does-not-apply` or `source-mutated`, written to `verification.json` beside the exact patch bytes and both logs, and the exit status is 0 only for `verified`, so a CI job can gate on it. Your repository is checksummed before and after and never written to.
+
+Of everything here, this half has held up best outside the fixtures. The agent has not yet repaired a repository it did not come with, but each of the three patches it produced on commander and AgentInspect was a plausible change that the upstream project's own regression tests, used as the oracle, refused.
+
 ### A repository I did not write, and a bug I did not write either
 
 The ten fixtures are mine, which is a fair objection to the whole benchmark: if I write the fault and I write the check that catches it, a good score proves I can write two halves of one puzzle.
