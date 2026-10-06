@@ -28,7 +28,7 @@ export const VerificationOutcomeSchema = z.discriminatedUnion('kind', [
   }),
   z.object({
     kind: z.literal('skipped'),
-    why: z.enum(['no-oracle-registered', 'no-patch-produced', 'run-aborted']),
+    why: z.enum(['no-oracle-registered', 'no-patch-produced', 'run-aborted', 'patch-did-not-apply']),
   }),
 ]);
 export type VerificationOutcome = z.infer<typeof VerificationOutcomeSchema>;

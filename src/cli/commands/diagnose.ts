@@ -8,7 +8,6 @@ import { diagnose } from '../../agent/diagnose.js';
 import { parseCheckCommand } from '../../agent/check-command.js';
 import { findFixtureForRepo } from '../../fixtures/registry.js';
 import { createLogger } from '../../infra/log.js';
-import type { HiddenOracle } from '../../oracle/verify.js';
 import { formatCost } from '../../report/run-report.js';
 import {
   assertKnownFlags,
@@ -17,14 +16,13 @@ import {
   stringFlag,
   type ParsedArgs,
 } from '../args.js';
+import { ORACLE_FLAGS, resolveOracle } from '../oracle-args.js';
 import type { Presenter } from '../presenter.js';
 
 const KNOWN_FLAGS = [
   'mode',
   'case-id',
-  'oracle-dir',
-  'oracle-entry',
-  'oracle-timeout',
+  ...ORACLE_FLAGS,
   'executor',
   'max-tool-calls',
   'max-patch-attempts',
@@ -49,8 +47,7 @@ export async function diagnoseCommand(args: ParsedArgs, presenter: Presenter): P
   const repoPath = path.resolve(repoArg);
 
   const fixture = await findFixtureForRepo(repoPath);
-  const oracleDir = stringFlag(args, 'oracle-dir');
-  const oracle = resolveOracle(oracleDir, args, fixture);
+  const oracle = resolveOracle(args, fixture);
   const caseId = stringFlag(args, 'case-id') ?? fixture?.meta.id ?? null;
   const checkFlag = stringFlag(args, 'check-command');
   const taskFile = stringFlag(args, 'task-file');
@@ -149,28 +146,4 @@ function budgetFromArgs(args: ParsedArgs): Budget {
     maxCostUsd: numberFlag(args, 'max-cost-usd') ?? DEFAULT_BUDGET.maxCostUsd,
     commandTimeoutSeconds: numberFlag(args, 'command-timeout') ?? DEFAULT_BUDGET.commandTimeoutSeconds,
   });
-}
-
-function resolveOracle(
-  oracleDir: string | null,
-  args: ParsedArgs,
-  fixture: Awaited<ReturnType<typeof findFixtureForRepo>>,
-): HiddenOracle | null {
-  if (oracleDir !== null) {
-    return {
-      id: path.basename(oracleDir),
-      directory: path.resolve(oracleDir),
-      entry: stringFlag(args, 'oracle-entry') ?? 'oracle.mjs',
-      timeoutSeconds: numberFlag(args, 'oracle-timeout') ?? 120,
-    };
-  }
-  if (fixture !== null) {
-    return {
-      id: `${fixture.meta.id}/oracle`,
-      directory: fixture.oracleDir,
-      entry: fixture.meta.oracle.entry,
-      timeoutSeconds: fixture.meta.oracle.timeoutSeconds,
-    };
-  }
-  return null;
 }

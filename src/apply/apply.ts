@@ -94,33 +94,7 @@ export async function commitApply(preview: ApplyPreview): Promise<ApplyOutcome> 
 
   const current = await readFileMap(preview.targetPath);
   const applied = applyUnifiedDiff(current, parseUnifiedDiff(preview.patchText));
-
-  // Validate every destination before creating anything. A single mkdir on a
-  // path that turns out to escape would already have made a directory outside
-  // the target, and there is no undo for that.
-  const plan: Array<{ relativePath: string; absolute: string; contents: string | null }> = [];
-  for (const [relativePath, contents] of applied.files) {
-    const absolute = resolveWithin(preview.targetPath, relativePath);
-    await assertSafeDestination(preview.targetPath, absolute);
-    plan.push({ relativePath, absolute, contents });
-  }
-
-  const written: string[] = [];
-  const deleted: string[] = [];
-  for (const entry of plan) {
-    if (entry.contents === null) {
-      await assertSafeDestination(preview.targetPath, entry.absolute);
-      await rm(entry.absolute, { force: true });
-      deleted.push(entry.relativePath);
-      continue;
-    }
-    await mkdir(path.dirname(entry.absolute), { recursive: true });
-    // Re-check after mkdir: the directory that now exists must still be the one
-    // inside the target, and the file itself must not be a symlink out.
-    await assertSafeDestination(preview.targetPath, entry.absolute);
-    await writeFile(entry.absolute, entry.contents, 'utf8');
-    written.push(entry.relativePath);
-  }
+  const { written, deleted } = await writeAppliedFiles(preview.targetPath, applied.files);
 
   return {
     preview,
@@ -128,6 +102,44 @@ export async function commitApply(preview: ApplyPreview): Promise<ApplyOutcome> 
     deletedFiles: deleted,
     checksumAfter: await treeChecksum(preview.targetPath),
   };
+}
+
+/**
+ * Writes the result of applyUnifiedDiff into a tree, null meaning delete.
+ * Shared by apply, which writes to the operator's repository, and by verify,
+ * which writes to a disposable copy: both must refuse a path that escapes.
+ */
+export async function writeAppliedFiles(
+  root: string,
+  files: ReadonlyMap<string, string | null>,
+): Promise<{ readonly written: readonly string[]; readonly deleted: readonly string[] }> {
+  // Validate every destination before creating anything. A single mkdir on a
+  // path that turns out to escape would already have made a directory outside
+  // the target, and there is no undo for that.
+  const plan: Array<{ relativePath: string; absolute: string; contents: string | null }> = [];
+  for (const [relativePath, contents] of files) {
+    const absolute = resolveWithin(root, relativePath);
+    await assertSafeDestination(root, absolute);
+    plan.push({ relativePath, absolute, contents });
+  }
+
+  const written: string[] = [];
+  const deleted: string[] = [];
+  for (const entry of plan) {
+    if (entry.contents === null) {
+      await assertSafeDestination(root, entry.absolute);
+      await rm(entry.absolute, { force: true });
+      deleted.push(entry.relativePath);
+      continue;
+    }
+    await mkdir(path.dirname(entry.absolute), { recursive: true });
+    // Re-check after mkdir: the directory that now exists must still be the one
+    // inside the target, and the file itself must not be a symlink out.
+    await assertSafeDestination(root, entry.absolute);
+    await writeFile(entry.absolute, entry.contents, 'utf8');
+    written.push(entry.relativePath);
+  }
+  return { written, deleted };
 }
 
 /**

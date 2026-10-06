@@ -35,6 +35,7 @@ export const HELP_TEXT = `Repro Doctor: repair an unfamiliar TypeScript reposito
 Usage:
   repro-doctor diagnose <repo> --mode baseline|advanced [options]
   repro-doctor apply <run-id> --to <repo> [--yes-i-reviewed-the-patch]
+  repro-doctor verify <repo> --patch <file.patch> --oracle-dir <path> [options]
   repro-doctor eval [--repeats 3] [--case <id>] [--mode <mode>]
   repro-doctor eval --experiment critic|ablation [--repeats 3]
   repro-doctor report
@@ -98,6 +99,22 @@ apply options:
   --to <repo>                  Required. The repository to patch.
   --yes-i-reviewed-the-patch   Explicit approval for non-interactive use. It means a human
                                has read the printed patch. There is no other way to skip the prompt.
+
+verify options:
+  Judges a patch written by anyone else: another agent, a colleague, a bot.
+  It is applied exactly, with no fuzz, to a copy of <repo>; the repository's
+  own check runs in the sandbox, then the hidden oracle runs on a fresh copy.
+  <repo> is never written to. Exit 0 only when the oracle passed, so CI can
+  gate on it. Accepts unified diffs, including git diff output; no renames
+  or binary changes.
+  --patch <file>               Required. The unified diff to judge.
+  --oracle-dir <path>          Required unless <repo> is a registered fixture.
+  --oracle-entry <file>        Default: oracle.mjs.
+  --oracle-timeout <n>         Seconds. Default 120.
+  --check-command "<argv>"     As for diagnose. Reported, never decides the verdict.
+  --command-timeout <n>        Seconds for the visible check. Default 60.
+  --executor <docker|local-test-adapter>
+                               As for diagnose.
 
 Environment:
   OPENAI_API_KEY               Required by diagnose and eval.
