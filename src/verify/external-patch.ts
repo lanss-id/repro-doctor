@@ -101,6 +101,7 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
   const oracleDigest = oracleBefore.checksum;
   const symlinkCount = oracleBefore.entries.filter((entry) => entry.kind === 'symlink').length;
   let baseline: VerificationOutcome | null = null;
+  let digestStable = true;
   await copyRepositoryToWorkspace(repoPath, workspace);
 
   let status: PatchCheckStatus;
@@ -157,6 +158,8 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
     }
     verification = oracleRun.outcome;
     verificationLog = oracleRun.log;
+    // Checked after each run, so a change made by the patched run cannot be hidden by the baseline run.
+    digestStable = digestStable && (await treeChecksum(request.oracle.directory, [])) === oracleDigest;
 
     // The same oracle on the unpatched copy. A pass here means the oracle
     // cannot tell this fix from no fix, so a pass on the patched tree is not
@@ -175,7 +178,7 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
     }
   }
 
-  const digestStable = (await treeChecksum(request.oracle.directory, [])) === oracleDigest;
+  digestStable = digestStable && (await treeChecksum(request.oracle.directory, [])) === oracleDigest;
   if (verification.kind === 'passed' && status === 'verified' && symlinkCount > 0) {
     status = 'inconclusive';
     detail = `the oracle directory contains ${symlinkCount} symlink(s); the digest records link targets, not the bytes they point to, so the oracle is not fully identified`;
