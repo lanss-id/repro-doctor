@@ -283,3 +283,35 @@ test('an oracle that modifies its own directory makes the verdict oracle-mutated
     await removeDirectory(copy);
   }
 });
+
+test('an oracle that changes itself on the patched run and restores itself on the baseline run is still caught', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const copy = await temporaryDirectory('restoring-oracle');
+  try {
+    // Patched copy: append a line and pass. Unpatched copy: strip the line again and fail with a FAIL check.
+    await writeFile(
+      path.join(copy, 'oracle.mjs'),
+      [
+        "import { readFileSync, writeFileSync } from 'node:fs';",
+        "import { fileURLToPath } from 'node:url';",
+        "const self = fileURLToPath(import.meta.url);",
+        "const fixed = readFileSync(process.env.REPO_DIR + '/package.json', 'utf8').includes('dist/index.js');",
+        "const text = readFileSync(self, 'utf8');",
+        "if (fixed) { writeFileSync(self, text + '\\n// x'); console.log('[oracle] PASS fixed'); }",
+        "else { writeFileSync(self, text.replace(/\\n\\/\\/ x$/u, '')); console.log('[oracle] FAIL not fixed'); process.exit(1); }",
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const result = await verifyExternalPatch({
+      ...options,
+      oracle: { id: 'restoring', directory: copy, entry: 'oracle.mjs', timeoutSeconds: 30 },
+    });
+    assert.equal(result.oracle.digestStable, false);
+    assert.equal(result.status, 'oracle-mutated');
+  } finally {
+    await removeDirectory(copy);
+  }
+});
