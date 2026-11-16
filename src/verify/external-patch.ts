@@ -8,6 +8,7 @@ import { newRunId, type RunId } from '../domain/ids.js';
 import {
   PATCH_CHECK_SCHEMA_VERSION,
   PatchCheckResultSchema,
+  type BaselineBasis,
   type OracleEvidence,
   type PatchCheckResult,
   type PatchCheckStatus,
@@ -22,7 +23,7 @@ import {
 } from '../infra/diff/unified.js';
 import { createExecutor } from '../infra/exec/factory.js';
 import { outcomeExitCode } from '../infra/exec/types.js';
-import { sha256, treeChecksum } from '../infra/fs/checksum.js';
+import { sha256, treeChecksum, treeSnapshot } from '../infra/fs/checksum.js';
 import { copyRepositoryToWorkspace } from '../infra/fs/copy.js';
 import { assertRealPathInside, isInside, resolveWithin } from '../infra/fs/paths.js';
 import { artifactsRoot } from '../infra/project-root.js';
@@ -37,6 +38,11 @@ export interface ExternalPatchRequest {
   readonly commandTimeoutSeconds: number;
   readonly executorKind?: ExecutorKind;
   readonly allowLocalAdapter?: boolean;
+  /**
+   * `exit-status` declares that the oracle exits non-zero only when an assertion
+   * fails, for oracles that do not print `[oracle] FAIL` lines. Default: not declared.
+   */
+  readonly oracleFailureContract?: 'reported-check' | 'exit-status';
   readonly id?: RunId;
 }
 
@@ -91,7 +97,9 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
 
   const checksumBefore = await treeChecksum(repoPath);
   // No ignore list: every file in the oracle directory can be an executable input, including node_modules and dist.
-  const oracleDigest = await treeChecksum(request.oracle.directory, []);
+  const oracleBefore = await treeSnapshot(request.oracle.directory, []);
+  const oracleDigest = oracleBefore.checksum;
+  const symlinkCount = oracleBefore.entries.filter((entry) => entry.kind === 'symlink').length;
   let baseline: VerificationOutcome | null = null;
   await copyRepositoryToWorkspace(repoPath, workspace);
 
@@ -161,14 +169,24 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
       verification.kind === 'passed'
         ? `the hidden oracle passed${visibleCheck.passed ? '' : `, although ${check.label} did not`}`
         : `the hidden oracle did not pass: ${verification.kind}`;
-    if (verification.kind === 'passed' && !baselineShowsAssertionFailure(baseline)) {
+    if (verification.kind === 'passed' && baselineBasis(baseline, request.oracleFailureContract) === null) {
       status = 'inconclusive';
-      detail = `the hidden oracle passed with the patch, but it was not shown to fail an assertion without it (unpatched run: ${describeBaseline(baseline)}); the pass does not demonstrate a repair`;
+      detail = `the hidden oracle passed with the patch, but it was not shown to fail an assertion without it (unpatched run: ${describeBaseline(baseline, request.oracleFailureContract)}); the pass does not demonstrate a repair`;
     }
+  }
+
+  const digestStable = (await treeChecksum(request.oracle.directory, [])) === oracleDigest;
+  if (verification.kind === 'passed' && status === 'verified' && symlinkCount > 0) {
+    status = 'inconclusive';
+    detail = `the oracle directory contains ${symlinkCount} symlink(s); the digest records link targets, not the bytes they point to, so the oracle is not fully identified`;
   }
 
   const checksumAfter = await treeChecksum(repoPath);
   const mutated = checksumAfter !== checksumBefore;
+  if (!digestStable) {
+    status = 'oracle-mutated';
+    detail = 'the oracle directory changed while it was being used; the verdict is not trustworthy';
+  }
   if (mutated) {
     status = 'source-mutated';
     detail = 'the input repository changed while the patch was being verified; the verdict is not trustworthy';
@@ -194,8 +212,11 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
       id: request.oracle.id,
       entry: request.oracle.entry,
       digest: oracleDigest,
+      symlinkCount,
+      digestStable,
       baseline,
-      discriminates: discriminates(baseline),
+      discriminates: discriminates(baseline, request.oracleFailureContract),
+      baselineBasis: baselineBasis(baseline, request.oracleFailureContract),
     } satisfies OracleEvidence,
     visibleCheck,
     verification,
@@ -258,29 +279,45 @@ async function runBaseline(
 
 /**
  * A non-zero exit alone is not evidence the oracle discriminates: a missing
- * dependency or a crash exits non-zero too. Only an exit that also reports at
- * least one failed check (an `[oracle] FAIL ...` line) counts as an assertion.
+ * dependency or a crash exits non-zero too. It counts when the oracle also
+ * reports a failed check (an `[oracle] FAIL ...` line), or when the caller has
+ * declared that this oracle exits non-zero only for failed assertions.
  */
-function baselineShowsAssertionFailure(baseline: VerificationOutcome | null): boolean {
-  return baseline?.kind === 'failed' && baseline.checks.some((check) => check.startsWith('FAIL '));
+function baselineBasis(
+  baseline: VerificationOutcome | null,
+  contract: ExternalPatchRequest['oracleFailureContract'],
+): BaselineBasis | null {
+  if (baseline?.kind !== 'failed') {
+    return null;
+  }
+  if (baseline.checks.some((check) => check.startsWith('FAIL '))) {
+    return 'reported-check';
+  }
+  return contract === 'exit-status' ? 'declared-exit-status' : null;
 }
 
-function discriminates(baseline: VerificationOutcome | null): boolean | null {
+function discriminates(
+  baseline: VerificationOutcome | null,
+  contract: ExternalPatchRequest['oracleFailureContract'],
+): boolean | null {
   if (baseline === null) {
     return null;
   }
   if (baseline.kind === 'passed') {
     return false;
   }
-  return baselineShowsAssertionFailure(baseline) ? true : null;
+  return baselineBasis(baseline, contract) === null ? null : true;
 }
 
-function describeBaseline(baseline: VerificationOutcome | null): string {
+function describeBaseline(
+  baseline: VerificationOutcome | null,
+  contract: ExternalPatchRequest['oracleFailureContract'],
+): string {
   if (baseline === null) {
     return 'not run';
   }
-  if (baseline.kind === 'failed' && !baselineShowsAssertionFailure(baseline)) {
-    return `exit ${baseline.exitCode} with no failed check reported, which may be a crash or setup error`;
+  if (baseline.kind === 'failed' && baselineBasis(baseline, contract) === null) {
+    return `exit ${baseline.exitCode} with no failed check reported, which may be a crash or setup error; if this oracle exits non-zero only for failed assertions, pass --oracle-failure-contract exit-status`;
   }
   return baseline.kind;
 }
