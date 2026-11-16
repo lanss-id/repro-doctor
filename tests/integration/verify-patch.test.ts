@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test, { after } from 'node:test';
-import { PatchCheckResultSchema } from '../../src/domain/patch-check.js';
+import { PatchCheckResultSchema, parsePatchCheckResult } from '../../src/domain/patch-check.js';
 import { loadFixture } from '../../src/fixtures/registry.js';
 import { sha256, treeChecksum } from '../../src/infra/fs/checksum.js';
 import { verifyExternalPatch } from '../../src/verify/external-patch.js';
@@ -56,6 +56,7 @@ test('a correct patch in git diff format is verified, and the repository is unto
   assert.equal(await treeChecksum(fixture.repoDir), before);
   assert.equal(result.oracle.baseline?.kind, 'failed');
   assert.equal(result.oracle.discriminates, true);
+  assert.equal(result.oracle.baselineBasis, 'reported-check');
   assert.equal(result.oracle.digest, await treeChecksum(fixture.oracleDir));
   assert.deepEqual(result.patch.changedFiles, ['package.json']);
   assert.equal(sha256(await readFile(result.artifacts.patchPath, 'utf8')), result.patch.sha256);
@@ -183,7 +184,102 @@ test('the oracle digest changes when any file in the oracle directory changes, e
     await mkdir(path.join(dir, 'node_modules'), { recursive: true });
     await writeFile(path.join(dir, 'node_modules', 'helper.js'), 'x', 'utf8');
     assert.notEqual(await treeChecksum(dir, []), first);
+    // The default ignore list would have hidden that file, which is why the evidence digest does not use it.
+    assert.equal(await treeChecksum(dir), await (async () => { await rm(path.join(dir, 'node_modules'), { recursive: true }); return treeChecksum(dir); })());
   } finally {
     await removeDirectory(dir);
+  }
+});
+
+test('a declared exit-status contract lets a marker-less oracle reach verified, and records the weaker basis', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const plain = await temporaryDirectory('exit-status-oracle');
+  await writeFile(
+    path.join(plain, 'oracle.mjs'),
+    [
+      "import { readFileSync } from 'node:fs';",
+      "const pkg = readFileSync(process.env.REPO_DIR + '/package.json', 'utf8');",
+      "process.exit(pkg.includes('dist/index.js') ? 0 : 1);",
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  const oracle = { id: 'plain', directory: plain, entry: 'oracle.mjs', timeoutSeconds: 30 };
+
+  try {
+    const undeclared = await verifyExternalPatch({ ...options, oracle });
+    assert.equal(undeclared.status, 'inconclusive');
+    assert.equal(undeclared.oracle.baselineBasis, null);
+
+    const declared = await verifyExternalPatch({ ...options, oracle, oracleFailureContract: 'exit-status' });
+    assert.equal(declared.status, 'verified');
+    assert.equal(declared.oracle.discriminates, true);
+    assert.equal(declared.oracle.baselineBasis, 'declared-exit-status');
+  } finally {
+    await removeDirectory(plain);
+  }
+});
+
+test('a version 1 verification.json is still readable and is not upgraded', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const current = await verifyExternalPatch(options);
+  const rest: Record<string, unknown> = JSON.parse(await readFile(current.artifacts.resultPath, 'utf8'));
+  delete rest.oracle;
+
+  const legacy = parsePatchCheckResult({ ...rest, schemaVersion: 1 });
+  assert.equal(legacy.schemaVersion, 1);
+  assert.equal('oracle' in legacy, false);
+  assert.equal(parsePatchCheckResult(JSON.parse(await readFile(current.artifacts.resultPath, 'utf8'))).schemaVersion, 2);
+});
+
+test('an oracle directory with a symlink is inconclusive, since the digest cannot cover the target bytes', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const copy = await temporaryDirectory('symlink-oracle');
+  try {
+    await cp(layout.oracleDir, copy, { recursive: true });
+    await symlink('/etc/hostname', path.join(copy, 'link.txt'));
+    const result = await verifyExternalPatch({
+      ...options,
+      oracle: { ...options.oracle, directory: copy },
+    });
+    assert.equal(result.oracle.symlinkCount, 1);
+    assert.equal(result.status, 'inconclusive');
+    assert.match(result.detail, /symlink/);
+  } finally {
+    await removeDirectory(copy);
+  }
+});
+
+test('an oracle that modifies its own directory makes the verdict oracle-mutated', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const copy = await temporaryDirectory('mutating-oracle');
+  try {
+    await writeFile(
+      path.join(copy, 'oracle.mjs'),
+      [
+        "import { appendFileSync } from 'node:fs';",
+        "import { fileURLToPath } from 'node:url';",
+        "appendFileSync(fileURLToPath(import.meta.url), '\\n// touched');",
+        "console.log('[oracle] PASS fixed');",
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const result = await verifyExternalPatch({
+      ...options,
+      oracle: { id: 'mutating', directory: copy, entry: 'oracle.mjs', timeoutSeconds: 30 },
+    });
+    assert.equal(result.oracle.digestStable, false);
+    assert.equal(result.status, 'oracle-mutated');
+  } finally {
+    await removeDirectory(copy);
   }
 });
