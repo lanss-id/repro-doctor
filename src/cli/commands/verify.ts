@@ -9,11 +9,13 @@ import { assertKnownFlags, numberFlag, requiredStringFlag, stringFlag, type Pars
 import { ORACLE_FLAGS, resolveOracle } from '../oracle-args.js';
 import type { Presenter } from '../presenter.js';
 
-const KNOWN_FLAGS = ['patch', ...ORACLE_FLAGS, 'executor', 'check-command', 'command-timeout'];
+const KNOWN_FLAGS = ['patch', ...ORACLE_FLAGS, 'executor', 'check-command', 'command-timeout', 'oracle-failure-contract'];
 
 /**
- * Exit status is the verdict, so a CI job can gate on it: 0 only when the
- * hidden oracle passed on the patched copy.
+ * Exit status is the verdict, so a CI job can gate on it: 0 only for `verified`,
+ * which here means the hidden oracle passed the patched copy AND failed an
+ * assertion on the unpatched one. Agent runs (`run`) are not given the baseline check: their
+ * `verified`/`passed` records only that the oracle passed the repaired copy.
  */
 export async function verifyCommand(args: ParsedArgs, presenter: Presenter): Promise<number> {
   assertKnownFlags(args, KNOWN_FLAGS);
@@ -36,6 +38,10 @@ export async function verifyCommand(args: ParsedArgs, presenter: Presenter): Pro
   if (checkFlag !== null && checkCommand === null) {
     throw new ReproDoctorError('internal-error', '--check-command was empty');
   }
+  const contractFlag = stringFlag(args, 'oracle-failure-contract');
+  if (contractFlag !== null && contractFlag !== 'exit-status' && contractFlag !== 'reported-check') {
+    throw new ReproDoctorError('internal-error', '--oracle-failure-contract must be exit-status or reported-check');
+  }
   const executorFlag = stringFlag(args, 'executor');
 
   presenter.heading('Verify');
@@ -49,6 +55,7 @@ export async function verifyCommand(args: ParsedArgs, presenter: Presenter): Pro
     oracle,
     checkCommand,
     commandTimeoutSeconds: numberFlag(args, 'command-timeout') ?? 60,
+    ...(contractFlag === null ? {} : { oracleFailureContract: contractFlag }),
     ...(executorFlag === null ? {} : { executorKind: ExecutorKindSchema.parse(executorFlag) }),
   });
 
@@ -71,6 +78,14 @@ export async function verifyCommand(args: ParsedArgs, presenter: Presenter): Pro
   presenter.keyValue(
     'oracle on unpatched repo',
     result.oracle.baseline === null ? 'not run' : describeVerification(result.oracle.baseline),
+  );
+  presenter.keyValue(
+    'baseline basis',
+    result.oracle.baselineBasis ?? 'none (the oracle was not shown to fail an assertion without the patch)',
+  );
+  presenter.keyValue(
+    'oracle scope',
+    `content snapshot only (${result.oracle.symlinkCount} symlinks, stable during run: ${result.oracle.digestStable ? 'yes' : 'NO'}); a failing baseline shows the oracle reacts to the patch, not that it covers the whole bug`,
   );
   presenter.keyValue('input repository', result.repo.mutated ? 'CHANGED (this is a bug)' : 'unchanged');
 
