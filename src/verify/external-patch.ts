@@ -8,6 +8,7 @@ import { newRunId, type RunId } from '../domain/ids.js';
 import {
   PATCH_CHECK_SCHEMA_VERSION,
   PatchCheckResultSchema,
+  type OracleEvidence,
   type PatchCheckResult,
   type PatchCheckStatus,
 } from '../domain/patch-check.js';
@@ -89,6 +90,9 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
   await writeFile(paths.patchPath, patchText, 'utf8');
 
   const checksumBefore = await treeChecksum(repoPath);
+  // No ignore list: every file in the oracle directory can be an executable input, including node_modules and dist.
+  const oracleDigest = await treeChecksum(request.oracle.directory, []);
+  let baseline: VerificationOutcome | null = null;
   await copyRepositoryToWorkspace(repoPath, workspace);
 
   let status: PatchCheckStatus;
@@ -145,11 +149,22 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
     }
     verification = oracleRun.outcome;
     verificationLog = oracleRun.log;
+
+    // The same oracle on the unpatched copy. A pass here means the oracle
+    // cannot tell this fix from no fix, so a pass on the patched tree is not
+    // evidence of a repair.
+    if (verification.kind === 'passed') {
+      baseline = await runBaseline(request, repoPath, dir);
+    }
     status = verification.kind === 'passed' ? 'verified' : 'rejected';
     detail =
       verification.kind === 'passed'
         ? `the hidden oracle passed${visibleCheck.passed ? '' : `, although ${check.label} did not`}`
         : `the hidden oracle did not pass: ${verification.kind}`;
+    if (verification.kind === 'passed' && !baselineShowsAssertionFailure(baseline)) {
+      status = 'inconclusive';
+      detail = `the hidden oracle passed with the patch, but it was not shown to fail an assertion without it (unpatched run: ${describeBaseline(baseline)}); the pass does not demonstrate a repair`;
+    }
   }
 
   const checksumAfter = await treeChecksum(repoPath);
@@ -175,6 +190,13 @@ export async function verifyExternalPatch(request: ExternalPatchRequest): Promis
     },
     repo: { inputPath: repoPath, treeChecksumBefore: checksumBefore, treeChecksumAfter: checksumAfter, mutated },
     oracleId: request.oracle.id,
+    oracle: {
+      id: request.oracle.id,
+      entry: request.oracle.entry,
+      digest: oracleDigest,
+      baseline,
+      discriminates: discriminates(baseline),
+    } satisfies OracleEvidence,
     visibleCheck,
     verification,
     sandbox,
@@ -212,4 +234,53 @@ async function applyToWorkspace(workspace: string, patch: ParsedPatch): Promise<
     }
     throw error;
   }
+}
+
+async function runBaseline(
+  request: ExternalPatchRequest,
+  repoPath: string,
+  dir: string,
+): Promise<VerificationOutcome> {
+  try {
+    const run = await runHiddenOracle({
+      oracle: request.oracle,
+      repairedWorkspace: repoPath,
+      scratchDirectory: path.join(dir, 'baseline'),
+      executorKind: request.executorKind ?? 'docker',
+      ...(request.allowLocalAdapter === undefined ? {} : { allowLocalAdapter: request.allowLocalAdapter }),
+    });
+    await writeFile(path.join(dir, 'baseline.log'), redactText(run.log), 'utf8');
+    return run.outcome;
+  } catch (error) {
+    return { kind: 'oracle-error', message: describeError(error) };
+  }
+}
+
+/**
+ * A non-zero exit alone is not evidence the oracle discriminates: a missing
+ * dependency or a crash exits non-zero too. Only an exit that also reports at
+ * least one failed check (an `[oracle] FAIL ...` line) counts as an assertion.
+ */
+function baselineShowsAssertionFailure(baseline: VerificationOutcome | null): boolean {
+  return baseline?.kind === 'failed' && baseline.checks.some((check) => check.startsWith('FAIL '));
+}
+
+function discriminates(baseline: VerificationOutcome | null): boolean | null {
+  if (baseline === null) {
+    return null;
+  }
+  if (baseline.kind === 'passed') {
+    return false;
+  }
+  return baselineShowsAssertionFailure(baseline) ? true : null;
+}
+
+function describeBaseline(baseline: VerificationOutcome | null): string {
+  if (baseline === null) {
+    return 'not run';
+  }
+  if (baseline.kind === 'failed' && !baselineShowsAssertionFailure(baseline)) {
+    return `exit ${baseline.exitCode} with no failed check reported, which may be a crash or setup error`;
+  }
+  return baseline.kind;
 }
