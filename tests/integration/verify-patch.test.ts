@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import test, { after } from 'node:test';
 import { PatchCheckResultSchema } from '../../src/domain/patch-check.js';
@@ -54,6 +54,9 @@ test('a correct patch in git diff format is verified, and the repository is unto
   assert.equal(result.verification.kind, 'passed');
   assert.equal(result.repo.mutated, false);
   assert.equal(await treeChecksum(fixture.repoDir), before);
+  assert.equal(result.oracle.baseline?.kind, 'failed');
+  assert.equal(result.oracle.discriminates, true);
+  assert.equal(result.oracle.digest, await treeChecksum(fixture.oracleDir));
   assert.deepEqual(result.patch.changedFiles, ['package.json']);
   assert.equal(sha256(await readFile(result.artifacts.patchPath, 'utf8')), result.patch.sha256);
   PatchCheckResultSchema.parse(JSON.parse(await readFile(result.artifacts.resultPath, 'utf8')));
@@ -110,4 +113,77 @@ test('a patch that writes outside the repository is refused before anything is c
   assert.match(result.detail, /path escapes its root/);
   const escapedFrom = path.join(result.artifacts.dir, 'workspace', '../../escaped.txt');
   assert.equal(await stat(escapedFrom).catch(() => null), null);
+});
+
+// An oracle that already passes on the broken repository cannot show a repair.
+test('a pass from an oracle that also passes without the patch is inconclusive, not verified', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const lenient = await temporaryDirectory('lenient-oracle');
+  await writeFile(path.join(lenient, 'oracle.mjs'), "console.log('[oracle] PASS anything');\n", 'utf8');
+
+  try {
+    const result = await verifyExternalPatch({
+      ...options,
+      oracle: { id: 'lenient', directory: lenient, entry: 'oracle.mjs', timeoutSeconds: 30 },
+    });
+
+    assert.equal(result.verification.kind, 'passed');
+    assert.equal(result.oracle.baseline?.kind, 'passed');
+    assert.equal(result.oracle.discriminates, false);
+    assert.equal(result.status, 'inconclusive');
+    assert.match(result.detail, /not shown to fail an assertion without it/);
+    PatchCheckResultSchema.parse(JSON.parse(await readFile(result.artifacts.resultPath, 'utf8')));
+  } finally {
+    await removeDirectory(lenient);
+  }
+});
+
+// A non-zero exit from a crashing oracle is not proof that the oracle can tell a fix from no fix.
+test('an oracle that crashes without a failed check on the unpatched repo is inconclusive', async () => {
+  const layout = await loadFixture('entrypoint-mismatch');
+  const reference = await readFile(path.join(layout.referenceDir, 'reference.patch'), 'utf8');
+  const { options } = await request('entrypoint-mismatch', reference);
+  const flaky = await temporaryDirectory('crashy-oracle');
+  // Passes when package.json carries the reference fix, otherwise dies like a setup error.
+  await writeFile(
+    path.join(flaky, 'oracle.mjs'),
+    [
+      "import { readFileSync } from 'node:fs';",
+      "const pkg = readFileSync(process.env.REPO_DIR + '/package.json', 'utf8');",
+      "if (!pkg.includes('dist/index.js')) { process.stderr.write('Error: cannot find module x\\n'); process.exit(1); }",
+      "console.log('[oracle] PASS fixed');",
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+
+  try {
+    const result = await verifyExternalPatch({
+      ...options,
+      oracle: { id: 'crashy', directory: flaky, entry: 'oracle.mjs', timeoutSeconds: 30 },
+    });
+
+    assert.equal(result.verification.kind, 'passed');
+    assert.equal(result.oracle.baseline?.kind, 'failed');
+    assert.equal(result.oracle.discriminates, null);
+    assert.equal(result.status, 'inconclusive');
+    assert.match(result.detail, /may be a crash or setup error/);
+  } finally {
+    await removeDirectory(flaky);
+  }
+});
+
+test('the oracle digest changes when any file in the oracle directory changes, even under node_modules', async () => {
+  const dir = await temporaryDirectory('digest-oracle');
+  try {
+    await writeFile(path.join(dir, 'oracle.mjs'), "console.log('[oracle] PASS a');\n", 'utf8');
+    const first = await treeChecksum(dir, []);
+    await mkdir(path.join(dir, 'node_modules'), { recursive: true });
+    await writeFile(path.join(dir, 'node_modules', 'helper.js'), 'x', 'utf8');
+    assert.notEqual(await treeChecksum(dir, []), first);
+  } finally {
+    await removeDirectory(dir);
+  }
 });
