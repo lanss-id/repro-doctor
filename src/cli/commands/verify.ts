@@ -67,6 +67,11 @@ export async function verifyCommand(args: ParsedArgs, presenter: Presenter): Pro
       : `${result.visibleCheck.command}: ${result.visibleCheck.passed ? 'passed' : `failed (exit ${result.visibleCheck.exitCode ?? 'none'})`}`,
   );
   presenter.keyValue('hidden oracle', describeVerification(result.verification));
+  presenter.keyValue('oracle digest', result.oracle.digest);
+  presenter.keyValue(
+    'oracle on unpatched repo',
+    result.oracle.baseline === null ? 'not run' : describeVerification(result.oracle.baseline),
+  );
   presenter.keyValue('input repository', result.repo.mutated ? 'CHANGED (this is a bug)' : 'unchanged');
 
   presenter.heading('Artifacts');
